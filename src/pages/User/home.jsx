@@ -1,19 +1,23 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Sidebar from "../../layouts/components/Sidebar/Sidebar";
 import Header from "../../layouts/components/Header/Header";
+import Footer from "../../layouts/components/Footer/MusicPlayer";
+import MainContent from "../../layouts/components/MainContent/MaiContent";
+
 const Home = () => {
-  //   const [data, setData] = useState([]);
-
-  //   useEffect(() => {}, []);
-
   return (
-    <div className="h-screen bg-black">
+    <div className="h-screen bg-black flex flex-col">
       {/* Header */}
       <Header />
-      <div className="h-[90%] flex">
+      {/* Main Content Area */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* Sidebar */}
         <Sidebar />
-        <h1>Welcome to the Home Page</h1>
+
+        {/* Main Content */}
+        <MainContent />
       </div>
+      <Footer />
     </div>
   );
 };
