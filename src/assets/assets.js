@@ -40,9 +40,9 @@ import img13 from './img13.jpg'
 import img14 from './img14.jpg'
 import img15 from './img15.jpg'
 import img16 from './img16.jpg'
-import song1 from  './song1.mp3'
-import song2 from  './song2.mp3'
-import song3 from  './song3.mp3'
+import song1 from './song1.mp3'
+import song2 from './song2.mp3'
+import song3 from './song3.mp3'
 
 export const assets = {
     bell_icon,
@@ -74,113 +74,116 @@ export const assets = {
 }
 
 export const albumsData = [
-    {   
-        id:0,
-        name: "Top 50 Global",
-        image: img8,
-        desc:"Your weekly update of the most played tracks",
-        bgColor:"#2a4365"
+    {
+        AlbumID: 1,
+        Title: "Đánh Đổi",
+        Artist: "Obito",
+        CoverImage: "images/danh-doi-cover.jpg",
+        ReleaseDate: "2023-10-10",
+        Genre: "Hip-hop",
+        bgColor: "#2a4365",
+        songs: [
+            { SongID: 1, Title: "Intro", Duration: 60, AudioFile: "audio/intro.mp3" },
+            { SongID: 2, Title: "Xuất Phát Điểm", Duration: 200, AudioFile: "audio/xuat-phat-diem.mp3" },
+            { SongID: 3, Title: "Đánh Đổi", Duration: 190, AudioFile: "audio/danh-doi.mp3" },
+            { SongID: 4, Title: "Thương Nhau Nha", Duration: 215, AudioFile: "audio/thuong-nhau-nha.mp3" },
+            { SongID: 5, Title: "Anh Luôn Như Vậy", Duration: 220, AudioFile: "audio/anh-luon-nhu-vay.mp3" }
+        ]
     },
-    {   
-        id:1,
-        name: "Top 50 India",
-        image: img9,
-        desc:"Your weekly update of the most played tracks",
-        bgColor:"#22543d"
+    {
+        AlbumID: 2,
+        Title: "Future Nostalgia",
+        Artist: "Dua Lipa",
+        CoverImage: "images/future-nostalgia.jpg",
+        ReleaseDate: "2020-03-27",
+        Genre: "Pop",
+        bgColor: "#742a2a",
+        songs: [
+            { SongID: 6, Title: "Don't Start Now", Duration: 183, AudioFile: "audio/dont-start-now.mp3" },
+            { SongID: 7, Title: "Physical", Duration: 194, AudioFile: "audio/physical.mp3" },
+            { SongID: 8, Title: "Levitating", Duration: 203, AudioFile: "audio/levitating.mp3" }
+        ]
     },
-    {   
-        id:2,
-        name: "Trending India",
-        image: img10,
-        desc:"Your weekly update of the most played tracks",
-        bgColor:"#742a2a"
-    },
-    {   
-        id:3,
-        name: "Trending Global",
-        image: img16,
-        desc:"Your weekly update of the most played tracks",
-        bgColor:"#44337a"
-    },
-    {   
-        id:4,
-        name: "Mega Hits,",
-        image: img11,
-        desc:"Your weekly update of the most played tracks",
-        bgColor:"#234e52"
-    },
-    {   
-        id:5,
-        name: "Happy Favorites",
-        image: img15,
-        desc:"Your weekly update of the most played tracks",
-        bgColor:"#744210"
+    {
+        AlbumID: 3,
+        Title: "Hollywood's Bleeding",
+        Artist: "Post Malone",
+        CoverImage: "images/hollywoods-bleeding.jpg",
+        ReleaseDate: "2019-09-06",
+        Genre: "Hip-hop",
+        bgColor: "#234e52",
+        songs: [
+            { SongID: 9, Title: "Circles", Duration: 215, AudioFile: "audio/circles.mp3" },
+            { SongID: 10, Title: "Wow.", Duration: 174, AudioFile: "audio/wow.mp3" },
+            { SongID: 11, Title: "Goodbyes", Duration: 178, AudioFile: "audio/goodbyes.mp3" }
+        ]
     }
-]
+];
+
 
 export const songsData = [
     {
-        id:0,
+        id: 0,
         name: "Song One",
         image: img1,
-        file:song1,
-        desc:"Put a smile on your face with these happy tunes",
-        duration:"3:00"
+        file: song1,
+        desc: "Put a smile on your face with these happy tunes",
+        duration: "3:00"
     },
     {
-        id:1,
+        id: 1,
         name: "Song Two",
         image: img2,
-        file:song2,
-        desc:"Put a smile on your face with these happy tunes",
-        duration:"2:20"
+        file: song2,
+        desc: "Put a smile on your face with these happy tunes",
+        duration: "2:20"
     },
     {
-        id:2,
+        id: 2,
         name: "Song Three",
         image: img3,
-        file:song3,
-        desc:"Put a smile on your face with these happy tunes",
-        duration:"2:32"
+        file: song3,
+        desc: "Put a smile on your face with these happy tunes",
+        duration: "2:32"
     },
     {
-        id:3,
+        id: 3,
         name: "Song Four",
         image: img4,
-        file:song1,
-        desc:"Put a smile on your face with these happy tunes",
-        duration:"2:50"
+        file: song1,
+        desc: "Put a smile on your face with these happy tunes",
+        duration: "2:50"
     },
     {
-        id:4,
+        id: 4,
         name: "Song Five",
         image: img5,
-        file:song2,
-        desc:"Put a smile on your face with these happy tunes",
-        duration:"3:10"
+        file: song2,
+        desc: "Put a smile on your face with these happy tunes",
+        duration: "3:10"
     },
     {
-        id:5,
+        id: 5,
         name: "Song Six",
-        image: img14    ,
-        file:song3,
-        desc:"Put a smile on your face with these happy tunes",
-        duration:"2:45"
+        image: img14,
+        file: song3,
+        desc: "Put a smile on your face with these happy tunes",
+        duration: "2:45"
     },
     {
-        id:6,
+        id: 6,
         name: "Song Seven",
         image: img7,
-        file:song1,
-        desc:"Put a smile on your face with these happy tunes",
-        duration:"2:18"
+        file: song1,
+        desc: "Put a smile on your face with these happy tunes",
+        duration: "2:18"
     },
     {
-        id:7,
+        id: 7,
         name: "Song Eight",
         image: img12,
-        file:song2,
-        desc:"Put a smile on your face with these happy tunes",
-        duration:"2:35"
+        file: song2,
+        desc: "Put a smile on your face with these happy tunes",
+        duration: "2:35"
     }
 ]

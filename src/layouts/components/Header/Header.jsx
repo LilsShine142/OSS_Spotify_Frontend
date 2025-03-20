@@ -19,7 +19,7 @@ const Header = () => {
           <div
             className="absolute left-1/2 -translate-x-1/2 top-12 opacity-0 scale-90 
     group-hover:opacity-100 group-hover:scale-100 transition-all duration-300 delay-200 ease-out 
-    bg-slate-800 text-white text-xs px-3 py-1 rounded-md shadow-lg whitespace-nowrap"
+    bg-slate-800 text-white text-xs px-3 py-1 rounded-md shadow-lg whitespace-nowrap z-[999]"
           >
             Trang chủ
           </div>
