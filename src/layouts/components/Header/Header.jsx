@@ -3,7 +3,7 @@ import { assets } from "../../../assets/assets";
 
 const Header = () => {
   return (
-    <div className="bg-[#121212] w-full h-[70px] flex items-center justify-between px-8">
+    <div className="bg-[#121212] w-full h-[9%] flex items-center justify-between px-8">
       {/* Logo Spotify */}
       <div className="flex items-center gap-3 cursor-pointer w-1/6 h-full">
         <img className="w-8" src={assets.spotify_logo} alt="Spotify Logo" />

@@ -38,12 +38,18 @@ import config from "../config";
 
 //pages 
 import Home from "../pages/User/home";
+import testCallAPI from "../pages/TestPage/testCallAPI";
 
 // Public routes
 const publicRoutes = [
     // Auth
     // User
     { path: config.routes.home, component: Home },
+
+
+
+    // TEST CALL API
+    { path: config.routes.testCallAPI, component: testCallAPI },
 ];
 
 export { publicRoutes };

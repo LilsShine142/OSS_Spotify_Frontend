@@ -34,6 +34,11 @@ const routes = {
 
     // User
     home: '/home',
+    
+    
+    
+    // TEST CALL API
+    testCallAPI: '/testCallAPI',
 };
 
 export default routes;
