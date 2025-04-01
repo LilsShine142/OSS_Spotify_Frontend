@@ -44,6 +44,8 @@ import song1 from './song1.mp3'
 import song2 from './song2.mp3'
 import song3 from './song3.mp3'
 
+import Avicii_banner from './Avicii_banner.jpg'
+
 export const assets = {
     bell_icon,
     home_icon,
@@ -70,7 +72,8 @@ export const assets = {
     spotify_logo,
     clock_icon,
     down,
-    avatar
+    avatar,
+    Avicii_banner
 }
 
 export const albumsData = [

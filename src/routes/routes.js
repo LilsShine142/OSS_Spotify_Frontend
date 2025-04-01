@@ -38,12 +38,14 @@ import config from "../config";
 
 //pages 
 import Home from "../pages/User/home";
+import Artist from "../pages/User/artist";
 
 // Public routes
 const publicRoutes = [
     // Auth
     // User
     { path: config.routes.home, component: Home },
+    { path: config.routes.artist, component: Artist },
 ];
 
 export { publicRoutes };

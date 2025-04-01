@@ -33,6 +33,7 @@ const routes = {
     // register: '/register',
 
     // User
+    artist: '/home/artist',
     home: '/home',
 };
 
