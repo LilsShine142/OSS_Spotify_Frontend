@@ -1,3 +1,4 @@
+
 const routes = {
     /*// Auth (Đăng nhập, Đăng ký)
     login
@@ -31,14 +32,11 @@ const routes = {
     // Auth
     // login: '/login',
     // register: '/register',
-
-    // User
-    home: '/home',
-    
-    
-    
     // TEST CALL API
     testCallAPI: '/testCallAPI',
+    // User
+    artist: '/home/artist',
+    home: '/home',
 };
 
 export default routes;

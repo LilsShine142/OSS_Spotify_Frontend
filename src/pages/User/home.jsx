@@ -1,4 +1,3 @@
-
 // import React, { useState, useEffect } from "react";
 // import Sidebar from "../../layouts/components/Sidebar/Sidebar";
 // import Header from "../../layouts/components/Header/Header";
@@ -77,6 +76,5 @@ const Home = () => {
     </div>
   );
 };
-
 
 export default Home;
