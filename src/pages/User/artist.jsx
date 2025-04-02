@@ -8,7 +8,6 @@ import Artist from "../../layouts/components/Artist/Artist";
 const Home = () => {
   return (
     <div className="h-screen bg-black flex flex-col">
-      {/* Header */}
       <Header />
       {/* Main Content Area */}
       <div className="flex flex-1 overflow-hidden">

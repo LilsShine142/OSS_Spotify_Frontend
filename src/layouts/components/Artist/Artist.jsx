@@ -1,5 +1,6 @@
 import React from 'react'
 import { assets } from "../../../assets/assets";
+import FooterMain from '../Footer/FooterMain';
 
 const Artist = () => {
 
@@ -16,7 +17,7 @@ const Artist = () => {
     console.log(songs);
       
   return (
-    <div className='w-[1140px] h-[540px] rounded-lg  m-2 box-border overflow-y-auto scrollbar-hide'>
+    <div className='w-full h-[530px] rounded-lg  m-2 box-border overflow-y-auto scrollbar-hide'>
         <div className='relative'>
             <img src="../src/assets/Avicii_banner.jpg" alt="" className='w-[100%] h-[250px] z-[-10] object-cover'/>
             <div className='absolute bottom-4 left-4 text-white'>
@@ -50,8 +51,9 @@ const Artist = () => {
                     {songs.map((song, index) => (
                         <div className='w-full flex items-center p-2 bg-transparent hover:bg-gray-800 rounded-lg group transition '>
                             <div className='w-[50%] flex items-center'>
-                                <label className='text-white' htmlFor="">{index+1}</label>
-                                <img className='w-[40px] h-[40px] mx-3' src="../src/assets/Avicii_banner.jpg" alt="" />
+                                <img className='w-[15px] h-[15px] hidden group-hover:block' src ={assets.play_icon} alt="" />
+                                <label className='text-white group-hover:hidden' htmlFor="">{index+1}</label>
+                                <img className='w-[40px] h-[40px] ml-6 mr-3' src="../src/assets/Avicii_banner.jpg" alt="" />
                                 <label className='font-bold text-white text-[15px]' htmlFor="">{song.title}</label>
                             </div>
                             
@@ -79,6 +81,9 @@ const Artist = () => {
                     </div>
                 </div>
             </div>
+        </div>
+        <div>
+            <FooterMain/>
         </div>
     </div>
   )

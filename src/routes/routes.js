@@ -39,13 +39,16 @@ import config from "../config";
 //pages 
 import Home from "../pages/User/home";
 import Artist from "../pages/User/artist";
-
+import Login from "../Pages/Auth/Login"
+import Register from "../Pages/Auth/Register"
 // Public routes
 const publicRoutes = [
     // Auth
     // User
     { path: config.routes.home, component: Home },
     { path: config.routes.artist, component: Artist },
+    { path: config.routes.login, component: Login },
+    { path: config.routes.register, component: Register },
 ];
 
 export { publicRoutes };

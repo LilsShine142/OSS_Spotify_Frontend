@@ -35,6 +35,9 @@ const routes = {
     // User
     artist: '/home/artist',
     home: '/home',
+    login: '/login',
+    register: 'register'
+
 };
 
 export default routes;
