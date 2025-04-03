@@ -1,4 +1,3 @@
-
 /**
  * Các Chức Năng Cần Xây Dựng
 Giao diện phát nhạc (Music Player)
@@ -37,19 +36,19 @@ Premium:	Giới thiệu và mua gói Premium.
 
 import config from "../config";
 
-//pages
+//pages 
 import Home from "../pages/Home/home";
-import testCallAPI from "../pages/TestPage/testCallAPI";
-//import Artist from "../pages/User/artist";
-
+import Artist from "../pages/User/artist";
+import Login from "../pages/Auth/Login"
+import Register from "../pages/Auth/Register"
 // Public routes
 const publicRoutes = [
     // Auth
     // User
-    // TEST CALL API
-    { path: config.routes.testCallAPI, component: testCallAPI },
     { path: config.routes.home, component: Home },
-    //{ path: config.routes.artist, component: Artist },
+    { path: config.routes.artist, component: Artist },
+    { path: config.routes.login, component: Login },
+    { path: config.routes.register, component: Register },
 ];
 
 export { publicRoutes };
