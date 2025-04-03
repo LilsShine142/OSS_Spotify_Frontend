@@ -38,9 +38,9 @@ Premium:	Giới thiệu và mua gói Premium.
 import config from "../config";
 
 //pages
-import Home from "../pages/User/home";
+import Home from "../pages/Home/home";
 import testCallAPI from "../pages/TestPage/testCallAPI";
-import Artist from "../pages/User/artist";
+//import Artist from "../pages/User/artist";
 
 // Public routes
 const publicRoutes = [
@@ -49,7 +49,7 @@ const publicRoutes = [
     // TEST CALL API
     { path: config.routes.testCallAPI, component: testCallAPI },
     { path: config.routes.home, component: Home },
-    { path: config.routes.artist, component: Artist },
+    //{ path: config.routes.artist, component: Artist },
 ];
 
 export { publicRoutes };
