@@ -87,7 +87,7 @@ const PlaylistItem = ({ item, width }) => {
 
 const Playlists = ({ width }) => {
   return (
-    <div className={`container mx-auto w-full ${width > 86 ? 'max-h-[67%]' : 'max-h-[87%]'} overflow-y-auto pr-2 scrollbar-custom scrollbar-hidden`}>
+    <div className={`container mx-auto w-full ${width > 86 ? 'max-h-[76%]' : 'max-h-[92%]'} overflow-auto pr-2 scrollbar-hidden`}>
       {playlists.map((playlist) => (
         <PlaylistItem key={playlist.id} item={playlist} width={width} />
       ))}

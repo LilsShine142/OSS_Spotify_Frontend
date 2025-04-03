@@ -1,5 +1,6 @@
 import React from "react";
-import Sidebar from "../../layouts/components/Sidebar/Sidebar";
+import LeftSidebar from "../../layouts/components/Sidebar/LeftSidebar";
+import RightSidebar from "../../layouts/components/Sidebar/RightSidebar";
 import Header from "../../layouts/components/Header/Header";
 import Footer from "../../layouts/components/Footer/MusicPlayer";
 import MainContent from "../../layouts/components/MainContent/MaiContent";
@@ -12,8 +13,8 @@ const Home = () => {
       {/* Main Content Area */}
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
-        <Sidebar />
-
+        <LeftSidebar />
+        <RightSidebar />
         <Artist />
       </div>
       <Footer />

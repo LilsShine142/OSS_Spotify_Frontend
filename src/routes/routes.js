@@ -37,7 +37,7 @@ Premium:	Giới thiệu và mua gói Premium.
 import config from "../config";
 
 //pages 
-import Home from "../pages/User/home";
+import Home from "../pages/Home/home";
 import Artist from "../pages/User/artist";
 import Login from "../pages/Auth/Login"
 import Register from "../pages/Auth/Register"
