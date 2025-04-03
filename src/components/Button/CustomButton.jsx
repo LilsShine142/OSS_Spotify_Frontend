@@ -1,15 +1,14 @@
 import React from "react";
 
 const buttonStyles = {
-  primary: "bg-blue-500 text-white hover:bg-blue-600",
-  secondary: "bg-gray-700 text-white hover:bg-gray-800",
-  outline: "border border-gray-500 text-white hover:bg-gray-700",
+  primary: "bg-white text-black hover:bg-gray-300", // Nút được chọn (Tất cả)
+  secondary: "bg-gray-800 border border-gray-600 text-white hover:bg-gray-900", // Nút chưa chọn
 };
 
 const CustomButton = ({ variant = "primary", children, onClick }) => {
   return (
     <button
-      className={`px-4 py-2 rounded-md transition ${buttonStyles[variant]}`}
+      className={`text-sm font-bold px-4 py-1 rounded-full transition ${buttonStyles[variant]}`}
       onClick={onClick}
     >
       {children}

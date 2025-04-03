@@ -37,10 +37,10 @@ Premium:	Giới thiệu và mua gói Premium.
 import config from "../config";
 
 //pages 
-import Home from "../pages/User/home";
+import Home from "../pages/Home/home";
 import Artist from "../pages/User/artist";
-import Login from "../Pages/Auth/Login"
-import Register from "../Pages/Auth/Register"
+import Login from "../pages/Auth/Login"
+import Register from "../pages/Auth/Register"
 import Account from "../pages/Account/account"
 import Profile from "../pages/Account/profile"
 // Public routes
@@ -52,7 +52,7 @@ const publicRoutes = [
     { path: config.routes.login, component: Login },
     { path: config.routes.register, component: Register },
     { path: config.routes.account, component: Account },
-    { path: config.routes.account_profile, component:Profile  },
+    { path: config.routes.account_profile, component: Profile  },
 ];
 
 export { publicRoutes };

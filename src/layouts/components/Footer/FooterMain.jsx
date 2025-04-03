@@ -1,6 +1,6 @@
-import { assets } from '@/assets/assets'
-import React from 'react'
-import { Facebook,Instagram,Twitter } from "@mui/icons-material"
+import { assets } from "../../../assets/assets";
+import React from "react";
+import { Facebook, Instagram, Twitter } from "@mui/icons-material";
 function FooterMain() {
   return (
     <footer className="bg-black text-white py-10 px-6">
@@ -9,9 +9,15 @@ function FooterMain() {
         <div>
           <h3 className="font-bold text-lg">Công ty</h3>
           <ul className="mt-2 space-y-2 text-gray-400">
-            <li><a href="#">Giới thiệu</a></li>
-            <li><a href="#">Việc làm</a></li>
-            <li><a href="#">For the Record</a></li>
+            <li>
+              <a href="#">Giới thiệu</a>
+            </li>
+            <li>
+              <a href="#">Việc làm</a>
+            </li>
+            <li>
+              <a href="#">For the Record</a>
+            </li>
           </ul>
         </div>
 
@@ -19,11 +25,21 @@ function FooterMain() {
         <div>
           <h3 className="font-bold text-lg">Cộng đồng</h3>
           <ul className="mt-2 space-y-2 text-gray-400">
-            <li><a href="#">Dành cho các Nghệ sĩ</a></li>
-            <li><a href="#">Nhà phát triển</a></li>
-            <li><a href="#">Quảng cáo</a></li>
-            <li><a href="#">Nhà đầu tư</a></li>
-            <li><a href="#">Nhà cung cấp</a></li>
+            <li>
+              <a href="#">Dành cho các Nghệ sĩ</a>
+            </li>
+            <li>
+              <a href="#">Nhà phát triển</a>
+            </li>
+            <li>
+              <a href="#">Quảng cáo</a>
+            </li>
+            <li>
+              <a href="#">Nhà đầu tư</a>
+            </li>
+            <li>
+              <a href="#">Nhà cung cấp</a>
+            </li>
           </ul>
         </div>
 
@@ -31,8 +47,12 @@ function FooterMain() {
         <div>
           <h3 className="font-bold text-lg">Liên kết hữu ích</h3>
           <ul className="mt-2 space-y-2 text-gray-400">
-            <li><a href="#">Hỗ trợ</a></li>
-            <li><a href="#">Ứng dụng Di động Miễn phí</a></li>
+            <li>
+              <a href="#">Hỗ trợ</a>
+            </li>
+            <li>
+              <a href="#">Ứng dụng Di động Miễn phí</a>
+            </li>
           </ul>
         </div>
 
@@ -40,22 +60,37 @@ function FooterMain() {
         <div>
           <h3 className="font-bold text-lg">Các gói của Spotify</h3>
           <ul className="mt-2 space-y-2 text-gray-400">
-            <li><a href="#">Premium Individual</a></li>
-            <li><a href="#">Premium Student</a></li>
-            <li><a href="#">Spotify Free</a></li>
+            <li>
+              <a href="#">Premium Individual</a>
+            </li>
+            <li>
+              <a href="#">Premium Student</a>
+            </li>
+            <li>
+              <a href="#">Spotify Free</a>
+            </li>
           </ul>
         </div>
 
         <div className="flex mt-4 space-x-2">
-            <a href="#" className="bg-gray-800 p-2 w-10 h-10 rounded-full flex items-center">
-                <Facebook/>
-            </a>
-            <a href="#" className="bg-gray-800 p-2 w-10 h-10  rounded-full flex items-center">
-                <Instagram/>
-            </a>
-            <a href="#" className="bg-gray-800 p-2 w-10 h-10  rounded-full flex items-center">
-                <Twitter/>
-            </a>
+          <a
+            href="#"
+            className="bg-gray-800 p-2 w-10 h-10 rounded-full flex items-center"
+          >
+            <Facebook />
+          </a>
+          <a
+            href="#"
+            className="bg-gray-800 p-2 w-10 h-10  rounded-full flex items-center"
+          >
+            <Instagram />
+          </a>
+          <a
+            href="#"
+            className="bg-gray-800 p-2 w-10 h-10  rounded-full flex items-center"
+          >
+            <Twitter />
+          </a>
         </div>
       </div>
 
@@ -76,9 +111,8 @@ function FooterMain() {
       </div>
 
       {/* Mạng xã hội */}
-   
     </footer>
-  )
+  );
 }
 
-export default FooterMain
+export default FooterMain;

@@ -1,11 +1,10 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
-import { assets } from "../../../assets/assets";
 import { BiListUl, BiChevronLeft, BiChevronRight } from "react-icons/bi";
-import Playlists from "../../components/Playlist/Playlists";
+import { assets } from "../../../assets/assets";
+import Playlists from "../Playlist/Playlists";
 
-const Sidebar = () => {
+const LeftSidebar = ({ width, onResize }) => {
   const [isFocused, setIsFocused] = useState(false);
-  const [width, setWidth] = useState(360);
   const inputRef = useRef(null);
   const sidebarRef = useRef(null);
   const listRef = useRef(null);
@@ -41,42 +40,28 @@ const Sidebar = () => {
     });
   };
 
-  // Hàm mở input tìm kiếm
   const handleOpenSearch = () => {
-    if (!isFocused) {
-      setIsFocused(true);
-      setTimeout(() => inputRef.current?.focus(), 50);
-    }
+    setIsFocused(true);
+    setTimeout(() => inputRef.current?.focus(), 50);
   };
 
-  // Cập nhật chiều rộng sidebar khi resize màn hình
-  const updateSidebarWidth = useCallback(() => {
-    const currentWidth = window.innerWidth;
-    setWidth(currentWidth < 1100 ? 86 : currentWidth < 1250 ? 300 : 360);
-  }, []);
-
-  useEffect(() => {
-    const handleResize = () => {
-      updateSidebarWidth();
-      checkScroll();
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, [updateSidebarWidth, checkScroll]);
-
-  // Xử lý kéo thả để thay đổi kích thước sidebar
   const handleMouseDown = (e) => {
     let startX = e.clientX;
     let startWidth = width;
     let isResizing = true;
 
     const handleMouseMove = (event) => {
-      if (!isResizing || !sidebarRef.current) return;
+      if (!isResizing) return;
       const newWidth = startWidth + (event.clientX - startX);
-      setWidth(
-        newWidth < 190 ? 85 : newWidth < 300 ? 300 : newWidth < 650 ? 360 : 1000
-      );
+      const finalWidth =
+        newWidth < 190
+          ? 85
+          : newWidth < 300
+          ? 300
+          : newWidth < 650
+          ? 360
+          : 1000;
+      onResize(finalWidth);
     };
 
     const handleMouseUp = () => {
@@ -92,16 +77,12 @@ const Sidebar = () => {
   return (
     <div
       ref={sidebarRef}
-      className="h-full p-2 flex flex-col gap-2 text-white relative"
-      style={{
-        width: `${width}px`,
-        minWidth: "85px",
-        maxWidth: "100vw",
-      }}
+      className="h-[78%] flex pr-2 text-white relative"
+      style={{ width: `${width}px`, minWidth: "85px", maxWidth: "100vw" }}
     >
-      <div className="bg-[#121212] h-[87%] rounded">
+      <div className="bg-[#121212] w-full rounded">
         {/* Header */}
-        <header>
+        <header className="h-[8%]">
           <div className="p-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <img className="w-6 ml-2" src={assets.stack_icon} alt="" />
@@ -120,7 +101,7 @@ const Sidebar = () => {
         {width > 86 && (
           <>
             {/* Danh sách lọc */}
-            <div className="relative flex items-center px-4 py-2">
+            <div className="h-[8%] relative flex items-center px-4 py-2">
               {canScrollLeft && (
                 <button
                   className="absolute left-0 bg-[#242424] p-2 rounded-full text-white z-10 hover:brightness-125"
@@ -138,7 +119,7 @@ const Sidebar = () => {
                 {["Danh sách phát", "Nghệ sĩ", "Album"].map((item, index) => (
                   <button
                     key={index}
-                    className="bg-[#242424] text-white px-4 py-1 text-sm font-bold rounded-full hover:scale-105 transition-transform duration-200"
+                    className="bg-[#242424] text-white px-4 py-1 text-sm font-bold rounded-full hover:bg-[#333333] active:bg-[#1e1e1e] transition-colors duration-200"
                   >
                     {item}
                   </button>
@@ -156,7 +137,7 @@ const Sidebar = () => {
             </div>
 
             {/* Tìm kiếm */}
-            <div className="flex items-center justify-between mb-4 px-3 py-2">
+            <div className="h-[5%] flex items-center justify-between mb-4 px-3 py-2">
               <div
                 className={`flex items-center px-3 py-2 transition-[width,background-color] duration-300 ${
                   isFocused
@@ -199,17 +180,20 @@ const Sidebar = () => {
             </div>
           </>
         )}
+
         {/* Danh sách phát */}
         <Playlists width={width} />
       </div>
 
       {/* Thanh kéo dãn */}
       <div
-        className="absolute top-0 right-0 h-full w-2 cursor-ew-resize bg-gray-500 opacity-50 hover:opacity-100"
+        className="absolute h-full right-0.5 w-0.5 cursor-ew-resize bg-transparent hover:bg-gray-400 active:bg-white transition-all duration-200 z-20 group-hover:bg-gray-400"
         onMouseDown={handleMouseDown}
       />
     </div>
   );
 };
 
-export default Sidebar;
+export default LeftSidebar;
+
+// cursor-ew-resize bg-transparent  hover:bg-gray-400 active:bg-white transition-all duration-200 z-20 group-hover:bg-gray-400

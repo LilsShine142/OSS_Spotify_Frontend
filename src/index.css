@@ -2,6 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Fix vị trí nút */
+.swiper-button-prev-unique,
+.swiper-button-next-unique {
+    margin-top: 0 !important;
+    transform: translateY(-50%) !important;
+}
+
+/* Ẩn mũi tên mặc định */
+.swiper-button-prev-unique:after,
+.swiper-button-next-unique:after {
+    display: none;
+}
+
 @layer utilities {
 
     /* Ẩn thanh cuộn mặc định */
