@@ -36,7 +36,9 @@ const routes = {
     artist: '/home/artist',
     home: '/home',
     login: '/login',
-    register: 'register'
+    register: 'register',
+    account : 'account',
+    account_profile : 'account/profile'
 
 };
 
