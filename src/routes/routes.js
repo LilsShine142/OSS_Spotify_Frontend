@@ -39,8 +39,8 @@ import config from "../config";
 //pages 
 import Home from "../pages/User/home";
 import Artist from "../pages/User/artist";
-import Login from "../Pages/Auth/Login"
-import Register from "../Pages/Auth/Register"
+import Login from "../pages/Auth/Login"
+import Register from "../pages/Auth/Register"
 // Public routes
 const publicRoutes = [
     // Auth
