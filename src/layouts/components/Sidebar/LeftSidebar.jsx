@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { BiListUl, BiChevronLeft, BiChevronRight } from "react-icons/bi";
 import { assets } from "../../../assets/assets";
-import Playlists from "../Playlist/Playlists";
+import Playlists from "../Libraly/Playlists";
 
 const LeftSidebar = ({ width, onResize }) => {
   const [isFocused, setIsFocused] = useState(false);
