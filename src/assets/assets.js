@@ -28,6 +28,14 @@ import danhdoi_album from './danhdoi-album.jpg'
 import danhdoi_img_song from './danhdoi-img-song.jpg'
 import tungngaynhumaimai_img from './tungngaynhumaimai-album.jpg'
 import cover_image_song from './cover_image_song.jpg'
+import obito_artist from './danhdoi-album.jpg'
+import jack_artist from './jack_artist.jpg'
+import bray_artist from './bray_artist.jpg'
+import buitruonglinh_artist from './buitruonglinh_artist.jpg'
+import lilwuyn_artist from './lilwuyn_artist.jpg'
+import sobin_artist from './sobin_artist.jpg'
+import orange_artist from './orange_artist.jpg'
+import rose_artist from './rose_artist.jpg'
 import img1 from './img1.jpg'
 import img2 from './img2.jpg'
 import img3 from './img3.jpg'
@@ -82,7 +90,14 @@ export const assets = {
     tungngaynhumaimai_img,
     Avicii_banner,
     cover_image_song,
-
+    obito_artist,
+    jack_artist,
+    bray_artist,
+    buitruonglinh_artist,
+    lilwuyn_artist,
+    sobin_artist,
+    orange_artist,
+    rose_artist,
 }
 
 export const albumsData = [
@@ -477,7 +492,7 @@ export const songsData = [
         Title: "Chúng Ta Rồi Sẽ Hạnh Phúc",
         Duration: 228, // 3 phút 48 giây
         AudioFile: "audio/chung-ta-roi-se-hanh-phuc.mp3",
-        cover_image: "assets/j97-cover.jpg", // Thay bằng đường dẫn thực tế
+        cover_image: "", // Thay bằng đường dẫn thực tế
         Artist: "Jack - J97",
         Album: "Single" // Hoặc tên album nếu có
     }
@@ -522,3 +537,74 @@ export const songDetails = [
         coverImage: assets.cover_image_song,
     }
 ];
+
+export const artists = [
+    {
+        artist_id: 1,
+        name: "Obito",
+        genre: "Rap / Hip-hop",
+        country: "Vietnam",
+        CoverImage: obito_artist,
+        label: "Nghệ sĩ"
+    },
+    {
+        artist_id: 2,
+        name: "Bray",
+        genre: "Rap",
+        country: "Vietnam",
+        CoverImage: bray_artist,
+        label: "Nghệ sĩ"
+    },
+    {
+        artist_id: 3,
+        name: "Jack",
+        genre: "Pop / Ballad",
+        country: "Vietnam",
+        CoverImage: jack_artist,
+        label: "Nghệ sĩ"
+    },
+    {
+        artist_id: 4,
+        name: "Rosé",
+        genre: "K-pop",
+        country: "South Korea",
+        CoverImage: rose_artist,
+        label: "Nghệ sĩ"
+    },
+    {
+        artist_id: 5,
+        name: "Bùi Trường Linh",
+        genre: "Ballad",
+        country: "Vietnam",
+        CoverImage: buitruonglinh_artist,
+        label: "Nghệ sĩ"
+    },
+    {
+        artist_id: 6,
+        name: "Orange",
+        genre: "Pop / R&B",
+        country: "Vietnam",
+        CoverImage: orange_artist,
+        label: "Nghệ sĩ"
+    },
+    {
+        artist_id: 7,
+        name: "Lil Wuyn",
+        genre: "Rap / Hip-hop",
+        country: "Vietnam",
+        CoverImage: lilwuyn_artist,
+        label: "Nghệ sĩ"
+    },
+    {
+        artist_id: 8,
+        name: "Soobin Hoàng Sơn",
+        genre: "Pop / R&B",
+        country: "Vietnam",
+        CoverImage: sobin_artist,
+        label: "Nghệ sĩ"
+    },
+
+];
+
+
+
