@@ -1,7 +1,41 @@
 import { assets } from '@/assets/assets'
 import React from 'react'
+import { useState } from "react";
+import axios from "axios";
 
 function Register() {
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [confirmpassword, setConfPassword] = useState("");
+//only have email textbox, click on register to check if user exists in backend, if success add password and confirmpassword textboxes(update later or never=)))
+
+    const handleRegister = async () => {
+        try {
+            if (password !== confirmpassword) {
+                console.error("Passwords do not match!");
+                alert("Passwords do not match. Please try again."); // Display an alert to the user
+                return; // Stop the registration process
+            }        
+            const response = await axios.post("http://127.0.0.1:8000/spotify/api/register/", {
+                email,
+                password,
+                confirmpassword
+            });
+            if (response.data.success) {
+                console.log("Registration successful!");
+                window.location.href = "/login";
+            } 
+            else if (response.data.error === "User already exists") {
+                console.log("User already exists. Redirecting to login...");
+                window.location.href = "/login";
+            }else {
+                console.error("Registration failed:", response.data.error);
+            }
+        } catch (error) {
+            console.error("Error during registration:", error);
+        }
+    };
+
   return (
     <div>
         <div className='h-auto bg-gray-900 text-white flex items-center justify-center'>
@@ -15,21 +49,38 @@ function Register() {
                 </div>
                
                
-               
                 <form className='space-y-4 flex flex-col items-center justify-center ' action="">
                     <div className=' flex flex-col space-y-2'>
                         <label className='text-bold' htmlFor="">Email address</label>
-                        <input className='w-80 h-10 border border-gray rounded-lg bg-black p-1' type="text" placeholder='Email or username' />
+                        <input className='w-80 h-10 border border-gray rounded-lg bg-black p-1' type="email"
+                        placeholder="Enter your email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        />
                         <a className='text-sm underline text-green-500' href=""> Use phoneNumber instead</a>
                     </div>
-                 
-                    <div className='w-[330px] h-11 flex items-center justify-center'>
-                        <input 
-                            className="w-80 h-10 border  font-bold  text-black border-gray-400 rounded-full bg-green-500 cursor mt-2 
-                                        hover:w-[330px] hover:h-11 transition-all duration-200" 
-                            type="submit" 
-                            value="Next" 
+                    <div className=' flex flex-col space-y-2'>
+                        <label className='text-bold' htmlFor="">Password</label>
+                        <input className='w-80 h-10 border border-gray rounded-lg bg-black p-1' type="password"
+                        placeholder="Enter your password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
                         />
+                    </div>
+                    <div className=' flex flex-col space-y-2'>
+                        <label className='text-bold' htmlFor="">Confirm Password</label>
+                        <input className='w-80 h-10 border border-gray rounded-lg bg-black p-1' type="password"
+                        placeholder="Confirm your password"
+                        value={confirmpassword}
+                        onChange={(e) => setConfPassword(e.target.value)}
+                        />
+                    </div>
+                    <div className='w-[330px] h-11 flex items-center justify-center'>
+                        <button className="w-80 h-10 border  font-bold  text-black border-gray-400 rounded-full bg-green-500 cursor mt-2 
+                        hover:w-[330px] hover:h-11 transition-all duration-200" 
+                            onClick={handleRegister}>Register
+                        
+                        </button>
                     </div>
                 </form>
                
@@ -37,30 +88,6 @@ function Register() {
                     <hr className="w-80 border-t-2 border-gray-500" />
                 </div>
 
-
-                {/* SignUp */}
-
-                <div className="flex w-80 items-center border border-gray rounded-[50px] p-4 bg-black-500">
-                    <img className='ml-4 w-5 h-5' src={assets.spotify_logo} alt="" />
-                    <div className='w-60 flex justify-center'>
-                       <label htmlFor="">Sign up with Google</label>
-                    </div>
-                </div>
-                <div className='flex w-80 items-center border border-gray rounded-[50px] p-4 bg-black-500'>
-                    <img className='ml-4 w-5 h-5' src={assets.spotify_logo} alt="" />
-                    <div className='w-60 flex justify-center'>
-                       <label htmlFor="">Sign up with Facebook</label>
-                    </div>
-                </div>
-                <div className='flex w-80 items-center border border-gray rounded-[50px] p-4 bg-black-500'>
-                    <img className='ml-4 w-5 h-5' src={assets.spotify_logo} alt="" />
-                    <div className='w-60 flex justify-center'>
-                       <label htmlFor="">Sign up with Apple</label>
-                    </div>
-                </div>
-                
-           
-                
                 {/* Footer */}
                 <div className='flex items-center'>
                     <label className='text-gray-400' htmlFor="">Already have an account?</label>
@@ -80,7 +107,6 @@ function Register() {
             </div>
         </div>
 
-        
     </div>
    
   )

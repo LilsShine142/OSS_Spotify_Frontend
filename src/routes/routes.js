@@ -41,6 +41,7 @@ import Home from "../pages/Home/home";
 import Artist from "../pages/User/artist";
 import Login from "../pages/Auth/Login"
 import Register from "../pages/Auth/Register"
+import Callback from "../pages/Auth/Callback"
 // Public routes
 const publicRoutes = [
     // Auth
@@ -49,6 +50,7 @@ const publicRoutes = [
     { path: config.routes.artist, component: Artist },
     { path: config.routes.login, component: Login },
     { path: config.routes.register, component: Register },
+    { path: config.routes.callback, component: Callback },
 ];
 
 export { publicRoutes };
