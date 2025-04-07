@@ -34,23 +34,81 @@ Admin:	Quản lý toàn bộ hệ thống.
 Premium:	Giới thiệu và mua gói Premium.
 */
 
-import config from "../config";
+// import config from "../config";
+// import { Navigate } from "react-router-dom";
+// //pages 
+// import Home from "../pages/Home/home";
+// import HomeContainer from "../layouts/components/MainContent/HomeContainer";
+// import Artist from "../layouts/components/Artist/Artist";
+// import Login from "../pages/Auth/Login"
+// import Register from "../pages/Auth/Register"
+// import Account from "../pages/Account/account"
+// import Profile from "../pages/Account/profile"
+// import DefaultPage from "../layouts/Default/DefaultPage";
 
-//pages 
-import Home from "../pages/Home/home";
-import Artist from "../pages/User/artist";
-import Login from "../pages/Auth/Login"
-import Register from "../pages/Auth/Register"
-import Callback from "../pages/Auth/Callback"
-// Public routes
-const publicRoutes = [
-    // Auth
-    // User
-    { path: config.routes.home, component: Home },
-    { path: config.routes.artist, component: Artist },
-    { path: config.routes.login, component: Login },
-    { path: config.routes.register, component: Register },
-    { path: config.routes.callback, component: Callback },
+// // Public routes
+// const publicRoutes = [
+//     // Auth
+//     // User
+//     {
+//         path: config.routes.home,
+//         index: true,
+//         component: Home,
+//         exact: true
+//     },
+//     {
+//         path: config.routes.home_container,
+//         component: HomeContainer,
+//         exact: true
+//     },
+//     {
+//         path: config.routes.artist(':id'),
+//         component: Artist,
+//         exact: true
+//     },
+//     {
+//         path: config.routes.default_page,
+//         component: DefaultPage
+//     },
+// { path: config.routes.login, component: Login },
+// { path: config.routes.register, component: Register },
+// { path: config.routes.account, component: Account },
+// { path: config.routes.account_profile, component: Profile },
+//     // { path: "*", element: <Navigate to={config.routes.default_page} replace /> }
+// ];
+
+// export { publicRoutes };
+
+
+import config from "../config";
+import HomeContainer from "../layouts/components/MainContent/HomeContainer";
+import Artist from "../layouts/components/Artist/Artist";
+import Login from "../pages/Auth/Login";
+import Register from "../pages/Auth/Register";
+import Callback from "../pages/Auth/Callback";
+import Account from "../pages/Account/account";
+import Profile from "../pages/Account/profile";
+import DefaultPage from "../layouts/Default/DefaultPage";
+
+// Các route sử dụng layout HomeLayout
+const layoutRoutes = [
+    {
+        path: config.routes.home,
+        component: HomeContainer,
+    },
+    {
+        path: config.routes.artist(':id'),
+        component: Artist,
+    },
 ];
 
-export { publicRoutes };
+// Các route không sử dụng layout
+const standaloneRoutes = [
+    { path: config.routes.login, component: Login },
+    { path: config.routes.register, component: Register },
+    { path: config.routes.account, component: Account },
+    { path: config.routes.account_profile, component: Profile },
+    { path: config.routes.default_page, component: DefaultPage },
+];
+
+export { layoutRoutes, standaloneRoutes };
