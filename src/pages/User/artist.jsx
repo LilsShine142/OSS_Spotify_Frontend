@@ -12,7 +12,6 @@ const Home = () => {
       <Header />
       {/* Main Content Area */}
       <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar */}
         <LeftSidebar />
         <RightSidebar />
         <Artist />

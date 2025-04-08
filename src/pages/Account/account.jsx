@@ -9,7 +9,6 @@ function account() {
 
     const [isFocused, setIsFocused] = useState(false);
 
-    const [isOpen, setIsOpen] = useState(false);
 
 
     const navigate = useNavigate();

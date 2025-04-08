@@ -27,19 +27,19 @@ function profile() {
                 <form className='w-full space-y-6' action="">
                     <div className='w-full flex flex-col text-white gap-2'>
                         <label className='font-semibold' htmlFor="">Email</label>
-                        <input className='bg-[#121212] border border-white p-2 rounded-[3px]' type="text" value="vhuynh414@gmail.com" />
+                        <input className='bg-[#121212] border border-white p-3 rounded-[3px]' type="text" value="vhuynh414@gmail.com" />
                     </div>
 
                     <div className='w-full flex flex-col text-white gap-2'>
                         <label className='font-semibold' htmlFor="">Mật khẩu</label>
-                        <input className='bg-[#121212] border border-white p-2 rounded-[3px]' type="text"  disabled  />
+                        <input className='bg-[#121212] border border-white p-3 rounded-[3px]' type="text"  disabled  />
                     </div>
 
                     <div className="w-full flex flex-col text-white gap-2">
                         <label className="font-semibold" htmlFor="gender">Giới tính</label>
                         <select 
                             id="gender" 
-                            className="bg-[#121212] border border-white p-2 rounded-[3px] text-white"
+                            className="bg-[#121212] border border-white p-3 rounded-[3px] text-white"
                         >
                             <option value="male">Nam</option>
                             <option value="female">Nữ</option>
@@ -52,14 +52,14 @@ function profile() {
                         <div className="flex gap-4">
                             {/* Ngày */}
                             <input 
-                                className="w-1/3 bg-[#121212] border border-white p-2 rounded-[3px] text-white " 
+                                className="w-1/3 bg-[#121212] border border-white p-3 rounded-[3px] text-white " 
                                 type="text" 
                                 value="1"
                             />
 
                             {/* Tháng */}
                             <select 
-                                className="w-1/3 bg-[#121212] border border-white p-2 rounded-[3px] text-white flex justify-start"
+                                className="w-1/3 bg-[#121212] border border-white p-3 rounded-[3px] text-white flex justify-start"
                             >
                                 <option value="1">Tháng Một</option>
                                 <option value="2">Tháng Hai</option>
@@ -78,7 +78,7 @@ function profile() {
 
                             {/* Năm */}
                             <input 
-                                className="w-1/3 bg-[#121212] border border-white p-2 rounded-[3px] text-white" 
+                                className="w-1/3 bg-[#121212] border border-white p-3 rounded-[3px] text-white" 
                                 type="text" 
                                 value="2004"
                             />
@@ -90,7 +90,7 @@ function profile() {
                         <label className="font-semibold" htmlFor="country">Quốc gia hoặc khu vực</label>
                         <select 
                             id="country" 
-                            className="bg-[#121212] border border-white p-2 rounded-[3px] text-white"
+                            className="bg-[#121212] border border-white p-3 rounded-[3px] text-white"
                         >
                             <option value="vn">Việt Nam</option>
                         </select>
