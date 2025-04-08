@@ -1,152 +1,209 @@
-// import React from "react";
+// import React, { useState } from "react";
+// import PlayButton from "../Button/PlayButton";
 
-// const BoxCard = ({ Playlist, width }) => {
-//   // Tăng kích thước BoxCard khi MainContent rộng ra, giảm khi thu nhỏ
+// const BoxCard = ({ playlist, width, variant = "default" }) => {
+//   const [isHovered, setIsHovered] = useState(false);
+
+//   /* Xác định loại item và ID tương ứng dựa trên playlist
+//     Mới chỉ xác định các trường hợp cơ bản, sẽ mở rộng thêm
+//   */
+//   const getItemInfo = () => {
+//     // Ưu tiên kiểm tra các trường đặc trưng trước
+//     if (playlist.artist_id) return { id: playlist.artist_id, type: "artist" };
+//     if (playlist.PlaylistID)
+//       return { id: playlist.PlaylistID, type: "playlist" };
+//     if (playlist.AlbumID) return { id: playlist.AlbumID, type: "album" };
+//     if (playlist.SongID) return { id: playlist.SongID, type: "song" };
+
+//     // Fallback cho các trường hợp khác
+//     return {
+//       id: playlist.id,
+//       type: playlist.type || "album", // Tùy xem db có type hay không
+//     };
+//   };
+
+//   const { id, type } = getItemInfo();
 //   const dynamicWidth =
 //     width >= 65 ? "w-[260px]" : width <= 55 ? "w-[200px]" : "w-[300px]";
 
+//   // ClassName động
+//   const containerClass = `relative p-3 text-white rounded-lg cursor-pointer transition-all duration-300 hover:bg-[#282828] ${
+//     variant === "list"
+//       ? `bg-gray-900 h-[52px] flex items-center justify-between ${dynamicWidth}`
+//       : variant === "playlist" || variant === "artist" || variant === "album"
+//       ? `w-48  flex flex-col items-center py-4 rounded-lg cursor-pointer transition-all duration-200 transform origin-center ${
+//           isHovered ? "scale-105 z-10" : ""
+//         }`
+//       : ""
+//   }`;
+
+//   const imageClass = `object-cover ${
+//     variant === "list"
+//       ? "w-12 h-12 rounded-md mr-3"
+//       : variant === "playlist" || variant === "album"
+//       ? "w-40 h-40 rounded-lg mb-2"
+//       : variant === "artist"
+//       ? "w-40 h-40 rounded-full mb-4 mx-auto"
+//       : ""
+//   }`;
+//   // Class cho phần text với chiều cao cố định
+//   const textContainerClass =
+//     variant === "list"
+//       ? "flex-1 truncate"
+//       : "w-full pl-3 text-left h-[60px] overflow-hidden"; // Album, Playlist, Artist
 //   return (
 //     <div
-//       className={`p-3 h-[55px] bg-gray-900 text-white rounded-lg flex items-center justify-between cursor-pointer hover:bg-gray-800 transition-all duration-300 ${dynamicWidth}`}
+//       className={containerClass}
+//       onMouseEnter={() => setIsHovered(true)}
+//       onMouseLeave={() => setIsHovered(false)}
 //     >
-//       {/* Hình ảnh Playlist */}
 //       <img
-//         src={Playlist.CoverImage}
-//         alt={Playlist.Title}
-//         className="w-12 h-12 rounded-md object-cover mr-3"
+//         src={playlist.CoverImage}
+//         alt={playlist.Title || playlist.name}
+//         className={imageClass}
 //       />
 
-//       {/* Thông tin Playlist */}
-//       <div className="flex-1 truncate">
-//         <h3 className="font-semibold text-sm">{Playlist.Title}</h3>
-//       </div>
+//       {isHovered && (
+//         <PlayButton
+//           isActive={true}
+//           size={variant === "list" ? "small" : "medium"}
+//           itemId={id}
+//           itemType={type}
+//           variant={variant}
+//         />
+//       )}
 
-//       {/* Hiệu ứng nhạc đang phát */}
-//       <div className="text-green-500 text-xl">▮▮▮</div>
-//     </div>
-//   );
-// };
-
-// export default BoxCard;
-// import React from "react";
-
-// const BoxCard = ({
-//   Playlist,
-//   width,
-//   variant = "default",
-//   index,
-//   hoverIndex,
-//   setHoverIndex,
-// }) => {
-//   // Điều chỉnh kích thước dựa vào width (cho kiểu list)
-//   const dynamicWidth =
-//     width >= 65 ? "w-[260px]" : width <= 55 ? "w-[200px]" : "w-[300px]";
-
-//   return (
-//     <div
-//       className={`relative p-3 bg-gray-900 text-white rounded-lg cursor-pointer transition-all duration-300
-//         ${
-//           variant === "list"
-//             ? `h-[55px] flex items-center justify-between ${dynamicWidth}`
-//             : `
-//           text-white rounded-lg
-//           w-48 cursor-pointer
-//           bg-transparent
-//           transition-all duration-200
-//           transform origin-center flex flex-col items-center py-4 hover:bg-[#282828] scale-105 ${
-//             hoverIndex === index ? "bg-[#282828] scale-105 z-10" : ""
-//           }`
-//         }`}
-//     >
-//       {/* Hình ảnh Playlist */}
-//       <img
-//         src={Playlist.CoverImage}
-//         alt={Playlist.Title}
-//         className={`object-cover ${
-//           variant === "list"
-//             ? "w-12 h-12 rounded-md mr-3"
-//             : "w-40 h-40 rounded-lg mb-2"
-//         }`}
-//       />
-
-//       {/* Thông tin Playlist */}
-//       <div
-//         className={`${
-//           variant === "list" ? "flex-1 truncate" : "w-full text-center"
-//         }`}
-//       >
+//       <div className={textContainerClass}>
 //         <h3
-//           className={`font-semibold text-sm ${
-//             variant === "list" ? "" : "text-gray-300 line-clamp-2"
+//           className={`font-bold h-full${
+//             variant === "list"
+//               ? "text-sm"
+//               : type === "artist"
+//               ? "text-lg mb-1"
+//               : "text-sm text-gray-300 line-clamp-2"
 //           }`}
 //         >
-//           {Playlist.Title}
+//           {playlist.Title || playlist.name}
 //         </h3>
+//         {type === "artist" && (
+//           <p className="text-gray-400 text-sm text-left">
+//             {playlist.label || "Nghệ sĩ"}
+//           </p>
+//         )}
 //       </div>
-
-//       {/* Hiệu ứng nhạc đang phát (Chỉ xuất hiện trong list) */}
-//       {variant === "list" && <div className="text-green-500 text-xl">▮▮▮</div>}
 //     </div>
 //   );
 // };
 
 // export default BoxCard;
-import React from "react";
 
-const BoxCard = ({
-  playlist,
-  width,
-  variant = "default",
-  index,
-  hoverIndex,
-}) => {
-  // Điều chỉnh kích thước dựa vào width (chỉ áp dụng cho list)
+import React, { useState } from "react";
+import { Link } from "react-router-dom"; 
+import PlayButton from "../Button/PlayButton";
+
+const BoxCard = ({ playlist, width, variant = "default" }) => {
+  const [isHovered, setIsHovered] = useState(false);
+
+  /* Xác định loại item và ID tương ứng dựa trên playlist
+    Mới chỉ xác định các trường hợp cơ bản, sẽ mở rộng thêm
+  */
+  const getItemInfo = () => {
+    // Ưu tiên kiểm tra các trường đặc trưng trước
+    if (playlist.artist_id) return { id: playlist.artist_id, type: "artist" };
+    if (playlist.PlaylistID)
+      return { id: playlist.PlaylistID, type: "playlist" };
+    if (playlist.AlbumID) return { id: playlist.AlbumID, type: "album" };
+    if (playlist.SongID) return { id: playlist.SongID, type: "song" };
+
+    // Fallback cho các trường hợp khác
+    return {
+      id: playlist.id,
+      type: playlist.type || "album", // Tùy xem db có type hay không
+    };
+  };
+
+  const { id, type } = getItemInfo();
   const dynamicWidth =
     width >= 65 ? "w-[260px]" : width <= 55 ? "w-[200px]" : "w-[300px]";
 
+  // ClassName động
+  const containerClass = `relative p-3 text-white rounded-lg cursor-pointer transition-all duration-300 hover:bg-[#282828] ${
+    variant === "list"
+      ? `bg-gray-900 h-[52px] flex items-center justify-between ${dynamicWidth}`
+      : variant === "playlist" || variant === "artist" || variant === "album"
+      ? `w-48  flex flex-col items-center py-4 rounded-lg cursor-pointer transition-all duration-200 transform origin-center ${
+          isHovered ? "scale-105 z-10" : ""
+        }`
+      : ""
+  }`;
+
+  const imageClass = `object-cover ${
+    variant === "list"
+      ? "w-12 h-12 rounded-md mr-3"
+      : variant === "playlist" || variant === "album"
+      ? "w-40 h-40 rounded-lg mb-2"
+      : variant === "artist"
+      ? "w-40 h-40 rounded-full mb-4 mx-auto"
+      : ""
+  }`;
+  // Class cho phần text với chiều cao cố định
+  const textContainerClass =
+    variant === "list"
+      ? "flex-1 truncate"
+      : "w-full pl-3 text-left h-[60px] overflow-hidden"; // Album, Playlist, Artist
+
+  const handlePlayButtonClick = (e) => {
+    // Ngừng sự kiện click để không chuyển trang khi nhấn PlayButton
+    e.stopPropagation();
+  };
+
   return (
     <div
-      className={`relative p-3 text-white rounded-lg cursor-pointer transition-all duration-300 
-    ${
-      variant === "list"
-        ? `bg-gray-900 h-[52px] flex items-center justify-between hover:bg-[#282828] ${dynamicWidth}`
-        : variant === "playlist"
-        ? `w-48 flex flex-col items-center py-4 rounded-lg cursor-pointer transition-all duration-200 transform origin-center ${
-            hoverIndex === index
-              ? "bg-[#282828] scale-105 z-10"
-              : "hover:bg-[#282828] hover:scale-105"
-          }`
-        : "" 
-    }`}
+      className={containerClass}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Hình ảnh Playlist */}
-      <img
-        src={playlist.CoverImage}
-        alt={playlist.Title}
-        className={`object-cover ${
-          variant === "list"
-            ? "w-12 h-12 rounded-md mr-3"
-            : "w-40 h-40 rounded-lg mb-2"
-        }`}
-      />
-
-      {/* Thông tin Playlist */}
-      <div
-        className={`${
-          variant === "list" ? "flex-1 truncate" : "w-full text-center"
-        }`}
+      <Link
+        to={type && id ? `${type}/${id}` : "/default-page"} // Không / trước type thì cần giữ trong layout /home, tạm thời gắn default-page, sau có thể bỏ và áp dụng cho trang khác
+        state={{ fromHome: true }}
+        className="relative"
       >
+        <img
+          src={playlist.CoverImage || "/default-image.jpg"}
+          alt={playlist.Title || playlist.name || "Default"}
+          className={imageClass}
+        />
+      </Link>
+
+      {isHovered && (
+        <PlayButton
+          isActive={true}
+          size={variant === "list" ? "small" : "medium"}
+          itemId={id}
+          itemType={type}
+          variant={variant}
+          onClick={handlePlayButtonClick} // Bắt sự kiện click vào nút PlayButton và ngừng sự kiện lan ra ngoài
+        />
+      )}
+
+      <div className={textContainerClass}>
         <h3
-          className={`font-semibold text-sm ${
-            variant === "list" ? "" : "text-gray-300 line-clamp-2"
+          className={`font-bold text-gray-300 h-full${
+            variant === "list"
+              ? "text-sm"
+              : type === "artist"
+              ? "text-lg mb-1"
+              : "text-sm text-gray-300 line-clamp-2"
           }`}
         >
-          {playlist.Title}
+          {playlist.Title || playlist.name}
         </h3>
+        {type === "artist" && (
+          <p className="text-gray-400 text-sm text-left">
+            {playlist.label || "Nghệ sĩ"}
+          </p>
+        )}
       </div>
-
-      {/* Hiệu ứng nhạc đang phát (Chỉ xuất hiện trong list) */}
-      {variant === "list" && <div className="text-green-500 text-xl">▮▮▮</div>}
     </div>
   );
 };

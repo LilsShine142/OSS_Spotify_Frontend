@@ -3,7 +3,7 @@ import { Menu, KeyboardArrowDown } from "@mui/icons-material";
 import { assets } from '@/assets/assets';
 import { Link, useNavigate } from 'react-router-dom';
 
-const Acc_header = () => {
+const AccountHeader = () => {
     const [isOpen, setIsOpen] = useState(false);
     const navigate = useNavigate();
 
@@ -43,4 +43,4 @@ const Acc_header = () => {
     );
 };
 
-export default Acc_header;
+export default AccountHeader;

@@ -3,7 +3,7 @@ import FooterMain from '@/layouts/components/Footer/FooterMain'
 import React from 'react'
 import { useState } from 'react';
 import {Diamond, Menu, ArrowDownward, KeyboardArrowDown} from "@mui/icons-material"
-import Acc_header from '@/layouts/components/Account/Acc_header';
+import AccountHeader from '@/layouts/components/Account/AccountHeader';
 import { useNavigate } from 'react-router-dom';
 function account() {
 
@@ -24,7 +24,7 @@ function account() {
   return (
     <div className='w-full min-h-screen bg-red-500'>
         {/* Header */}
-        <Acc_header/>
+        <AccountHeader/>
         
         {/* Main Content */}
         <div className='h-auto bg-[#121212] flex flex-col items-center justify-center'>

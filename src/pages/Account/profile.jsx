@@ -1,5 +1,5 @@
 import { assets } from '@/assets/assets'
-import Acc_header from '@/layouts/components/Account/Acc_header'
+import AccountHeader from '@/layouts/components/Account/AccountHeader'
 import FooterMain from '@/layouts/components/Footer/FooterMain'
 import React from 'react'
 import { useNavigate } from 'react-router-dom';
@@ -10,7 +10,7 @@ function profile() {
   return (
     <div className='w-full bg-[#121212]'>
         {/* Header */}
-        <Acc_header/>
+        <AccountHeader/>
 
 
         {/* Main Content */}

@@ -15,7 +15,7 @@ const RightSidebar = ({ sidebarWidth, currentSongId }) => {
   const artistInfo = {
     name: "Jack - J97",
     monthlyListeners: "196.965 người nghe hằng tháng",
-    description: "Trịnh Trần Phương Tuấn (born April of age....)",
+    description: "Trịnh Trần Phương Tuấn ( aka Jack aka J97 aka Bocon...)",
     songs: ["Chúng Ta Rồi Sẽ Hạnh Phúc", "Sóng Gió", "Hồng Nhan"],
     image: displayData.coverImage || "assets/jack-j97.jpg",
   };
@@ -38,7 +38,7 @@ const RightSidebar = ({ sidebarWidth, currentSongId }) => {
       {/* Nội dung chính */}
       <div className="relative z-10 flex flex-col h-full">
         {/* Header (Hiện playlist của bài hát đang chọn)*/}
-        <div className="p-6 pt-16">
+        <div className="p-6 pt-8">
           <h1 className="text-xl font-bold text-white mb-1">Daily Mix 3</h1>
           <div className="h-px bg-gray-600 my-3"></div>
         </div>

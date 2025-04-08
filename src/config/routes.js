@@ -33,12 +33,13 @@ const routes = {
     // register: '/register',
 
     // User
-    artist: '/home/artist',
+    artist: (id) => `/home/artist/${id}`,
     home: '/home',
     login: '/login',
     register: 'register',
-    account : 'account',
-    account_profile : 'account/profile'
+    account: 'account',
+    account_profile: 'account/profile',
+    default_page: '*'
 
 };
 
