@@ -39,8 +39,8 @@ const routes = {
     register: 'register',
     account: 'account',
     account_profile: 'account/profile',
-    default_page: '*'
-
+    default_page: '*',
+    library: "/library", // ✅ Thêm dòng này
 };
 
 export default routes;

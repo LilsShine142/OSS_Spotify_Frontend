@@ -89,7 +89,7 @@ import Callback from "../pages/Auth/Callback";
 import Account from "../pages/Account/account";
 import Profile from "../pages/Account/profile";
 import DefaultPage from "../layouts/Default/DefaultPage";
-
+import Library from "../pages/User/Library";
 // Các route sử dụng layout HomeLayout
 const layoutRoutes = [
     {
@@ -100,6 +100,10 @@ const layoutRoutes = [
         path: config.routes.artist(':id'),
         component: Artist,
     },
+    {
+        path: config.routes.library, // ✅ Thêm Library vào layoutRoutes
+        component: Library,
+      },
 ];
 
 // Các route không sử dụng layout

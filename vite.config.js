@@ -9,4 +9,7 @@ export default defineConfig({
       "@": path.resolve(__dirname, "src"),
     },
   },
+  build: {
+    sourcemap: false, // ✅ Tắt sourcemap để tránh lỗi file .map bị lỗi
+  },
 });
