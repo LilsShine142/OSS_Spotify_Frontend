@@ -543,7 +543,8 @@ export const artists = [
         artist_id: 1,
         name: "Obito",
         genre: "Rap / Hip-hop",
-        country: "Vietnam",
+        //spotify aint support to get country 
+        // country: "Vietnam",
         CoverImage: obito_artist,
         label: "Nghệ sĩ"
     },
@@ -551,7 +552,7 @@ export const artists = [
         artist_id: 2,
         name: "Bray",
         genre: "Rap",
-        country: "Vietnam",
+        // country: "Vietnam",
         CoverImage: bray_artist,
         label: "Nghệ sĩ"
     },
@@ -559,7 +560,7 @@ export const artists = [
         artist_id: 3,
         name: "Jack",
         genre: "Pop / Ballad",
-        country: "Vietnam",
+        // country: "Vietnam",
         CoverImage: jack_artist,
         label: "Nghệ sĩ"
     },
@@ -567,7 +568,7 @@ export const artists = [
         artist_id: 4,
         name: "Rosé",
         genre: "K-pop",
-        country: "South Korea",
+        // country: "South Korea",
         CoverImage: rose_artist,
         label: "Nghệ sĩ"
     },
@@ -575,7 +576,7 @@ export const artists = [
         artist_id: 5,
         name: "Bùi Trường Linh",
         genre: "Ballad",
-        country: "Vietnam",
+        // country: "Vietnam",
         CoverImage: buitruonglinh_artist,
         label: "Nghệ sĩ"
     },
@@ -583,7 +584,7 @@ export const artists = [
         artist_id: 6,
         name: "Orange",
         genre: "Pop / R&B",
-        country: "Vietnam",
+        // country: "Vietnam",
         CoverImage: orange_artist,
         label: "Nghệ sĩ"
     },
@@ -591,7 +592,7 @@ export const artists = [
         artist_id: 7,
         name: "Lil Wuyn",
         genre: "Rap / Hip-hop",
-        country: "Vietnam",
+        // country: "Vietnam",
         CoverImage: lilwuyn_artist,
         label: "Nghệ sĩ"
     },
@@ -599,7 +600,7 @@ export const artists = [
         artist_id: 8,
         name: "Soobin Hoàng Sơn",
         genre: "Pop / R&B",
-        country: "Vietnam",
+        // country: "Vietnam",
         CoverImage: sobin_artist,
         label: "Nghệ sĩ"
     },
