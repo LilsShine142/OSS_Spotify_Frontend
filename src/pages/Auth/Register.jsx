@@ -9,32 +9,31 @@ function Register() {
     const [confirmpassword, setConfPassword] = useState("");
 //only have email textbox, click on register to check if user exists in backend, if success add password and confirmpassword textboxes(update later or never=)))
 
-    const handleRegister = async () => {
-        try {
-            if (password !== confirmpassword) {
-                console.error("Passwords do not match!");
-                alert("Passwords do not match. Please try again."); // Display an alert to the user
-                return; // Stop the registration process
-            }        
-            const response = await axios.post("http://127.0.0.1:8000/spotify/api/register/", {
-                email,
-                password,
-                confirmpassword
-            });
-            if (response.data.success) {
-                console.log("Registration successful!");
-                window.location.href = "/login";
-            } 
-            else if (response.data.error === "User already exists") {
-                console.log("User already exists. Redirecting to login...");
-                window.location.href = "/login";
-            }else {
-                console.error("Registration failed:", response.data.error);
-            }
-        } catch (error) {
-            console.error("Error during registration:", error);
+const handleRegister = async () => {
+    try {
+        if (password !== confirmpassword) {
+            console.error("Passwords do not match!");
+            alert("Passwords do not match. Please try again.");
+            return;
         }
-    };
+        const response = await axios.post("http://127.0.0.1:8000/spotify_app/register/", {
+            email,
+            password,
+        });
+                
+        if (response.data.success) {
+            alert("Registration successful! Redirecting to login...");
+            window.location.href = "/login";
+        } else if (response.data.error === "User already exists") {
+            alert("User already exists. Redirecting to login...");
+            window.location.href = "/login";
+        } else {
+            console.error("Registration failed:", response.data.error);
+        }
+    } catch (error) {
+        console.error("Error during registration:", error);
+    }
+};
 
   return (
     <div>
