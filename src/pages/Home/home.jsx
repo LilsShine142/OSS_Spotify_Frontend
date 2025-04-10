@@ -24,13 +24,13 @@ const Home = () => {
           sidebarWidth={sidebarWidth}
           currentSongId={30} // Tạm thời gắn cứng ID bài hát
         />
-        <NowPlayingBar
+        {/* <NowPlayingBar
           currentSongId={currentSongId}
           currentAlbumId={currentAlbumId}
           isPlaying={!!nowPlaying.id}
           nowPlaying={nowPlaying}
           setNowPlaying={setNowPlaying}
-        />
+        /> */}
       </div>
     </div>
   );

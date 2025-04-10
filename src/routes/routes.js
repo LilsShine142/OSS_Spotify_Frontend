@@ -88,6 +88,7 @@ import Register from "../pages/Auth/Register";
 import Callback from "../pages/Auth/Callback";
 import Account from "../pages/Account/account";
 import Profile from "../pages/Account/profile";
+import UserProfile from "../layouts/components/User/UserProfile";
 import DefaultPage from "../layouts/Default/DefaultPage";
 import Library from "../pages/User/Library";
 // Các route sử dụng layout HomeLayout
@@ -101,9 +102,13 @@ const layoutRoutes = [
         component: Artist,
     },
     {
+        path: config.routes.user_profile(':id'),
+        component: UserProfile,
+    },
+    {
         path: config.routes.library, // ✅ Thêm Library vào layoutRoutes
         component: Library,
-      },
+    },
 ];
 
 // Các route không sử dụng layout
