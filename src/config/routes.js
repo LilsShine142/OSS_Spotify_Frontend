@@ -42,6 +42,9 @@ const routes = {
     user_profile: (id) => `/user/profile/${id}`,
     default_page: '*',
     library: "/library", // ✅ Thêm dòng này
+
+    // Admin
+    admin_dashboard: '/admin',
 };
 
 export default routes;
