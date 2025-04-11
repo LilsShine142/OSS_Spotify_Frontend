@@ -91,7 +91,7 @@ import Profile from "../client/pages/Account/profile";
 import UserProfile from "../client/layouts/components/User/UserProfile";
 import DefaultPage from "../client/layouts/Default/DefaultPage";
 import Library from "../client/pages/User/Library";
-import AdminLayout from "@/admin/layouts/components/AdminLayout/Dashboard";
+import AdminLayout from "@/admin/pages/AdminLayout/Dashboard";
 // Các route sử dụng layout HomeLayout
 const layoutRoutes = [
     {

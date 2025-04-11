@@ -1,6 +1,6 @@
 // admin/layouts/AdminLayout.jsx
-import Sidebar from "../Sidebar/Sidebar";
-import MainContent from "../MainContent/MainContent";
+import Sidebar from "../../layouts/components/Sidebar/Sidebar";
+import MainContent from "../../layouts/components/MainContent/MainContent";
 
 export default function AdminLayout() {
   return (

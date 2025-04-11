@@ -20,10 +20,10 @@ const Home = () => {
       <div className="flex h-full pt-2 gap-0.5">
         <LeftSidebar width={sidebarWidth} onResize={setSidebarWidth} />
         <MainContent sidebarWidth={sidebarWidth} />
-        <RightSidebar
+        {/* <RightSidebar
           sidebarWidth={sidebarWidth}
           currentSongId={30} // Tạm thời gắn cứng ID bài hát
-        />
+        /> */}
         <NowPlayingBar
           currentSongId={currentSongId}
           currentAlbumId={currentAlbumId}
