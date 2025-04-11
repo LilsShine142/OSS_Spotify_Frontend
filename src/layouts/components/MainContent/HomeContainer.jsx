@@ -11,15 +11,19 @@ const HomeContainer = ({ width }) => {
   return (
     <div className="text-white scrollbar-hidden rounded flex flex-col h-full bg-gradient-to-b from-[#0d1a2d] to-black">
       <header className="flex flex-shrink-0 items-center h-[60px] px-4 md:px-10 gap-2 overflow-hidden">
+        {/* playlist and artist from api */}
         <CustomButton variant="primary" className="truncate">
-          Tất cả
+          Global
         </CustomButton>
+
+        {/* playlist and artist from database */}
         <CustomButton variant="secondary" className="truncate">
-          Nhạc
+          Local
         </CustomButton>
-        <CustomButton variant="secondary" className="truncate">
+
+        {/* <CustomButton variant="secondary" className="truncate">
           Podcast
-        </CustomButton>
+        </CustomButton> */}
       </header>
 
       <div className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-hidden px-2 md:px-6">
