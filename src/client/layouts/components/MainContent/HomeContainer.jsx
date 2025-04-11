@@ -5,33 +5,11 @@ import BoxCard from "../../../../components/BoxCard/BoxCard";
 import PlaylistCarousel from "../../../../components/BoxCard/PlaylistCarousel";
 import { artists, albumsData } from "../../../../assets/assets";
 import CustomScrollbar from "../../../../components/Scrollbar/CustomScrollbar";
+import TopArtistsSection from "../Homepage/TopArtistsSection";
+import AlbumsSection from "../Homepage/AlbumsSection";
 
 const HomeContainer = ({ width }) => {
-  const [albumsData2, setAlbumsData2] = useState([]);
-
-  useEffect(() => {
-    // Fetch data from the backend
-    const fetchAlbumsData = async () => {
-      try {
-        const response = await fetchNewReleases();
-        if (!response) {
-          console.error("No data received from the API.");
-          return;
-        }
-        const albums = await response;
-        console.log("Fetched albums data:", albums);
-        setAlbumsData2(albums); // Set albumsData2 dynamically
-      } catch (error) {
-        console.error("Error fetching albums data:", error);
-      }
-    };
-
-    fetchAlbumsData();
-  }, []);
-
-  const handleAlbumClick = (album) => {
-    setSelectedAlbum(album); // Set the selected album to display its songs
-  };
+  
   return (
     <CustomScrollbar className="text-white rounded flex flex-col h-full bg-gradient-to-b from-[#0d1a2d] to-black">
       <header className="flex items-center h-[60px] px-4 md:px-10 gap-2 flex-shrink-0">
@@ -45,7 +23,6 @@ const HomeContainer = ({ width }) => {
           Podcast
         </CustomButton>
       </header>
-
       <div className="px-2 md:px-6">
         <div className="flex flex-wrap gap-4 p-4">
           {albumsData
@@ -74,29 +51,10 @@ const HomeContainer = ({ width }) => {
             </div>
           </section> */}
 
-          <section className="flex flex-col">
-            <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold">Nghệ sĩ bạn theo dõi</h2>
-              <button className="text-sm font-bold text-gray-400 hover:text-white">
-                Xem tất cả
-              </button>
-            </div>
-            <div className="flex pb-4 scrollbar-hide -ml-6">
-              <PlaylistCarousel playlists={artists} variant="artist" />
-            </div>
-          </section>
+          <TopArtistsSection />
+          <AlbumsSection />
 
-          <section className="flex flex-col">
-            <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold">New Releases</h2>
-              <button className="text-sm font-bold text-gray-400 hover:text-white">
-                Xem tất cả
-              </button>
-            </div>
-            <div className="flex pb-4 scrollbar-hide -ml-6">
-              <PlaylistCarousel playlists={albumsData2} variant="playlist" />
-            </div>
-          </section>
+          
         </div>
       </div>
     </CustomScrollbar>
