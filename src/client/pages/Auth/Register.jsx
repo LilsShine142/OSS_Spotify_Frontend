@@ -22,11 +22,24 @@ const handleRegister = async () => {
             alert("Passwords do not match. Please try again.");
             return;
         }
+        
+        if (!day || !month || !year || isNaN(new Date(dob).getTime())) {
+            alert("Invalid date of birth. Please check your inputs.");
+            return;
+        }
+        // Combine day, month, and year into a formatted date string
+        const monthIndex = new Date(`${month} 1`).getMonth() + 1; // Convert month name to index
+        const formattedMonth = monthIndex < 10 ? `0${monthIndex}` : monthIndex; // Add leading zero
+        const dob = `${year}-${formattedMonth}-${day.padStart(2, '0')}`; // Format: YYYY-MM-DD
+
         const response = await axios.post("http://127.0.0.1:8000/spotify_app/register/", {
             email,
             password,
+            name,
+            gender,
+            dob, // Pass the formatted dob
         });
-                
+
         if (response.data.success) {
             alert("Registration successful! Redirecting to login...");
             window.location.href = "/login";
@@ -104,7 +117,7 @@ const handleRegister = async () => {
                         <input
                             className="w-20 h-10 border border-gray-400 rounded-lg bg-black text-white p-2"
                             type="text"
-                            placeholder="dd"
+                            placeholder="DD"
                             value={day}
                             onChange={(e) => setDay(e.target.value)}
                         />
@@ -113,7 +126,7 @@ const handleRegister = async () => {
                             value={month}
                             onChange={(e) => setMonth(e.target.value)}
                         >
-                            <option>Month</option>
+                            <option>MM</option>
                             <option>January</option>
                             <option>February</option>
                             <option>March</option>
@@ -130,7 +143,7 @@ const handleRegister = async () => {
                         <input
                             className="w-24 h-10 border border-gray-400 rounded-lg bg-black text-white p-2"
                             type="text"
-                            placeholder="yyyy"
+                            placeholder="YYYY"
                             value={year}
                             onChange={(e) => setYear(e.target.value)}
                         />
@@ -139,9 +152,9 @@ const handleRegister = async () => {
 
                     {/* Gender */}
                     <div className="w-full flex flex-col space-y-1 p-2">
-                        <label className="font-bold text-left">Gender</label>
+                        <label className="font-bold text-left">Gender</label> <br></br>
                         <div className="grid grid-cols-2 gap-5 mt-2">
-                        {["Man", "Woman"].map((option) => (
+                        {["Male", "Female"].map((option) => (
                             <label key={option} className="flex space-x-2 text-white">
                             <input
                                 type="radio"
@@ -154,7 +167,7 @@ const handleRegister = async () => {
                             </label>
                         ))}
                         </div>
-                    </div>`
+                    </div>
 
 
                     <div className='w-[330px] h-11 flex items-center justify-center'>

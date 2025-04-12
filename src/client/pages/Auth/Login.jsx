@@ -19,7 +19,12 @@ function Login() {
             });
             if (response.data.success) {
                 console.log("Login successful!");
-                localStorage.setItem("user_login", true); // Store login status in local storage
+                const user = {
+                    "id" : response.data.id,
+                    "email" : response.data.email,
+                    "role" : response.data.role,
+                };
+                localStorage.setItem(JSON.stringify(user)); // Store login status in local storage
                 window.location.href = "/home"; // Redirect to dashboard
             } else if (response.data.error === "User not found") {
                 console.log("Redirecting to register...");

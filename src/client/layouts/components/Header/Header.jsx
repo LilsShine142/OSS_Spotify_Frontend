@@ -130,12 +130,12 @@ const Header = () => {
         <button className="bg-white text-black px-4 py-1 text-sm font-bold rounded-full hover:scale-110 transition-transform duration-200 hover:opacity-80">
           Khám phá Premium
         </button>
-        <div className="flex items-center gap-2 cursor-pointer brightness-50 invert hover:invert-0 hover:brightness-100 hover:scale-110 transition-transform duration-200">
+        {/* <div className="flex items-center gap-2 cursor-pointer brightness-50 invert hover:invert-0 hover:brightness-100 hover:scale-110 transition-transform duration-200">
           <img className="w-5 invert" src={assets.down} alt="Cài đặt" />
           <p className="font-bold text-sm text-gray-400 hover:text-white">
             Cài đặt ứng dụng
           </p>
-        </div>
+        </div> */}
         <img
           className="w-4 cursor-pointer brightness-50 invert hover:invert-0 hover:brightness-100 hover:scale-110 transition-transform duration-200"
           src={assets.bell_icon}
