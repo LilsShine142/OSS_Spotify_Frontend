@@ -9,7 +9,7 @@ const AccountHeader = () => {
 
     return (
         <div className='flex w-auto h-[50px] bg-[#121212] items-center justify-between px-4 py-8 lg:px-[200px]'>
-            <div className='flex items-center'>
+            <div onClick={ () => navigate("/home")} className='flex items-center'>
                 <img className='w-8' src={assets.spotify_logo} alt="Spotify Logo" />
                 <label className='text-[22px] font-bold text-white ml-2'>Spotify</label>
             </div>
