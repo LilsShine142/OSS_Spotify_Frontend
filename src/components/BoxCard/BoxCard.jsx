@@ -98,7 +98,7 @@
 // export default BoxCard;
 
 import React, { useState } from "react";
-import { Link } from "react-router-dom"; 
+import { Link } from "react-router-dom";
 import PlayButton from "../Button/PlayButton";
 
 const BoxCard = ({ playlist, width, variant = "default" }) => {
