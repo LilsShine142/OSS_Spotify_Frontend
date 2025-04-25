@@ -9,7 +9,7 @@ function Login() {
     
     const handleLogin = async () => {
         try {
-            const response = await axios.post("http://127.0.0.1:8000/spotify_app/login/", {
+            const response = await axios.post("http://127.0.0.1:8000/user_management/login/", {
                 email,
                 password,
             }, {
@@ -21,10 +21,10 @@ function Login() {
                 console.log("Login successful!");
                 const user = {
                     "id" : response.data.id,
-                    "email" : response.data.email,
                     "role" : response.data.role,
                 };
-                localStorage.setItem(JSON.stringify(user)); // Store login status in local storage
+                localStorage.setItem(JSON.stringify(user)); 
+                console.log(user)
                 window.location.href = "/home"; // Redirect to dashboard
             } else if (response.data.error === "User not found") {
                 console.log("Redirecting to register...");

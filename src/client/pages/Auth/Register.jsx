@@ -32,7 +32,7 @@ const handleRegister = async () => {
         const formattedMonth = monthIndex < 10 ? `0${monthIndex}` : monthIndex; // Add leading zero
         const dob = `${year}-${formattedMonth}-${day.padStart(2, '0')}`; // Format: YYYY-MM-DD
 
-        const response = await axios.post("http://127.0.0.1:8000/spotify_app/register/", {
+        const response = await axios.post("http://127.0.0.1:8000/user_management/register/", {
             email,
             password,
             name,
