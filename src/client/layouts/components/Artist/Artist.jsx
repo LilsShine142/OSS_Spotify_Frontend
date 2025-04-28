@@ -62,16 +62,16 @@ const Artist = () => {
               Avicii
             </label>
           </div>
-          <div>
+          {/* <div>
             <label className="text-sm" htmlFor="">
               {views} người nghe hàng tháng
             </label>
-          </div>
+          </div> */}
         </div>
       </div>
-      <div className="bg-gray-500 p-2 w-full h-auto ">
-        <div className="bg-blue-500 w-full h-full p-3">
-          <div className="flex items-center justify gap-5">
+      <div className="bg-gradient-to-b from-zinc-800 to-black p-2 w-full h-auto ">
+        <div className="w-full h-full p-3">
+          {/* <div className="flex items-center justify gap-5">
             <label
               className="bg-green-500 w-[50px] h-[50px] flex items-center justify-center rounded-full"
               htmlFor=""
@@ -86,10 +86,10 @@ const Artist = () => {
             <label htmlFor="">
               <img className="w-5 " src={assets.arrow_icon} alt="" />
             </label>
-          </div>
+          </div> */}
           <div className="pb-4 pt-4">
             <div className="py-2">
-              <label className="font-bold text-[20px] " htmlFor="">
+              <label className="font-bold text-[30px] text-white " htmlFor="">
                 Phổ biến
               </label>
             </div>

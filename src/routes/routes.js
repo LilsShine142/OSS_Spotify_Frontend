@@ -83,6 +83,7 @@ Premium:	Giới thiệu và mua gói Premium.
 import config from "../config";
 import HomeContainer from "../client/layouts/components/MainContent/HomeContainer";
 import Artist from "../client/layouts/components/Artist/Artist";
+import AlbumTracksList from "../components/AlbumTracksList/AlbumTracksList";
 import Login from "../client/pages/Auth/Login";
 import Register from "../client/pages/Auth/Register";
 import Callback from "../client/pages/Auth/Callback";
@@ -101,6 +102,10 @@ const layoutRoutes = [
     {
         path: config.routes.artist(':id'),
         component: Artist,
+    },
+    {
+        path: config.routes.album_tracks_list(':id'),
+        component: AlbumTracksList,
     },
     {
         path: config.routes.user_profile(':id'),

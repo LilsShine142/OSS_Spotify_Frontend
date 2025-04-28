@@ -108,8 +108,12 @@ const BoxCard = ({ playlist, width, variant = "default" }) => {
     Mới chỉ xác định các trường hợp cơ bản, sẽ mở rộng thêm
   */
   const getItemInfo = () => {
-    // Ưu tiên kiểm tra các trường đặc trưng trước
-    if (playlist.artist_id) return { id: playlist.artist_id, type: "artist" };
+    if (variant === "artist") return { id: playlist._id, type: "artist" };
+    if (variant === "playlist") return { id: playlist._id, type: "playlist" };
+    if (variant === "album") return { id: playlist._id, type: "album" };
+    if (playlist.artist_id)
+      // Ưu tiên kiểm tra các trường đặc trưng trước
+      return { id: playlist.artist_id, type: "artist" };
     if (playlist.PlaylistID)
       return { id: playlist.PlaylistID, type: "playlist" };
     if (playlist.AlbumID) return { id: playlist.AlbumID, type: "album" };
@@ -169,8 +173,10 @@ const BoxCard = ({ playlist, width, variant = "default" }) => {
         className="relative"
       >
         <img
-          src={playlist.CoverImage || "/default-image.jpg"}
-          alt={playlist.Title || playlist.name || "Default"}
+          src={
+            playlist.profile_img || playlist.cover_img || "/default-image.jpg"
+          }
+          alt={playlist.Title || playlist.artist_name || "Default"}
           className={imageClass}
         />
       </Link>
@@ -196,9 +202,9 @@ const BoxCard = ({ playlist, width, variant = "default" }) => {
               : "text-sm text-gray-300 line-clamp-2"
           }`}
         >
-          {playlist.Title || playlist.name}
+          {playlist.Title || playlist.artist_name}
         </h3>
-        {type === "artist" && (
+        {variant === "artist" && (
           <p className="text-gray-400 text-sm text-left">
             {playlist.label || "Nghệ sĩ"}
           </p>

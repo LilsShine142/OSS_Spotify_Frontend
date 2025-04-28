@@ -7,6 +7,12 @@ function Register() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmpassword, setConfPassword] = useState("");
+    const [name, setName] = useState('');
+    const [day, setDay] = useState('');
+    const [month, setMonth] = useState('');
+    const [year, setYear] = useState('');
+    const [gender, setGender] = useState('');
+
 //only have email textbox, click on register to check if user exists in backend, if success add password and confirmpassword textboxes(update later or never=)))
 
 const handleRegister = async () => {
@@ -16,11 +22,24 @@ const handleRegister = async () => {
             alert("Passwords do not match. Please try again.");
             return;
         }
-        const response = await axios.post("http://127.0.0.1:8000/spotify_app/register/", {
+        
+        if (!day || !month || !year || isNaN(new Date(dob).getTime())) {
+            alert("Invalid date of birth. Please check your inputs.");
+            return;
+        }
+        // Combine day, month, and year into a formatted date string
+        const monthIndex = new Date(`${month} 1`).getMonth() + 1; // Convert month name to index
+        const formattedMonth = monthIndex < 10 ? `0${monthIndex}` : monthIndex; // Add leading zero
+        const dob = `${year}-${formattedMonth}-${day.padStart(2, '0')}`; // Format: YYYY-MM-DD
+
+        const response = await axios.post("http://127.0.0.1:8000/user_management/register/", {
             email,
             password,
+            name,
+            gender,
+            dob, // Pass the formatted dob
         });
-                
+
         if (response.data.success) {
             alert("Registration successful! Redirecting to login...");
             window.location.href = "/login";
@@ -74,6 +93,83 @@ const handleRegister = async () => {
                         onChange={(e) => setConfPassword(e.target.value)}
                         />
                     </div>
+
+                    <div className="flex flex-col space-y-1">
+                        <label className="font-bold" htmlFor="name">Name</label>
+                        <span className="text-sm text-gray-400">This name will appear on your profile</span>
+                        <input
+                        id="name"
+                        className="w-80 h-10 border border-gray-400 rounded-lg bg-black text-white p-2"
+                        type="text"
+                        placeholder="Your name"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        />
+                    </div>
+
+                    {/* Date of Birth */}
+                    <div className="flex flex-col space-y-1">
+                        <label className="font-bold">Date of birth</label>
+                        <span className="text-sm text-gray-400">
+                        Why do we need your date of birth? <a href="#" className="underline text-blue-400">Learn more.</a>
+                        </span>
+                        <div className="flex space-x-2">
+                        <input
+                            className="w-20 h-10 border border-gray-400 rounded-lg bg-black text-white p-2"
+                            type="text"
+                            placeholder="DD"
+                            value={day}
+                            onChange={(e) => setDay(e.target.value)}
+                        />
+                        <select
+                            className="w-32 h-10 border border-gray-400 rounded-lg bg-black text-white p-2"
+                            value={month}
+                            onChange={(e) => setMonth(e.target.value)}
+                        >
+                            <option>MM</option>
+                            <option>January</option>
+                            <option>February</option>
+                            <option>March</option>
+                            <option>April</option>
+                            <option>May</option>
+                            <option>June</option>
+                            <option>July</option>
+                            <option>August</option>
+                            <option>September</option>
+                            <option>October</option>
+                            <option>November</option>
+                            <option>December</option>
+                        </select>
+                        <input
+                            className="w-24 h-10 border border-gray-400 rounded-lg bg-black text-white p-2"
+                            type="text"
+                            placeholder="YYYY"
+                            value={year}
+                            onChange={(e) => setYear(e.target.value)}
+                        />
+                        </div>
+                    </div>
+
+                    {/* Gender */}
+                    <div className="w-full flex flex-col space-y-1 p-2">
+                        <label className="font-bold text-left">Gender</label> <br></br>
+                        <div className="grid grid-cols-2 gap-5 mt-2">
+                        {["Male", "Female"].map((option) => (
+                            <label key={option} className="flex space-x-2 text-white">
+                            <input
+                                type="radio"
+                                name="gender"
+                                value={option}
+                                checked={gender === option}
+                                onChange={(e) => setGender(e.target.value)}
+                            />
+                            <span>{option}</span>
+                            </label>
+                        ))}
+                        </div>
+                    </div>
+
+
                     <div className='w-[330px] h-11 flex items-center justify-center'>
                         <button className="w-80 h-10 border  font-bold  text-black border-gray-400 rounded-full bg-green-500 cursor mt-2 
                         hover:w-[330px] hover:h-11 transition-all duration-200" 
@@ -81,6 +177,8 @@ const handleRegister = async () => {
                         
                         </button>
                     </div>
+
+                    
                 </form>
                
                 <div className="py-8 w-full flex justify-center">
