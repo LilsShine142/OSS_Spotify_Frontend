@@ -12,7 +12,7 @@ const HomeContainer = ({ width }) => {
   
   return (
     <CustomScrollbar className="text-white rounded flex flex-col h-full bg-gradient-to-b from-[#0d1a2d] to-black">
-      <header className="flex items-center h-[60px] px-4 md:px-10 gap-2 flex-shrink-0">
+      <header className="flex items-center h-[60px] px-4 md:px-10 gap-2 flex-shrink-0 sticky top-0 z-10 bg-[#0b1728]">
         <CustomButton variant="primary" className="truncate">
           Tất cả
         </CustomButton>
@@ -53,8 +53,6 @@ const HomeContainer = ({ width }) => {
 
           <TopArtistsSection />
           <AlbumsSection />
-
-          
         </div>
       </div>
     </CustomScrollbar>
