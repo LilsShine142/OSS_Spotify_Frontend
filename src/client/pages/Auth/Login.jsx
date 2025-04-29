@@ -1,37 +1,61 @@
 import { assets } from '@/assets/assets'
 import React, { useState } from "react";
 import axios from "axios";
+import z, { defaultErrorMap } from "zod"
+import {useForm} from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function Login() {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+
+    const schema = z.object({
+        email : z.string().email("Email không đúng định dạng"),
+        password : z.string().min(1, "Mật khẩu ít nhất 6 kí tự"),
+    })
+
+    const {register, handleSubmit, formState :{errors}} = useForm({
+        defaultValues :{
+            email: "",
+            password: "",
+        },
+        resolver: zodResolver(schema)
+    })
+
 
     
-    const handleLogin = async () => {
+    const handleLogin = async (data) => {
         try {
             const response = await axios.post("http://127.0.0.1:8000/spotify_app/login/", {
-                email,
-                password,
+                email: data.email,
+                password : data.password,
             }, {
                 headers: {
                     "Content-Type": "application/json",
                 },
             });
+    
             if (response.data.success) {
-                console.log("Login successful!");
-                localStorage.setItem("user_login", true); // Store login status in local storage
-                window.location.href = "/home"; // Redirect to dashboard
+                toast.success("Đăng nhập thành công!");
+                localStorage.setItem("user_login", true);
+                setTimeout(() => {
+                    window.location.href = "/home";
+                }, 2000); // Đợi Toast hiển thị xong
             } else if (response.data.error === "User not found") {
-                console.log("Redirecting to register...");
-                window.location.href = "/register";
+                toast.warn("Không tìm thấy người dùng, đang chuyển đến trang đăng ký...");
+                setTimeout(() => {
+                    window.location.href = "/register";
+                }, 2000);
             } else {
-                console.log("Invalid credentials.");
+                toast.error("Email hoặc mật khẩu không chính xác.");
             }
         } catch (error) {
+            toast.error("Lỗi kết nối máy chủ. Vui lòng thử lại.");
             console.error("Login failed:", error);
         }
     };
-
+    
+   
   return (
     <div>
         <div className='h-auto bg-gray-900 text-white  py-10 flex items-center justify-center'>
@@ -64,17 +88,17 @@ function Login() {
                     <hr className="w-[500px] border-t-2 border-gray-500" />
                 </div>
 
-                <form className='space-y-4 flex flex-col items-center justify-center pb-5' action="">
+                <form onSubmit={handleSubmit(handleLogin)} className='space-y-4 flex flex-col items-center justify-center pb-5' action="">
                     <div className='space-y-1'>
                         <label className='text-bold' htmlFor="">Email or username</label> <br />
                         <input
                             className="w-80 h-10 border border-gray rounded-lg bg-black p-1"
-                            type="email"
                             placeholder="Enter your email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-
+                            {...register("email")}
                         />
+                        {errors.email?.message && (
+                            <p className="text-red-500 text-xs">{errors.email?.message}</p>
+                        )}
 
                     </div>
                     <div className='space-y-1'>
@@ -84,20 +108,20 @@ function Login() {
                             className="w-80 h-10 border border-gray rounded-lg bg-black p-1"
                             type="password"
                             placeholder="Enter your password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
+                            {...register("password")}
 
                         />
-
+                        {errors.password?.message && (
+                            <p className="text-red-500 text-xs">{errors.password?.message}</p>
+                        )}
                     </div>
                     <div className='w-[330px] h-11 flex items-center justify-center'>
                     <button
                             className="w-80 h-10 border border-gray rounded-[50px] bg-green-500"
-                            type="button"
-                            onClick={handleLogin}
+                            type="submit"
                         >
                             Login with Spotify
-                        </button>
+                    </button>
 
                     </div>
                 </form>
@@ -116,6 +140,7 @@ function Login() {
                 This site is protected by reCAPTCHA and the Google Privacy Policy and Terms of Service apply.
             </label>
         </div>
+        <ToastContainer position="top-right" autoClose={2000} />
     </div>
    
   )

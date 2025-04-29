@@ -131,7 +131,7 @@ function profile() {
             </div>
             <div className="w-full h-auto flex items-center justify-end gap-10 text-white font-semibold">
               <label htmlFor="">Hủy</label>
-              <button className="border border-white bg-green-500 text-black rounded-full px-5 py-2 hover:px-6 py-2">
+              <button className="border border-white bg-green-500 text-black rounded-full px-5 hover:px-6 py-2">
                 Lưu hồ sơ
               </button>
             </div>
