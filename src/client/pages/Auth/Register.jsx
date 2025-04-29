@@ -34,10 +34,11 @@ function Register() {
 
   const handleRegister = async (data) => {
     const { email, password, name, day, month, year, gender } = data;
-    const date = `${day}-${month}-${year}`;
+    // const date = `${day}-${month}-${year}`;
+    const date = `${year}-${month}-${day}`;
 
     try {
-      const response = await axios.post('http://127.0.0.1:8000/spotify_app/register/', {
+      const response = await axios.post('http://127.0.0.1:8000/user_management/register/', {
         email,
         password,
         name,
@@ -55,6 +56,38 @@ function Register() {
         console.error('Lỗi đăng ký:', response.data.error);
         toast.error('Có lỗi xảy ra, vui lòng thử lại!');
       }
+        // if (password !== confirmpassword) {
+        //     console.error("Passwords do not match!");
+        //     alert("Passwords do not match. Please try again.");
+        //     return;
+        // }
+        
+        // if (!day || !month || !year || isNaN(new Date(dob).getTime())) {
+        //     alert("Invalid date of birth. Please check your inputs.");
+        //     return;
+        // }
+        // // Combine day, month, and year into a formatted date string
+        // const monthIndex = new Date(`${month} 1`).getMonth() + 1; // Convert month name to index
+        // const formattedMonth = monthIndex < 10 ? `0${monthIndex}` : monthIndex; // Add leading zero
+        // const dob = `${year}-${formattedMonth}-${day.padStart(2, '0')}`; // Format: YYYY-MM-DD
+
+        // const response = await axios.post("http://127.0.0.1:8000/user_management/register/", {
+        //     email,
+        //     password,
+        //     name,
+        //     gender,
+        //     dob, // Pass the formatted dob
+        // });
+
+        // if (response.data.success) {
+        //     alert("Registration successful! Redirecting to login...");
+        //     window.location.href = "/login";
+        // } else if (response.data.error === "User already exists") {
+        //     alert("User already exists. Redirecting to login...");
+        //     window.location.href = "/login";
+        // } else {
+        //     console.error("Registration failed:", response.data.error);
+        // }
     } catch (error) {
       console.error('Lỗi kết nối:', error);
       toast.error('Lỗi kết nối, vui lòng thử lại!');

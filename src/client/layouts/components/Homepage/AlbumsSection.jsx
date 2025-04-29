@@ -33,7 +33,7 @@ const AlbumsSection = () => {
             </div>
             <div className="flex pb-4 scrollbar-hide -ml-6">
                 {/* Pass the updated albumsData2 to PlaylistCarousel */}
-                <PlaylistCarousel playlists={albumsData2} variant="playlist" />
+                <PlaylistCarousel playlists={albumsData2} variant="album" />
             </div>
         </section>
     );

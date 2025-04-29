@@ -34,6 +34,7 @@ const routes = {
 
     // User
     artist: (id) => `/home/artist/${id}`,
+    album_tracks_list: (id) => `/home/album/${id}`,
     home: '/home',
     login: '/login',
     register: 'register',

@@ -1,6 +1,7 @@
 import React from "react";
 import { assets } from "../../../../assets/assets";
 import FooterMain from "../Footer/FooterMain";
+import CustomScrollbar from "../../../../components/Scrollbar/CustomScrollbar";
 
 const Artist = () => {
   const views = "37.424.840";
@@ -59,7 +60,7 @@ const Artist = () => {
   console.log(songs);
 
   return (
-    <div className="w-full h-[530px] rounded-lg  m-2 box-border overflow-y-auto scrollbar-hide">
+    <div className="w-full h-[80vh] rounded-lg box-border overflow-y-auto ">
       <div className="relative">
         <img
           src={profile_img}

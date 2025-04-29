@@ -26,7 +26,7 @@ function Login() {
     
     const handleLogin = async (data) => {
         try {
-            const response = await axios.post("http://127.0.0.1:8000/spotify_app/login/", {
+            const response = await axios.post("http://127.0.0.1:8000/user_management/login/", {
                 email: data.email,
                 password : data.password,
             }, {
@@ -37,10 +37,17 @@ function Login() {
     
             if (response.data.success) {
                 toast.success("Đăng nhập thành công!");
-                localStorage.setItem("user_login", true);
+                
+                const user = {
+                    "id" : response.data.id,
+                    "role" : response.data.role,
+                };
+                localStorage.setItem(JSON.stringify(user)); 
+                console.log(user)
                 setTimeout(() => {
                     window.location.href = "/home";
                 }, 2000); // Đợi Toast hiển thị xong
+                
             } else if (response.data.error === "User not found") {
                 toast.warn("Không tìm thấy người dùng, đang chuyển đến trang đăng ký...");
                 setTimeout(() => {
