@@ -5,12 +5,14 @@ import {
   fetchAlbumTracksList,
   fetchArtistInfo,
 } from "../../services/SpotifyAPI/spotifyService";
+import { getSpotifyAccessToken } from "@/services/SpotifyAPI/spotifyAccessTokenService";
 import CustomScrollbar from "../Scrollbar/CustomScrollbar";
 import { assets } from "@/assets/assets";
 import PlayButton from "../Button/PlayButton";
 import { RenderIcon } from "../Button/RenderIcon";
 import { CiSaveDown1 } from "react-icons/ci";
 import { HiDotsHorizontal } from "react-icons/hi";
+import LoadingSpinner from "../Loading/LoadingSpinner";
 
 const AlbumTracksList = () => {
   const { id: albumId } = useParams();
@@ -30,8 +32,10 @@ const AlbumTracksList = () => {
 
   useEffect(() => {
     const fetchAlbumData = async () => {
-      const accessToken =
-        "BQCMv4AKXCTa4cUevzMnuQ-01ZHA0bHcWPV85Ho9Jpeg6XS8qu6kX1sHnQWT2Nt7xv3YUmiRsmBn6G1JdxEdp22rAruCG_6QHqnaHmSypuR_0NgnzAGS_5p2Eaz_m9AzS4mR0dkT7_8";
+      const accessToken = await getSpotifyAccessToken(); // Lấy access token từ Spotify
+      // const accessToken =
+      //   "BQDIojhsPiB14vZ_mYix88zSW9tbh7OXsU0FPKR_CFPx8JtsqG-Na0p9XiluhD30zc4gzx6OAm_ytYdIZ32m-ZenEBf3Paq4HjTBWrcUwI_6v5geBuLMvrxREM1Ag1CaKoXY9VXy1qc";
+      console.log("accessToken", accessToken); // Kiểm tra access token
       try {
         // Tạm thời gắn prams như vậy
         const params = {
@@ -164,7 +168,13 @@ const AlbumTracksList = () => {
     return date.getFullYear(); // Trả về năm từ đối tượng Date
   };
 
-  if (loading) return <div className="text-white p-4">Đang tải...</div>;
+  if (loading)
+    return (
+      <div className="fixed top-0 left-0 right-0 bottom-0 w-full h-full flex flex-col items-center justify-center bg-gray-900 bg-opacity-90 z-50">
+        {/* <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500 mb-4"></div> */}
+        <LoadingSpinner size="xl" color="primary" />
+      </div>
+    );
   if (error) return <div className="text-red-500 p-4">Lỗi: {error}</div>;
   if (!albumData)
     return <div className="text-white p-4">Không tìm thấy dữ liệu album</div>;
