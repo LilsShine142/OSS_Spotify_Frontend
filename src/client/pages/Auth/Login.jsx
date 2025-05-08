@@ -39,10 +39,13 @@ function Login() {
                 toast.success("Đăng nhập thành công!");
                 
                 const user = {
-                    "id" : response.data.id,
+                    "id" : response.data._id,
                     "role" : response.data.role,
+                    "access_token" : response.data.access_token,
+                    "refresh_token" : response.data.refresh_token,
                 };
-                localStorage.setItem(JSON.stringify(user)); 
+                localStorage.setItem("user", JSON.stringify(user));
+
                 console.log(user)
                 setTimeout(() => {
                     window.location.href = "/home";
