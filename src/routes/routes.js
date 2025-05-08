@@ -81,15 +81,18 @@ Premium:	Giới thiệu và mua gói Premium.
 
 
 import config from "../config";
-import HomeContainer from "../layouts/components/MainContent/HomeContainer";
-import Artist from "../layouts/components/Artist/Artist";
-import Login from "../pages/Auth/Login";
-import Register from "../pages/Auth/Register";
-import Callback from "../pages/Auth/Callback";
-import Account from "../pages/Account/account";
-import Profile from "../pages/Account/profile";
-import DefaultPage from "../layouts/Default/DefaultPage";
-import Library from "../pages/User/Library";
+import HomeContainer from "../client/layouts/components/MainContent/HomeContainer";
+import Artist from "../client/layouts/components/Artist/Artist";
+import AlbumTracksList from "../components/AlbumTracksList/AlbumTracksList";
+import Login from "../client/pages/Auth/Login";
+import Register from "../client/pages/Auth/Register";
+import Callback from "../client/pages/Auth/Callback";
+import Account from "../client/pages/Account/account";
+import Profile from "../client/pages/Account/profile";
+import UserProfile from "../client/layouts/components/User/UserProfile";
+import DefaultPage from "../client/layouts/Default/DefaultPage";
+import Library from "../client/pages/User/Library";
+import AdminLayout from "@/admin/pages/AdminLayout/Dashboard";
 // Các route sử dụng layout HomeLayout
 const layoutRoutes = [
     {
@@ -101,9 +104,17 @@ const layoutRoutes = [
         component: Artist,
     },
     {
+        path: config.routes.album_tracks_list(':id'),
+        component: AlbumTracksList,
+    },
+    {
+        path: config.routes.user_profile(':id'),
+        component: UserProfile,
+    },
+    {
         path: config.routes.library, // ✅ Thêm Library vào layoutRoutes
         component: Library,
-      },
+    },
 ];
 
 // Các route không sử dụng layout
@@ -115,4 +126,9 @@ const standaloneRoutes = [
     { path: config.routes.default_page, component: DefaultPage },
 ];
 
-export { layoutRoutes, standaloneRoutes };
+// Admin routes
+const adminRoutes = [
+    { path: config.routes.admin_dashboard, component: AdminLayout },
+];
+
+export { layoutRoutes, standaloneRoutes, adminRoutes };

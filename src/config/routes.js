@@ -34,13 +34,18 @@ const routes = {
 
     // User
     artist: (id) => `/home/artist/${id}`,
+    album_tracks_list: (id) => `/home/album/${id}`,
     home: '/home',
     login: '/login',
     register: 'register',
     account: 'account',
     account_profile: 'account/profile',
+    user_profile: (id) => `/user/profile/${id}`,
     default_page: '*',
     library: "/library", // ✅ Thêm dòng này
+
+    // Admin
+    admin_dashboard: '/admin',
 };
 
 export default routes;

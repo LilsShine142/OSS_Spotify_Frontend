@@ -26,8 +26,8 @@
 
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { PlayerProvider } from "./context/PlayerContext/PlayerContext";
-import { layoutRoutes, standaloneRoutes } from "./routes";
-import HomeLayout from "./pages/Home/home";
+import { layoutRoutes, standaloneRoutes, adminRoutes } from "./routes";
+import HomeLayout from "./client/pages/Home/home";
 
 function App() {
   return (
@@ -47,6 +47,13 @@ function App() {
 
           {/* Các route không dùng chung layout home */}
           {standaloneRoutes.map((route, index) => {
+            const Element = route.component;
+            return (
+              <Route key={index} path={route.path} element={<Element />} />
+            );
+          })}
+
+          {adminRoutes.map((route, index) => {
             const Element = route.component;
             return (
               <Route key={index} path={route.path} element={<Element />} />

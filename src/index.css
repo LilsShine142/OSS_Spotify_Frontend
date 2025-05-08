@@ -17,50 +17,6 @@
 
 @layer utilities {
 
-    /* Ẩn thanh cuộn mặc định */
-    .scrollbar-hidden {
-        scrollbar-width: none;
-        /* Firefox */
-        -ms-overflow-style: none;
-        /* IE và Edge */
-    }
-
-    .scrollbar-hidden::-webkit-scrollbar {
-        display: none;
-        /* Chrome, Safari, Opera */
-    }
-
-    /* Hiển thị thanh cuộn khi hover */
-    .scrollbar-visible {
-        scrollbar-width: thin;
-        /* Firefox */
-        scrollbar-color: #3a3a3a transparent;
-        /* Firefox */
-    }
-
-    .scrollbar-visible::-webkit-scrollbar {
-        width: 8px;
-        /* Chiều rộng thanh cuộn */
-        display: block;
-        /* Hiển thị thanh cuộn */
-    }
-
-    .scrollbar-visible::-webkit-scrollbar-track {
-        background: transparent;
-        /* Màu nền của track */
-    }
-
-    .scrollbar-visible::-webkit-scrollbar-thumb {
-        background: #3a3a3a;
-        /* Màu của thanh cuộn */
-        border-radius: 10px;
-        /* Bo góc thanh cuộn */
-    }
-
-    .scrollbar-visible::-webkit-scrollbar-thumb:hover {
-        background: #5a5a5a;
-        /* Màu khi hover */
-    }
 }
 
 
