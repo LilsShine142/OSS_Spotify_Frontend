@@ -13,9 +13,11 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setActiveContent } from "../../../../redux/features/activeContent/activeContentSlice";
+import { getUserInfoFromAPI } from "@/services/userService"; // nếu nó có tồn tại trong service
 
 const Header = () => {
   const [isDropDownOpen, setIsDropDownOpen] = useState(false);
+  const [user, setUser] = useState(null);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -23,6 +25,15 @@ const Header = () => {
 
   // Đóng dropDown khi click ra ngoài
   useEffect(() => {
+
+    const fetchUserData = async () => {
+      const userData = await getUserInfoFromAPI()
+      setUser(userData.user)
+      console.log(userData.user)
+    }
+
+    fetchUserData()
+
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsDropDownOpen(false);
@@ -51,7 +62,7 @@ const Header = () => {
     {
       title: "user-info",
       content: {
-        text: "Phạm Thanh Sự",
+        text: user?.name,
         type: "text",
       },
     },
@@ -60,7 +71,7 @@ const Header = () => {
       // Sửa lại link khi làm xong các trang còn thiếu trong đây
       items: [
         { title: "Tài khoản", link: "/account", icon: <FaUser /> },
-        { title: "Hồ sơ", link: `/user/profile/${userId}`, icon: <FaIdCard /> }, // Gắn userId tạm thời
+        { title: "Hồ sơ", link: `/user/profile/${user?._id}`, icon: <FaIdCard /> }, // Gắn userId tạm thời
         { title: "Nâng cấp Premium", link: "/premium", icon: <FaCrown /> },
         { title: "Hỗ trợ", link: "/support", icon: <FaQuestionCircle /> },
         { title: "Tải xuống", link: "/download", icon: <FaDownload /> },
@@ -69,7 +80,7 @@ const Header = () => {
     },
     {
       title: "logout-section",
-      items: [{ title: "Đăng xuất", link: "/logout", icon: <FaSignOutAlt /> }],
+      items: [{ title: "Đăng xuất", link: "/login", icon: <FaSignOutAlt /> }],
     },
   ];
 
@@ -162,8 +173,8 @@ const Header = () => {
                   {/* Phần thông tin user */}
                   {section.title === "user-info" && (
                     <div className="px-4 py-2 relative border-b border-[#7c7c7c] border-opacity-50 mx-2">
-                      <p className="text-sm text-gray-400">
-                        {section.content.text}
+                      <p className="text-sm font-semibold text-green-500">
+                        Hello, {section.content.text}
                       </p>
                     </div>
                   )}

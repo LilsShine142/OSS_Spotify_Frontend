@@ -4,14 +4,29 @@ import { MoreHorizontal, Pencil, Copy } from "lucide-react";
 import { assets, artists } from "@/assets/assets";
 import PlaylistBox from "@/components/BoxCard/PlaylistBox";
 import CustomScrollbar from "../../../../components/Scrollbar/CustomScrollbar";
+import { getUserInfoFromAPI } from "@/services/userService";
+
+
 const UserProfile = () => {
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef(null);
 
   const [hoverIndex, setHoverIndex] = useState(null);
   const variant = "artist"; // Gắn variant = artist tạm thời vì đang set ở bên boxcard
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
+
+    const fetchUserData = async () => {
+        const userData = await getUserInfoFromAPI()
+        setUser(userData.user)
+        console.log(userData.user)
+      }
+    fetchUserData()
+
+
+
+
     const handleClickOutside = (e) => {
       if (menuRef.current && !menuRef.current.contains(e.target)) {
         setShowMenu(false);
@@ -67,7 +82,7 @@ const UserProfile = () => {
           <div>
             <p className="text-sm font-semibold">Hồ sơ</p>
             <h1 className="text-5xl font-bold tracking-tight mb-2">
-              Phạm Thanh Sự
+              {user?.name}
             </h1>
             <div className="flex items-center gap-2 text-sm text-[#b3b3b3] font-semibold">
               <p>12 danh sách phát công khai</p>
