@@ -6,7 +6,8 @@ import {useForm} from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import { handleLogin } from "@/services/authService";
+import { useNavigate } from "react-router-dom";
 function Login() {
 
     const schema = z.object({
@@ -23,45 +24,19 @@ function Login() {
     })
 
 
-    
-    const handleLogin = async (data) => {
-        try {
-            const response = await axios.post("http://127.0.0.1:8000/user_management/login/", {
-                email: data.email,
-                password : data.password,
-            }, {
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
-    
-            if (response.data.success) {
-                toast.success("Đăng nhập thành công!");
-                
-                const user = {
-                    "id" : response.data._id,
-                    "role" : response.data.role,
-                    "access_token" : response.data.access_token,
-                    "refresh_token" : response.data.refresh_token,
-                };
-                localStorage.setItem("user", JSON.stringify(user));
+    const navigate = useNavigate();
 
-                console.log(user)
-                setTimeout(() => {
-                    window.location.href = "/home";
-                }, 2000); // Đợi Toast hiển thị xong
-                
-            } else if (response.data.error === "User not found") {
-                toast.warn("Không tìm thấy người dùng, đang chuyển đến trang đăng ký...");
-                setTimeout(() => {
-                    window.location.href = "/register";
-                }, 2000);
-            } else {
-                toast.error("Email hoặc mật khẩu không chính xác.");
-            }
-        } catch (error) {
-            toast.error("Lỗi kết nối máy chủ. Vui lòng thử lại.");
-            console.error("Login failed:", error);
+    const onSubmit = async (formData) => {
+        const result = await handleLogin(formData);
+    
+        if (result.success) {
+            toast.success("Đăng nhập thành công!");
+            setTimeout(() => navigate("/home"), 2000);
+        } else if (result.redirect) {
+            toast.warn(result.message);
+            setTimeout(() => navigate(result.redirect), 2000);
+        } else {
+            toast.error(result.message);
         }
     };
     
@@ -98,7 +73,7 @@ function Login() {
                     <hr className="w-[500px] border-t-2 border-gray-500" />
                 </div>
 
-                <form onSubmit={handleSubmit(handleLogin)} className='space-y-4 flex flex-col items-center justify-center pb-5' action="">
+                <form onSubmit={handleSubmit(onSubmit)} className='space-y-4 flex flex-col items-center justify-center pb-5' action="">
                     <div className='space-y-1'>
                         <label className='text-bold' htmlFor="">Email or username</label> <br />
                         <input
