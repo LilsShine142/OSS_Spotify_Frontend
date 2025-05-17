@@ -223,7 +223,8 @@ const AlbumTracksList = () => {
                 </div>
 
                 <span>
-                  Wxrdie • {getYearFromDate(albumData.release_date)} •{" "}
+                  {albumData.artists[0].name || ""} •{" "}
+                  {getYearFromDate(albumData.release_date)} •{" "}
                   {albumData.total_tracks} bài hát,{" "}
                   {formattedTotalDuration || ""}
                 </span>

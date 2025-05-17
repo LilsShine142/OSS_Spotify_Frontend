@@ -87,7 +87,7 @@ function account() {
 
           {/* Subscription Box */}
           <div className="w-full flex gap-2  text-white h-[160px]">
-            <div className="relative w-full w-[67%] h-full bg-[#2A2A2A] rounded-lg p-3 hover:bg-[#404040]">
+            <div className="relative w-full max-w-[67%] h-full bg-[#2A2A2A] rounded-lg p-3 hover:bg-[#404040]">
               <label className="text-sm">Gói của bạn</label>
               <br />
               <label className="text-3xl font-semibold">Spotify Free</label>
@@ -100,7 +100,7 @@ function account() {
                 Tìm hiểu các gói
               </label>
             </div>
-            <div className="w-full w-[33%] h-full bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg flex flex-col items-center justify-center">
+            <div className="w-[33%] h-full bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg flex flex-col items-center justify-center">
               <Diamond />
               <label className="cursor-pointer ">Dùng Premium</label>
             </div>

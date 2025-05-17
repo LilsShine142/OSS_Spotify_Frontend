@@ -12,6 +12,11 @@ export const login = async (email, password) => {
         );
 
         if (response.data && response.data.access_token) {
+            Cookies.set("access_token", response.data.access_token, { expires: 7 });
+
+            axiosInstance.defaults.headers.common[
+                "Authorization"
+            ] = `Bearer ${response.data.access_token}`;
 
             return response.data;
         } else {

@@ -5,40 +5,57 @@ import CustomScrollbar from "../../../../components/Scrollbar/CustomScrollbar";
 
 const Artist = () => {
   const views = "37.424.840";
-  const decription =
-    " With his melodic songs and inspirational lyrics Swedish house producer Avicii was one of the defining artists of modern pop. The genre-bending tracks captivated audiences worldwide and are widely considered the soundtrack of a generation. Born 1989 in Stockholm, Tim Bergling grew up being obsessed with video games, a passion that in his teens translated into him making music. After being discovered through a blog and gaining some traction with ”Seek Bromance”, his career exploded in 2011 with ”Levels”. His way of boldly blending musical styles became a trademark of Avicii, shown on full display on his first album ”True”. The leading single ”Wake Me Up”, a fusion of house music and traditional bluegrass, reached the number one spot on the iTunes charts in over 60 countries. The song became the most streamed ever on Spotify to that date, played over 200 million times, and turned Avicii into a sought-after pop producer, collaborating with stars such as Madonna and Coldplay. After touring the world at a frantic pace, all the while struggling with health issues and substance abuse, in 2015 Tim Bergling retired from performing live altogether.  The slower lifestyle allowed him to focus purely on composing, drawing inspiration this time mainly from African and Asian traditions. Bergling was working on his fourth project, ”Tim”, when he tragically passed away during a holiday trip to Oman, in April of 2018. He is regarded as one of the most influential house producers of all time.   ";
   const songs = [
     {
       title: "Wake Me Up",
-      artist: "Avicii",
+      artist_name: "Avicii",
       duration: "4:07",
       views: "10M Views",
+      img: assets.Avicii_banner
     },
     {
       title: "Blinding Lights",
-      artist: "The Weeknd",
+      artist_name: "The Weeknd",
       duration: "3:22",
       views: "50M Views",
+      img: assets.Avicii_banner
+
     },
     {
       title: "Shape of You",
-      artist: "Ed Sheeran",
+      artist_name: "Ed Sheeran",
       duration: "4:24",
       views: "100M Views",
+      img: assets.Avicii_banner
+
     },
     {
       title: "Someone Like You",
       artist: "Adele",
       duration: "4:45",
       views: "30M Views",
+      img: assets.Avicii_banner
+
     },
     {
       title: "Believer",
-      artist: "Imagine Dragons",
+      artist_name: "Imagine Dragons",
       duration: "3:37",
       views: "80M Views",
+      img: assets.Avicii_banner
+
     },
   ];
+
+  
+  const artistName = songs[0]?.artist_name || songs[0]?.artist || "Unknown";
+
+  const decription =
+    "With his melodic songs and inspirational lyrics Swedish house producer " +
+    artistName +
+    " was one of the defining artists of modern pop. The genre-bending tracks captivated audiences worldwide and are widely considered the soundtrack of a generation. ...";
+  const profile_img = assets.Avicii_banner
+
 
   console.log(songs);
 
@@ -46,7 +63,7 @@ const Artist = () => {
     <div className="w-full h-[80vh] rounded-lg box-border overflow-y-auto ">
       <div className="relative">
         <img
-          src={assets.Avicii_banner}
+          src={profile_img}
           alt=""
           className="w-[100%] h-[250px] z-[-10] object-cover"
         />
@@ -59,7 +76,7 @@ const Artist = () => {
           </div>
           <div>
             <label className="text-[75px] font-bold block" htmlFor="">
-              Avicii
+              {songs[0].artist_name}
             </label>
           </div>
           {/* <div>
@@ -106,7 +123,7 @@ const Artist = () => {
                   </label>
                   <img
                     className="w-[40px] h-[40px] ml-6 mr-3"
-                    src={assets.Avicii_banner}
+                    src={song.img}
                     alt=""
                   />
                   <label
@@ -149,7 +166,7 @@ const Artist = () => {
             </label>
             <img
               className="w-[900px] h-[500px]"
-              src={assets.Avicii_banner}
+              src={profile_img}
               alt=""
             />
             <div className="absolute bottom-4 left-4">
