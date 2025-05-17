@@ -6,26 +6,25 @@ import PlaylistBox from "@/components/BoxCard/PlaylistBox";
 import CustomScrollbar from "../../../../components/Scrollbar/CustomScrollbar";
 import { getUserInfoFromAPI } from "@/services/userService";
 
-
 const UserProfile = () => {
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef(null);
-
+  const [userData, setUserData] = useState(null);
   const [hoverIndex, setHoverIndex] = useState(null);
   const variant = "artist"; // Gắn variant = artist tạm thời vì đang set ở bên boxcard
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-
     const fetchUserData = async () => {
-        const userData = await getUserInfoFromAPI()
-        setUser(userData.user)
-        console.log(userData.user)
+      // const userData = await getUserInfoFromAPI();
+      // setUser(userData.user);
+      const userDataStorage = JSON.parse(localStorage.getItem("userData"));
+      console.log("userDataStorage", userDataStorage);
+      if (userDataStorage) {
+        setUserData(userDataStorage);
       }
-    fetchUserData()
-
-
-
+    };
+    fetchUserData();
 
     const handleClickOutside = (e) => {
       if (menuRef.current && !menuRef.current.contains(e.target)) {
@@ -43,7 +42,7 @@ const UserProfile = () => {
         <div className="flex items-end gap-6">
           <div className="relative">
             <img
-              src={assets.avatar}
+              src={userData?.user?.data.profile_pic || assets.avatar}
               alt="Profile"
               className="w-40 h-40 rounded-full object-cover border-4 border-[#121212]"
             />
@@ -82,7 +81,7 @@ const UserProfile = () => {
           <div>
             <p className="text-sm font-semibold">Hồ sơ</p>
             <h1 className="text-5xl font-bold tracking-tight mb-2">
-              {user?.name}
+              {userData?.user?.data?.name}
             </h1>
             <div className="flex items-center gap-2 text-sm text-[#b3b3b3] font-semibold">
               <p>12 danh sách phát công khai</p>

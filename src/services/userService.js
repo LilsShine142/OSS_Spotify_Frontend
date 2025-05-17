@@ -1,57 +1,58 @@
 import axios from "axios"
+import api from "./api";
 
 export const handleUpdateUserInfo = async (data) => {
     try {
         // Lấy thông tin user từ localStorage
         const userStorage = localStorage.getItem("user");
         const user = userStorage ? JSON.parse(userStorage) : null;
-        
+
         if (!user || !user.access_token) {
             return { success: false, message: "Vui lòng đăng nhập để tiếp tục." };
         }
-        
+
         // Chuẩn bị dữ liệu để gửi đi
         // Chỉ gửi các trường có giá trị
         const updateData = {};
-        
+
         // Kiểm tra và thêm các trường vào dữ liệu cập nhật
         if (data.name) updateData.name = data.name;
         if (data.dob) updateData.dob = data.dob;
         if (data.gender) updateData.gender = data.gender;
         if (data.password) updateData.password = data.password;
         if (data.profile_pic) updateData.profile_pic = data.profile_pic;
-        
+
         console.log("Trong userService")
         console.log(updateData)
         // console.log(user.access_token)
 
 
         console.log(user.id)
-        const url =  `http://127.0.0.1:8000/user_management/update_user/${user.id}/`
-          
-        
+        const url = `http://127.0.0.1:8000/user_management/update_user/${user.id}/`
+
+
         // Gửi request cập nhật
         const response = await axios.put(
-            url, 
+            url,
             updateData,
             {
                 headers: {
                     "Authorization": `Bearer ${user.access_token}`,
-                    "Content-Type" : "application/json"
+                    "Content-Type": "application/json"
                 }
             }
         );
-        
+
         if (response.data.success) {
-            return { 
-                success: true, 
+            return {
+                success: true,
                 message: "Cập nhật thông tin thành công!",
                 user: response.data.data
             };
         } else {
-            return { 
-                success: false, 
-                message: response.data.error || "Có lỗi xảy ra khi cập nhật thông tin." 
+            return {
+                success: false,
+                message: response.data.error || "Có lỗi xảy ra khi cập nhật thông tin."
             };
         }
     } catch (error) {
@@ -59,36 +60,36 @@ export const handleUpdateUserInfo = async (data) => {
         if (error.response) {
             // Máy chủ trả về lỗi có status code khác 2xx
             const errorMessage = error.response.data.error || "Có lỗi xảy ra khi cập nhật thông tin.";
-            
+
             // Nếu token hết hạn (401)
             if (error.response.status === 401) {
                 localStorage.removeItem("user"); // Xóa thông tin đăng nhập
-                return { 
-                    success: false, 
+                return {
+                    success: false,
                     message: "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.",
                     redirect: "/login"
                 };
             }
             // Nếu không có quyền (403)
             if (error.response.status === 403) {
-                return { 
-                    success: false, 
-                    message: "Bạn không có quyền thực hiện thao tác này." 
+                return {
+                    success: false,
+                    message: "Bạn không có quyền thực hiện thao tác này."
                 };
             }
-            
+
             return { success: false, message: errorMessage };
         } else if (error.request) {
             // Request được gửi nhưng không nhận được response
-            return { 
-                success: false, 
-                message: "Không thể kết nối đến máy chủ. Vui lòng thử lại sau." 
+            return {
+                success: false,
+                message: "Không thể kết nối đến máy chủ. Vui lòng thử lại sau."
             };
         } else {
             // Lỗi khi thiết lập request
-            return { 
-                success: false, 
-                message: "Có lỗi xảy ra. Vui lòng thử lại." 
+            return {
+                success: false,
+                message: "Có lỗi xảy ra. Vui lòng thử lại."
             };
         }
     }
@@ -97,10 +98,10 @@ export const handleUpdateUserInfo = async (data) => {
 
 export const getUserInfoFromAPI = async () => {
     try {
-        
+
         const userStorage = localStorage.getItem("user");
         const user = userStorage ? JSON.parse(userStorage) : null;
-       
+
         const url = `http://127.0.0.1:8000/user_management/get_user_info/${user.id}/`;
 
         // Gửi yêu cầu GET để lấy thông tin người dùng
@@ -132,5 +133,23 @@ export const getUserInfoFromAPI = async () => {
         } else {
             return { success: false, message: "Có lỗi xảy ra. Vui lòng thử lại." };
         }
+    }
+};
+
+export const getUserInfo = async (userId, token) => {
+    try {
+        const response = await api.get(`/user_management/get_user_info/${userId}/`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        if (response.data.success) {
+            return { success: true, user: response.data };
+        } else {
+            return { success: false, message: response.data.error };
+        }
+    } catch (error) {
+        console.error("Error fetching user info:", error);
+        return { success: false, message: "Lỗi kết nối máy chủ. Vui lòng thử lại." };
     }
 };

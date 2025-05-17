@@ -13,7 +13,7 @@ export const login = async (email, password) => {
         );
 
         if (response.data && response.data.access_token) {
-            Cookies.set("authToken", response.data.access_token, { expires: 7 });
+            Cookies.set("access_token", response.data.access_token, { expires: 7 });
 
             axiosInstance.defaults.headers.common[
                 "Authorization"
