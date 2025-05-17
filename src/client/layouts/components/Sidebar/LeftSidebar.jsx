@@ -13,7 +13,7 @@ const LeftSidebar = ({ width, onResize }) => {
 
   // Hàm kiểm tra khả năng cuộn trái/phải của danh sách
   const checkScroll = useCallback(() => {
-    if (!listRef.current) return;
+    if (!listRef.current) return; 
     const { scrollLeft, scrollWidth, clientWidth } = listRef.current;
 
     setCanScrollLeft(scrollLeft > 0);

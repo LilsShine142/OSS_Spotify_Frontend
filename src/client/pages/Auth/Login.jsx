@@ -1,17 +1,24 @@
 import { assets } from "@/assets/assets";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import axios from "axios";
 import z, { defaultErrorMap } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { login } from "@/services/authService";
 import Cookies from "js-cookie";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { handleLogin } from "@/services/authService";
+import { useNavigate } from "react-router-dom";
+import { UserContext } from "../../../context/AuthContext/AuthContext";
+
 function Login() {
+  const { loginUser } = useContext(UserContext);
+  const navigate = useNavigate();
+
   const schema = z.object({
     email: z.string().email("Email không đúng định dạng"),
-    password: z.string().min(1, "Mật khẩu ít nhất 6 kí tự"),
+    password: z.string().min(6, "Mật khẩu ít nhất 6 kí tự"),
   });
 
   const {
@@ -26,31 +33,36 @@ function Login() {
     resolver: zodResolver(schema),
   });
 
+  // Hàm xử lý submit form đăng nhập
   const handleLogin = async (data) => {
     try {
-      console.log("data", data);
       const response = await login(data.email, data.password);
-      console.log("response", response);
+
       if (!response.success) {
         toast.error(response.error || "Email hoặc mật khẩu không chính xác.");
         return;
       }
 
-      toast.success("Đăng nhập thành công!");
-      const token = Cookies.get("access_token"); // Lấy access_token từ cookie
-      console.log("token", token);
-      setTimeout(() => {
-        window.location.href = "/home";
-      }, 2000); // Đợi Toast hiển thị xong
-    } catch (error) {
-      console.error("Login error:", {
-        message: error.message,
-        data: error.response?.data,
-      });
+      // Lấy token nếu có từ response (hoặc lấy từ cookie nếu server set cookie tự động)
+      const token = response.token || Cookies.get("access_token");
 
-      // Hiển thị thông báo lỗi phù hợp
+      // Cập nhật context user
+      loginUser(
+        {
+          id: response._id,
+          role: response.role,
+        },
+        token
+      );
+
+      toast.success("Đăng nhập thành công!");
+      setTimeout(() => {
+        navigate("/home");
+      }, 2000);
+    } catch (error) {
+      console.error("Login error:", error);
       const errorMessage =
-        error.response?.data.error || "Lỗi kết nối máy chủ. Vui lòng thử lại";
+        error.response?.data?.error || "Lỗi kết nối máy chủ. Vui lòng thử lại";
       toast.error(errorMessage);
     }
   };
@@ -93,7 +105,7 @@ function Login() {
             <div className="space-y-1">
               <label className="text-bold" htmlFor="">
                 Email or username
-              </label>{" "}
+              </label>
               <br />
               <input
                 className="w-80 h-10 border border-gray rounded-lg bg-black p-1"
@@ -104,10 +116,11 @@ function Login() {
                 <p className="text-red-500 text-xs">{errors.email?.message}</p>
               )}
             </div>
+
             <div className="space-y-1">
               <label className="text-bold" htmlFor="">
                 Password
-              </label>{" "}
+              </label>
               <br />
               <input
                 className="w-80 h-10 border border-gray rounded-lg bg-black p-1"
@@ -121,6 +134,7 @@ function Login() {
                 </p>
               )}
             </div>
+
             <div className="w-[330px] h-11 flex items-center justify-center">
               <button
                 className="w-80 h-10 border border-gray rounded-[50px] bg-green-500"

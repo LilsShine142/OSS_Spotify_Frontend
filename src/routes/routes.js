@@ -108,6 +108,10 @@ const layoutRoutes = [
         component: AlbumTracksList,
     },
     {
+        path: config.routes.playlist_tracks_list(':id'),
+        component: AlbumTracksList,
+    },
+    {
         path: config.routes.user_profile(':id'),
         component: UserProfile,
     },

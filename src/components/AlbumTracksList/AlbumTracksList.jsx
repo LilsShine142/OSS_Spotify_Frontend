@@ -33,8 +33,7 @@ const AlbumTracksList = () => {
   useEffect(() => {
     const fetchAlbumData = async () => {
       const accessToken = await getSpotifyAccessToken(); // Lấy access token từ Spotify
-      // const accessToken =
-      //   "BQDIojhsPiB14vZ_mYix88zSW9tbh7OXsU0FPKR_CFPx8JtsqG-Na0p9XiluhD30zc4gzx6OAm_ytYdIZ32m-ZenEBf3Paq4HjTBWrcUwI_6v5geBuLMvrxREM1Ag1CaKoXY9VXy1qc";
+
       console.log("accessToken", accessToken); // Kiểm tra access token
       try {
         // Tạm thời gắn prams như vậy

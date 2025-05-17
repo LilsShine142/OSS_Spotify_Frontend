@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 import { assets } from "../../../../assets/assets";
 import { Link } from "react-router-dom";
 import {
@@ -13,9 +13,14 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setActiveContent } from "../../../../redux/features/activeContent/activeContentSlice";
+import { getUserInfo } from "@/services/userService"; // nếu nó có tồn tại trong service
+import { UserContext } from "@/context/AuthContext/AuthContext";
+import Cookies from "js-cookie";
 
 const Header = () => {
   const [isDropDownOpen, setIsDropDownOpen] = useState(false);
+  const { user } = useContext(UserContext); // Lấy user từ context
+  const [detailedUser, setDetailedUser] = useState(null); // Thông tin chi tiết của user
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -23,6 +28,37 @@ const Header = () => {
 
   // Đóng dropDown khi click ra ngoài
   useEffect(() => {
+    const token = Cookies.get("access_token");
+    // if (!token) {
+    //   navigate("/login");
+    //   return;
+    // }
+    const userData = JSON.parse(localStorage.getItem("userData"));
+
+    setDetailedUser(userData);
+    // const fetchUserData = async (token) => {
+    //   console.log("userData:", userData);
+    //   if (userData && userData.user.data._id) {
+    //     try {
+    //       const response = await getUserInfo(user.id, token);
+    //       console.log("Response from API:", response);
+    //       if (response.success) {
+    //         setDetailedUser(response.user);
+    //         console.log("User info:", response.user);
+    //         console.log("detailedUser:", detailedUser);
+    //         console.log(response.user);
+    //       } else {
+    //         // Xử lý trường hợp lỗi khi lấy data
+    //         console.error("Lấy thông tin user thất bại");
+    //       }
+    //     } catch (error) {
+    //       console.error("Lỗi khi gọi API lấy user info:", error);
+    //     }
+    //   }
+    // };
+
+    // fetchUserData(token);
+
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsDropDownOpen(false);
@@ -51,7 +87,7 @@ const Header = () => {
     {
       title: "user-info",
       content: {
-        text: "Phạm Thanh Sự",
+        text: detailedUser?.user.data.name,
         type: "text",
       },
     },
@@ -60,7 +96,11 @@ const Header = () => {
       // Sửa lại link khi làm xong các trang còn thiếu trong đây
       items: [
         { title: "Tài khoản", link: "/account", icon: <FaUser /> },
-        { title: "Hồ sơ", link: `/user/profile/${userId}`, icon: <FaIdCard /> }, // Gắn userId tạm thời
+        {
+          title: "Hồ sơ",
+          link: `/user/profile/${detailedUser?.user.data._id}`,
+          icon: <FaIdCard />,
+        }, // Gắn userId tạm thời
         { title: "Nâng cấp Premium", link: "/premium", icon: <FaCrown /> },
         { title: "Hỗ trợ", link: "/support", icon: <FaQuestionCircle /> },
         { title: "Tải xuống", link: "/download", icon: <FaDownload /> },
@@ -69,7 +109,7 @@ const Header = () => {
     },
     {
       title: "logout-section",
-      items: [{ title: "Đăng xuất", link: "/logout", icon: <FaSignOutAlt /> }],
+      items: [{ title: "Đăng xuất", link: "/login", icon: <FaSignOutAlt /> }],
     },
   ];
 
@@ -77,7 +117,15 @@ const Header = () => {
     <div className="bg-[#121212] w-full h-[9%] flex items-center justify-between px-8">
       {/* Logo Spotify */}
       <div className="flex items-center gap-3 cursor-pointer w-1/6 h-full">
-        <img className="w-8" src={assets.spotify_logo} alt="Spotify Logo" />
+        <img
+          className="w-8"
+          src={detailedUser?.user.data.profile_pic || assets.spotify_logo}
+          alt={
+            detailedUser?.user.data.name
+              ? `${detailedUser.user.data.name} Profile Picture`
+              : "Spotify Logo"
+          }
+        />
       </div>
       {/* Thanh tìm kiếm */}
       <div className="flex flex-1 justify-center items-center max-w-2xl h-full gap-2 pl-[145px]">
@@ -142,68 +190,87 @@ const Header = () => {
           alt="Thông báo"
         />
         {/* Avatar với dropdown */}
-        <div className="relative" ref={dropdownRef}>
-          <div
-            className="flex items-center cursor-pointer hover:bg-slate-700 rounded-full p-2 bg-gray-800 hover:scale-110 transition-transform"
-            onClick={handleDropDownToggle}
-          >
-            <img
-              className="w-8 h-8 rounded-full cursor-pointer"
-              src={assets.avatar}
-              alt="Avatar"
-            />
-          </div>
-
-          {/* Dropdown menu */}
-          {isDropDownOpen && (
-            <div className="absolute right-0 mt-2 w-56 bg-[#282828] rounded-md shadow-lg py-1 z-50">
-              {menuSections.map((section, sectionIndex) => (
-                <div key={`section-${sectionIndex}`}>
-                  {/* Phần thông tin user */}
-                  {section.title === "user-info" && (
-                    <div className="px-4 py-2 relative border-b border-[#7c7c7c] border-opacity-50 mx-2">
-                      <p className="text-sm text-gray-400">
-                        {section.content.text}
-                      </p>
-                    </div>
-                  )}
-
-                  {/* Phần menu chính */}
-                  {section.title === "main-menu" && (
-                    <div className="py-1">
-                      {section.items.map((item, itemIndex) => (
-                        <div
-                          key={`menu-item-${itemIndex}`}
-                          onClick={() => handleMenuClick(item.link)}
-                          className="flex items-center justify-between px-4 py-2 mx-2 text-sm text-white hover:bg-[#3E3E3E] hover:rounded-[2px] hover:underline transition-colors"
-                        >
-                          {item.title}
-                          {item.icon}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Phần đăng xuất */}
-                  {section.title === "logout-section" && (
-                    <div className="py-1 relative border-t border-[#7c7c7c] border-opacity-50 mx-2">
-                      {section.items.map((item, itemIndex) => (
-                        <Link
-                          key={`logout-item-${itemIndex}`}
-                          to={item.link}
-                          className="flex items-center justify-between px-4 py-2 text-sm text-white hover:bg-[#3E3E3E] hover:rounded-[2px] hover:underline transition-colors"
-                        >
-                          {item.title}
-                          {item.icon}
-                        </Link>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ))}
+        {/* Nếu đã đăng nhập */}
+        {detailedUser ? (
+          <div className="relative" ref={dropdownRef}>
+            <div
+              className="flex items-center cursor-pointer hover:bg-slate-700 rounded-full p-2 bg-gray-800 hover:scale-110 transition-transform"
+              onClick={handleDropDownToggle}
+            >
+              <img
+                className="w-8 h-8 rounded-full cursor-pointer"
+                src={assets.avatar}
+                alt="Avatar"
+              />
             </div>
-          )}
-        </div>
+
+            {/* Dropdown menu */}
+            {isDropDownOpen && (
+              <div className="absolute right-0 mt-2 w-56 bg-[#282828] rounded-md shadow-lg py-1 z-50">
+                {menuSections.map((section, sectionIndex) => (
+                  <div key={`section-${sectionIndex}`}>
+                    {/* Phần thông tin user */}
+                    {section.title === "user-info" && (
+                      <div className="px-4 py-2 relative border-b border-[#7c7c7c] border-opacity-50 mx-2">
+                        <p className="text-sm font-semibold text-green-500">
+                          Hello, {section.content.text}
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Phần menu chính */}
+                    {section.title === "main-menu" && (
+                      <div className="py-1">
+                        {section.items.map((item, itemIndex) => (
+                          <div
+                            key={`menu-item-${itemIndex}`}
+                            onClick={() => handleMenuClick(item.link)}
+                            className="flex items-center justify-between px-4 py-2 mx-2 text-sm text-white hover:bg-[#3E3E3E] hover:rounded-[2px] hover:underline transition-colors"
+                          >
+                            {item.title}
+                            {item.icon}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Phần đăng xuất */}
+                    {section.title === "logout-section" && (
+                      <div className="py-1 relative border-t border-[#7c7c7c] border-opacity-50 mx-2">
+                        {section.items.map((item, itemIndex) => (
+                          <Link
+                            key={`logout-item-${itemIndex}`}
+                            to={item.link}
+                            className="flex items-center justify-between px-4 py-2 text-sm text-white hover:bg-[#3E3E3E] hover:rounded-[2px] hover:underline transition-colors"
+                          >
+                            {item.title}
+                            {item.icon}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        ) : (
+          // Nếu chưa đăng nhập
+          <div className="flex gap-4">
+            <Link
+              to="/register"
+              className="text-white px-4 py-1 border border-white rounded-full text-sm hover:bg-white hover:text-black transition"
+            >
+              Đăng ký
+            </Link>
+            <Link
+              to="/login"
+              className="bg-white text-black px-4 py-1 text-sm font-bold rounded-full hover:scale-110 transition-transform duration-200 hover:opacity-80"
+            >
+              Đăng nhập
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   );
