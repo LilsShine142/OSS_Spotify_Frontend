@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2, RefreshCw } from "lucide-react";
 
 function ManageArtists() {
   const [artists, setArtists] = useState([]);
@@ -9,54 +9,91 @@ function ManageArtists() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchArtists();
-  }, []);
-
   const fetchArtists = async () => {
+    const userData = JSON.parse(localStorage.getItem("userData"));
+    const token = userData?.token;
+    if (!token) {
+      alert("Bạn chưa đăng nhập!");
+      navigate("/login");
+      return;
+    }
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:8000/artists/");
-      setArtists(res.data);
-    } catch {
-      alert("Lấy dữ liệu nghệ sĩ thất bại.");
+      const res = await axios.get("http://127.0.0.1:8000/spotify_app/artists/", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      console.log("API response:", res.data);
+      const data = res.data.results || [];
+      setArtists(Array.isArray(data) ? data : []);
+    } catch (error) {
+      alert(error.response?.data?.error || "Lấy dữ liệu nghệ sĩ thất bại.");
+      console.error("Error fetching artists:", error.response);
     } finally {
       setLoading(false);
     }
   };
 
+  useEffect(() => {
+    fetchArtists();
+  }, []);
+
   const handleDelete = async (id) => {
+    const userData = JSON.parse(localStorage.getItem("userData"));
+    const token = userData?.token;
+    if (!token) {
+      alert("Bạn chưa đăng nhập!");
+      navigate("/login");
+      return;
+    }
     if (window.confirm("Bạn có chắc muốn xóa nghệ sĩ này?")) {
+      console.log("Deleting artist with ID:", id);
       try {
-        await axios.delete(`http://localhost:8000/artists/${id}/`);
+        await axios.delete(`http://127.0.0.1:8000/spotify_app/artists/${id}/delete`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         fetchArtists();
         alert("Xóa nghệ sĩ thành công.");
-      } catch {
-        alert("Xóa nghệ sĩ thất bại.");
+      } catch (error) {
+        const errorMsg = error.response?.data?.error || "Xóa nghệ sĩ thất bại.";
+        alert(errorMsg);
+        console.error("Error deleting artist:", error.response);
       }
     }
   };
 
-  const filteredArtists = artists.filter((a) =>
-    a.name.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredArtists = Array.isArray(artists)
+    ? artists.filter((a) =>
+        a.artist_name
+          ? a.artist_name.toLowerCase().includes(search.toLowerCase())
+          : false
+      )
+    : [];
 
   return (
     <div className="p-6 text-white min-h-screen">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold uppercase tracking-wide">Quản lý nghệ sĩ</h1>
-        <button
-          onClick={() => navigate("/admin/create-artist")}
-          className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-full font-semibold transition"
-        >
-          + Thêm nghệ sĩ
-        </button>
+        <div className="flex gap-4">
+          <button
+            onClick={fetchArtists}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-full font-semibold transition"
+            title="Làm mới danh sách"
+          >
+            <RefreshCw size={20} />
+          </button>
+          <button
+            onClick={() => navigate("/admin/create-artist")}
+            className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-full font-semibold transition"
+          >
+            + Thêm nghệ sĩ
+          </button>
+        </div>
       </div>
 
       <input
         type="text"
         placeholder="Tìm kiếm nghệ sĩ..."
-        className="w-full p-3 mb-6 bg-[#121212] text-white rounded-md border border-gray-700 placeholder-gray-500 focus:border-green-500 outline-none transition"
+        className="w-full p-3 mb-6 bg-[#121212] text-white rounded-md border border-gray-700 placeholder-gray-400 focus:border-green-500 outline-none transition"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         disabled={loading}
@@ -88,13 +125,13 @@ function ManageArtists() {
                   <td className="py-3 px-4">{index + 1}</td>
                   <td className="px-4 py-3">
                     <img
-                      src={artist.avatar || "/default-avatar.png"}
-                      alt={artist.name}
+                      src={artist.profile_img || "/default-avatar.png"}
+                      alt={artist.artist_name || "Unknown"}
                       className="w-12 h-12 rounded-full object-cover shadow"
                     />
                   </td>
-                  <td className="py-3 px-4 font-medium truncate" title={artist.name}>
-                    {artist.name}
+                  <td className="py-3 px-4 font-medium truncate" title={artist.artist_name || "Unknown"}>
+                    {artist.artist_name || "Unknown"}
                   </td>
                   <td className="py-3 px-4 flex items-center gap-3">
                     <button

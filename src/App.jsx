@@ -37,6 +37,21 @@ import ManagePlaylist from "./admin/pages/AdminLayout/ManagePlaylists";
 import CreatePlaylist from "./admin/pages/AdminLayout/CreatePlaylist";
 import ManageArtists from "./admin/pages/AdminLayout/ManageArtists";
 import CreateArtist from "./admin/pages/AdminLayout/CreateArtist";
+import EditArtist from "./admin/pages/AdminLayout/EditArtist";
+// configAxios.js hoặc ngay đầu file App.js
+import axios from "axios";
+
+axios.defaults.baseURL = "http://localhost:8000"; // hoặc domain backend
+axios.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
 function App() {
   return (
@@ -73,6 +88,7 @@ function App() {
             <Route path="create-playlist" element={<CreatePlaylist />} />
             <Route path="artists" element={<ManageArtists />} />
             <Route path="create-artist" element={<CreateArtist />} />
+            <Route path="edit-artist/:artistId" element={<EditArtist />} />
             {adminRoutes.map((route, index) => {
               const Element = route.component;
               return <Route key={index} path={route.path} element={<Element />} />;

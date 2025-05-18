@@ -47,7 +47,8 @@ export default function CreateTrack() {
     formData.append("audio_file", audioFile);
 
     try {
-      await axios.post("http://localhost:8000/tracks/", formData, {
+      // Sửa URL phù hợp Django backend
+      await axios.post("http://localhost:8000/songs/upload/", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       alert("Tạo bài hát thành công!");
@@ -89,7 +90,7 @@ export default function CreateTrack() {
           >
             <option value="">-- Chọn album --</option>
             {albums.map((album) => (
-              <option key={album._id} value={album._id}>
+              <option key={album.id || album._id} value={album.id || album._id}>
                 {album.title}
               </option>
             ))}

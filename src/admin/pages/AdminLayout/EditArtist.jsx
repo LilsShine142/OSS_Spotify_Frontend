@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-export default function CreateArtist() {
+export default function EditArtist() {
   const [artistName, setArtistName] = useState("");
   const [biography, setBiography] = useState("");
   const [profileImg, setProfileImg] = useState("");
@@ -10,7 +10,45 @@ export default function CreateArtist() {
   const [isFromDB, setIsFromDB] = useState(true);
   const [isHidden, setIsHidden] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [fetching, setFetching] = useState(true);
   const navigate = useNavigate();
+  const { artistId } = useParams();
+
+  useEffect(() => {
+    const fetchArtist = async () => {
+      const userData = JSON.parse(localStorage.getItem("userData"));
+      const token = userData?.token;
+      if (!token) {
+        alert("Bạn chưa đăng nhập!");
+        navigate("/login");
+        return;
+      }
+
+      console.log("Fetching artist with ID:", artistId);
+      try {
+        const res = await axios.get(`http://127.0.0.1:8000/spotify_app/artists/${artistId}/`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        console.log("Artist data:", res.data);
+        const artist = res.data;
+        setArtistName(artist.artist_name || "");
+        setBiography(artist.biography || "");
+        setProfileImg(artist.profile_img || "");
+        setLabel(artist.label || "");
+        setIsFromDB(artist.isfromDB !== false);
+        setIsHidden(artist.isHidden || false);
+      } catch (error) {
+        const errorMsg = error.response?.data?.error || "Lấy dữ liệu nghệ sĩ thất bại.";
+        alert(errorMsg);
+        console.error("Error fetching artist:", error.response);
+        navigate("/admin/artists");
+      } finally {
+        setFetching(false);
+      }
+    };
+
+    fetchArtist();
+  }, [artistId, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,7 +58,8 @@ export default function CreateArtist() {
       return;
     }
 
-    const token = JSON.parse(localStorage.getItem("userData"))?.token;
+    const userData = JSON.parse(localStorage.getItem("userData"));
+    const token = userData?.token;
     if (!token) {
       alert("Bạn chưa đăng nhập!");
       navigate("/login");
@@ -30,34 +69,41 @@ export default function CreateArtist() {
     const payload = {
       artist_name: artistName,
       biography,
-      profile_img: profileImg || null, // Gửi null nếu không có ảnh
+      profile_img: profileImg || null,
       label: label || null,
       isfromDB: isFromDB,
       isHidden: isHidden,
     };
+    console.log("Update payload:", payload);
 
     setLoading(true);
     try {
-      await axios.post(
-        "http://127.0.0.1:8000/spotify_app/artists/create",
+      const res = await axios.put(
+        `http://127.0.0.1:8000/spotify_app/artists/${artistId}/update/`,
         payload,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      alert("Thêm nghệ sĩ thành công!");
+      console.log("Update artist response:", res.data);
+      alert("Cập nhật nghệ sĩ thành công!");
       navigate("/admin/artists");
     } catch (error) {
-      console.error("Error creating artist:", error.response);
-      alert(error.response?.data?.message || "Thêm nghệ sĩ thất bại.");
+      const errorMsg = error.response?.data?.error || "Cập nhật nghệ sĩ thất bại.";
+      alert(errorMsg);
+      console.error("Error updating artist:", error.response);
     } finally {
       setLoading(false);
     }
   };
 
+  if (fetching) {
+    return <div className="p-6 text-white text-center">Đang tải dữ liệu...</div>;
+  }
+
   return (
     <div className="p-6 text-white max-w-md mx-auto">
-      <h1 className="text-3xl mb-6 font-bold">Thêm Nghệ sĩ mới</h1>
+      <h1 className="text-3xl mb-6 font-bold">Chỉnh sửa Nghệ sĩ</h1>
       <form
         onSubmit={handleSubmit}
         className="bg-[#121212] backdrop-blur-md p-8 rounded-lg flex flex-col gap-6"
@@ -141,7 +187,7 @@ export default function CreateArtist() {
             disabled={loading}
             className="bg-green-600 hover:bg-green-700 disabled:opacity-50 px-6 py-3 rounded-full font-semibold transition"
           >
-            {loading ? "Đang tạo..." : "Thêm nghệ sĩ"}
+            {loading ? "Đang cập nhật..." : "Cập nhật nghệ sĩ"}
           </button>
         </div>
       </form>

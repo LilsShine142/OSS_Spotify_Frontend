@@ -16,7 +16,7 @@ function ManageTracks() {
   const fetchTracks = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:8000/tracks/");
+      const res = await axios.get("http://localhost:8000/songs/");
       setTracks(res.data);
     } catch (error) {
       alert("Lấy dữ liệu bài hát thất bại.");
@@ -28,7 +28,8 @@ function ManageTracks() {
   const handleDelete = async (id) => {
     if (window.confirm("Bạn có chắc muốn xóa bài hát này?")) {
       try {
-        await axios.delete(`http://localhost:8000/tracks/${id}/`);
+        // Nếu dùng POST /songs/<id>/delete/
+        await axios.post(`http://localhost:8000/songs/${id}/delete/`);
         fetchTracks();
         alert("Xóa bài hát thành công.");
       } catch (error) {
@@ -93,7 +94,7 @@ function ManageTracks() {
             ) : filteredTracks.length > 0 ? (
               filteredTracks.map((track, index) => (
                 <tr
-                  key={track._id}
+                  key={track.song_id}
                   className="border-b border-gray-800 hover:bg-[#2a2a2a] transition-colors"
                 >
                   <td className="py-3 px-4">{index + 1}</td>
@@ -123,14 +124,14 @@ function ManageTracks() {
                       </audio>
                     )}
                     <button
-                      onClick={() => navigate(`/admin/edit-track/${track._id}`)}
+                      onClick={() => navigate(`/admin/edit-track/${track.song_id}`)}
                       className="text-yellow-400 hover:text-yellow-500 transition"
                       title="Chỉnh sửa bài hát"
                     >
                       <Pencil size={20} />
                     </button>
                     <button
-                      onClick={() => handleDelete(track._id)}
+                      onClick={() => handleDelete(track.song_id)}
                       className="text-red-500 hover:text-red-600 transition"
                       title="Xóa bài hát"
                     >
@@ -154,4 +155,3 @@ function ManageTracks() {
 }
 
 export default ManageTracks;
-  
