@@ -3,59 +3,67 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Pencil, Trash2 } from "lucide-react";
 
-function ManageAlbums() {
-  const [albums, setAlbums] = useState([]);
+function ManageTracks() {
+  const [tracks, setTracks] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchAlbums();
+    fetchTracks();
   }, []);
 
-  const fetchAlbums = async () => {
+  const fetchTracks = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:8000/albums/");
-      setAlbums(res.data);
-    } catch {
-      alert("Lấy dữ liệu album thất bại.");
+      const res = await axios.get("http://localhost:8000/tracks/");
+      setTracks(res.data);
+    } catch (error) {
+      alert("Lấy dữ liệu bài hát thất bại.");
     } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm("Bạn có chắc muốn xóa album này?")) {
+    if (window.confirm("Bạn có chắc muốn xóa bài hát này?")) {
       try {
-        await axios.delete(`http://localhost:8000/albums/${id}/`);
-        fetchAlbums();
-        alert("Xóa album thành công.");
-      } catch {
-        alert("Xóa album thất bại.");
+        await axios.delete(`http://localhost:8000/tracks/${id}/`);
+        fetchTracks();
+        alert("Xóa bài hát thành công.");
+      } catch (error) {
+        alert("Xóa bài hát thất bại.");
       }
     }
   };
 
-  const filteredAlbums = albums.filter((a) =>
-    a.title.toLowerCase().includes(search.toLowerCase())
+  const formatDuration = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
+  };
+
+  const filteredTracks = tracks.filter((t) =>
+    t.title.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
     <div className="p-6 text-white min-h-screen">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold uppercase tracking-wide">Quản lý album</h1>
+        <h1 className="text-3xl font-bold uppercase tracking-wide">
+          Quản lý bài hát
+        </h1>
         <button
-          onClick={() => navigate("/admin/create-album")}
+          onClick={() => navigate("/admin/create-track")}
           className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-full font-semibold transition"
         >
-          + Thêm album
+          + Thêm bài hát
         </button>
       </div>
 
       <input
         type="text"
-        placeholder="Tìm kiếm album..."
+        placeholder="Tìm kiếm bài hát..."
         className="w-full p-3 mb-6 bg-[#121212] text-white rounded-md border border-gray-700 placeholder-gray-500 focus:border-green-500 outline-none transition"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
@@ -68,52 +76,63 @@ function ManageAlbums() {
             <tr>
               <th className="py-3 px-4 w-12">#</th>
               <th className="py-3 px-4">Ảnh</th>
-              <th className="py-3 px-4">Tên album</th>
+              <th className="py-3 px-4">Tên bài hát</th>
               <th className="py-3 px-4">Nghệ sĩ</th>
-              <th className="py-3 px-4 w-40">Ngày phát hành</th>
+              <th className="py-3 px-4">Album</th>
+              <th className="py-3 px-4 w-28">Thời lượng</th>
               <th className="py-3 px-4 w-48">Hành động</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan="6" className="text-center text-gray-500 py-6 animate-pulse">
+                <td colSpan="7" className="text-center text-gray-500 py-6 animate-pulse">
                   Đang tải dữ liệu...
                 </td>
               </tr>
-            ) : filteredAlbums.length > 0 ? (
-              filteredAlbums.map((album, index) => (
+            ) : filteredTracks.length > 0 ? (
+              filteredTracks.map((track, index) => (
                 <tr
-                  key={album._id}
+                  key={track._id}
                   className="border-b border-gray-800 hover:bg-[#2a2a2a] transition-colors"
                 >
                   <td className="py-3 px-4">{index + 1}</td>
                   <td className="px-4 py-3">
                     <img
-                      src={album.cover || "/default-cover.png"}
-                      alt={album.title}
+                      src={track.cover || "/default-cover.png"}
+                      alt={track.title}
                       className="w-12 h-12 rounded object-cover shadow"
                     />
                   </td>
-                  <td className="py-3 px-4 font-medium truncate" title={album.title}>
-                    {album.title}
+                  <td className="py-3 px-4 font-medium truncate" title={track.title}>
+                    {track.title}
                   </td>
-                  <td className="py-3 px-4 text-gray-300">{album.artist_name || "Chưa có"}</td>
+                  <td className="py-3 px-4 text-gray-300">
+                    {track.artist_name || "Chưa có"}
+                  </td>
+                  <td className="py-3 px-4 text-gray-300">
+                    {track.album_name || "Chưa có"}
+                  </td>
                   <td className="py-3 px-4 text-gray-400">
-                    {album.release_date ? new Date(album.release_date).toLocaleDateString() : "Chưa có"}
+                    {formatDuration(track.duration || 0)}
                   </td>
-                  <td className="py-3 px-4 flex items-center gap-3">
+                  <td className="py-3 px-4 flex items-center gap-3 flex-wrap">
+                    {track.audio_file && (
+                      <audio controls className="w-32 rounded bg-black">
+                        <source src={track.audio_file} type="audio/mpeg" />
+                      </audio>
+                    )}
                     <button
-                      onClick={() => navigate(`/admin/edit-album/${album._id}`)}
+                      onClick={() => navigate(`/admin/edit-track/${track._id}`)}
                       className="text-yellow-400 hover:text-yellow-500 transition"
-                      title="Chỉnh sửa album"
+                      title="Chỉnh sửa bài hát"
                     >
                       <Pencil size={20} />
                     </button>
                     <button
-                      onClick={() => handleDelete(album._id)}
+                      onClick={() => handleDelete(track._id)}
                       className="text-red-500 hover:text-red-600 transition"
-                      title="Xóa album"
+                      title="Xóa bài hát"
                     >
                       <Trash2 size={20} />
                     </button>
@@ -122,8 +141,8 @@ function ManageAlbums() {
               ))
             ) : (
               <tr>
-                <td colSpan="6" className="text-center text-gray-500 py-6">
-                  Không có album nào.
+                <td colSpan="7" className="text-center text-gray-500 py-6">
+                  Không có bài hát nào.
                 </td>
               </tr>
             )}
@@ -134,4 +153,5 @@ function ManageAlbums() {
   );
 }
 
-export default ManageAlbums;
+export default ManageTracks;
+  

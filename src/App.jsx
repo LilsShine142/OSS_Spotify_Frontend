@@ -29,6 +29,14 @@ import { PlayerProvider } from "./context/PlayerContext/PlayerContext";
 import { layoutRoutes, standaloneRoutes, adminRoutes } from "./routes";
 import HomeLayout from "./client/pages/Home/home";
 import AdminLayout from "./admin/pages/AdminLayout/Dashboard";
+import ManageAlbums from "./admin/pages/AdminLayout/ManageAlbums";
+import CreateAlbum from "./admin/pages/AdminLayout/CreateAlbum";
+import ManageTracks from "./admin/pages/AdminLayout/ManageTracks";
+import CreateTrack from "./admin/pages/AdminLayout/CreateTrack";
+import ManagePlaylist from "./admin/pages/AdminLayout/ManagePlaylists";
+import CreatePlaylist from "./admin/pages/AdminLayout/CreatePlaylist";
+import ManageArtists from "./admin/pages/AdminLayout/ManageArtists";
+import CreateArtist from "./admin/pages/AdminLayout/CreateArtist";
 
 function App() {
   return (
@@ -56,11 +64,21 @@ function App() {
 
 
           <Route path="/admin" element={<AdminLayout />}>
+            <Route path="albums" element={<ManageAlbums />} />
+            <Route path="create-album" element={<CreateAlbum />} /> {/* ✅ ĐÃ SỬA */}
+            {/* <Route path="albums" element={<ManageAlbums />} /> */}
+            <Route path="tracks" element={<ManageTracks />} />
+            <Route path="create-track" element={<CreateTrack />} />
+            <Route path="playlists" element={<ManagePlaylist />} />
+            <Route path="create-playlist" element={<CreatePlaylist />} />
+            <Route path="artists" element={<ManageArtists />} />
+            <Route path="create-artist" element={<CreateArtist />} />
             {adminRoutes.map((route, index) => {
               const Element = route.component;
               return <Route key={index} path={route.path} element={<Element />} />;
             })}
-          </Route>
+        </Route>
+
 
         </Routes>
       </BrowserRouter>

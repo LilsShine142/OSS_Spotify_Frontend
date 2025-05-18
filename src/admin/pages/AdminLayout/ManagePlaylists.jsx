@@ -3,59 +3,59 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Pencil, Trash2 } from "lucide-react";
 
-function ManageArtists() {
-  const [artists, setArtists] = useState([]);
+function ManagePlaylists() {
+  const [playlists, setPlaylists] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchArtists();
+    fetchPlaylists();
   }, []);
 
-  const fetchArtists = async () => {
+  const fetchPlaylists = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:8000/artists/");
-      setArtists(res.data);
+      const res = await axios.get("http://localhost:8000/playlists/");
+      setPlaylists(res.data);
     } catch {
-      alert("Lấy dữ liệu nghệ sĩ thất bại.");
+      alert("Lấy dữ liệu playlist thất bại.");
     } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm("Bạn có chắc muốn xóa nghệ sĩ này?")) {
+    if (window.confirm("Bạn có chắc muốn xóa playlist này?")) {
       try {
-        await axios.delete(`http://localhost:8000/artists/${id}/`);
-        fetchArtists();
-        alert("Xóa nghệ sĩ thành công.");
+        await axios.delete(`http://localhost:8000/playlists/${id}/`);
+        fetchPlaylists();
+        alert("Xóa playlist thành công.");
       } catch {
-        alert("Xóa nghệ sĩ thất bại.");
+        alert("Xóa playlist thất bại.");
       }
     }
   };
 
-  const filteredArtists = artists.filter((a) =>
-    a.name.toLowerCase().includes(search.toLowerCase())
+  const filteredPlaylists = playlists.filter((p) =>
+    p.title.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
     <div className="p-6 text-white min-h-screen">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold uppercase tracking-wide">Quản lý nghệ sĩ</h1>
+        <h1 className="text-3xl font-bold uppercase tracking-wide">Quản lý playlist</h1>
         <button
-          onClick={() => navigate("/admin/create-artist")}
+          onClick={() => navigate("/admin/create-playlist")}
           className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-full font-semibold transition"
         >
-          + Thêm nghệ sĩ
+          + Thêm playlist
         </button>
       </div>
 
       <input
         type="text"
-        placeholder="Tìm kiếm nghệ sĩ..."
+        placeholder="Tìm kiếm playlist..."
         className="w-full p-3 mb-6 bg-[#121212] text-white rounded-md border border-gray-700 placeholder-gray-500 focus:border-green-500 outline-none transition"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
@@ -68,7 +68,7 @@ function ManageArtists() {
             <tr>
               <th className="py-3 px-4 w-12">#</th>
               <th className="py-3 px-4">Ảnh</th>
-              <th className="py-3 px-4">Tên nghệ sĩ</th>
+              <th className="py-3 px-4">Tên playlist</th>
               <th className="py-3 px-4 w-48">Hành động</th>
             </tr>
           </thead>
@@ -79,35 +79,35 @@ function ManageArtists() {
                   Đang tải dữ liệu...
                 </td>
               </tr>
-            ) : filteredArtists.length > 0 ? (
-              filteredArtists.map((artist, index) => (
+            ) : filteredPlaylists.length > 0 ? (
+              filteredPlaylists.map((playlist, index) => (
                 <tr
-                  key={artist._id}
+                  key={playlist._id}
                   className="border-b border-gray-800 hover:bg-[#2a2a2a] transition-colors"
                 >
                   <td className="py-3 px-4">{index + 1}</td>
                   <td className="px-4 py-3">
                     <img
-                      src={artist.avatar || "/default-avatar.png"}
-                      alt={artist.name}
-                      className="w-12 h-12 rounded-full object-cover shadow"
+                      src={playlist.cover || "/default-cover.png"}
+                      alt={playlist.title}
+                      className="w-12 h-12 rounded object-cover shadow"
                     />
                   </td>
-                  <td className="py-3 px-4 font-medium truncate" title={artist.name}>
-                    {artist.name}
+                  <td className="py-3 px-4 font-medium truncate" title={playlist.title}>
+                    {playlist.title}
                   </td>
                   <td className="py-3 px-4 flex items-center gap-3">
                     <button
-                      onClick={() => navigate(`/admin/edit-artist/${artist._id}`)}
+                      onClick={() => navigate(`/admin/edit-playlist/${playlist._id}`)}
                       className="text-yellow-400 hover:text-yellow-500 transition"
-                      title="Chỉnh sửa nghệ sĩ"
+                      title="Chỉnh sửa playlist"
                     >
                       <Pencil size={20} />
                     </button>
                     <button
-                      onClick={() => handleDelete(artist._id)}
+                      onClick={() => handleDelete(playlist._id)}
                       className="text-red-500 hover:text-red-600 transition"
-                      title="Xóa nghệ sĩ"
+                      title="Xóa playlist"
                     >
                       <Trash2 size={20} />
                     </button>
@@ -117,7 +117,7 @@ function ManageArtists() {
             ) : (
               <tr>
                 <td colSpan="4" className="text-center text-gray-500 py-6">
-                  Không có nghệ sĩ nào.
+                  Không có playlist nào.
                 </td>
               </tr>
             )}
@@ -128,4 +128,4 @@ function ManageArtists() {
   );
 }
 
-export default ManageArtists;
+export default ManagePlaylists;

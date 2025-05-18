@@ -48,32 +48,33 @@ export default function AdminSidebar() {
           icon: <FiMusic />,
           label: "Bài hát",
           sub: [
-            { label: "Tất cả bài hát", path: "/tracks" },
-            { label: "Tạo mới", path: "/tracks/new" },
+            { label: "Tất cả bài hát", path: "/admin/tracks" },
+            { label: "Tạo bài hát mới", path: "/admin/create-track" },
           ],
         },
         {
           icon: <FiDisc />,
           label: "Album",
           sub: [
-            { label: "Tất cả album", path: "/albums" },
-            { label: "Tạo album", path: "/albums/new" },
+            { label: "Tất cả album", path: "/admin/albums" },
+            { label: "Tạo album", path: "/admin/create-album" },
+
           ],
         },
         {
           icon: <FiMic />,
           label: "Nghệ sĩ",
           sub: [
-            { label: "Danh sách nghệ sĩ", path: "/artists" },
-            { label: "Thêm nghệ sĩ", path: "/artists/new" },
+            { label: "Danh sách nghệ sĩ", path: "/admin/artists" },
+            { label: "Thêm nghệ sĩ", path: "/admin/create-artist" },
           ],
         },
         {
           icon: <FiList />,
           label: "Playlist",
           sub: [
-            { label: "Tất cả playlists", path: "/playlists" },
-            { label: "Tạo playlist", path: "/playlists/new" },
+            { label: "Tất cả playlists", path: "/admin/playlists" },
+            { label: "Tạo playlist", path: "/admin/create-playlist" },
           ],
         },
       ],
