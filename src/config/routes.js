@@ -33,9 +33,10 @@ const routes = {
     // register: '/register',
 
     // User
-    artist: (id) => `/home/artist/${id}`,
-    album_tracks_list: (id) => `/home/album/${id}`,
-    playlist_tracks_list: (id) => `/home/playlists/${id}`,
+    artist: (id) => `/artist/${id}`,
+    album_tracks_list: (id) => `/album/${id}`,
+    playlist_tracks_list: (id) => `/playlist/${id}`,
+    liked_songs_collection: '/collection/likedsongs',
     home: '/home',
     login: '/login',
     register: 'register',
