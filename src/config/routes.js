@@ -32,18 +32,22 @@ const routes = {
     // login: '/login',
     // register: '/register',
 
-     // Auth
+    // Auth
     login: '/login',
     register: '/register',
 
     // User
+    artist: (id) => `/artist/${id}`,
+    album_tracks_list: (id) => `/album/${id}`,
+    playlist_tracks_list: (id) => `/playlist/${id}`,
+    liked_songs_collection: '/collection/likedsongs',
     home: '/home',
-    artist: (id) => `/home/artist/${id}`,
-    album_tracks_list: (id) => `/home/album/${id}`,
-    playlist_tracks_list: (id) => `/home/playlists/${id}`,
+    login: '/login',
+    register: 'register',
     library: '/library',
     account: '/account',
     account_profile: '/account/profile',
+
     user_profile: (id) => `/user/profile/${id}`,
 
     // Admin

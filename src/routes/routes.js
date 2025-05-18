@@ -92,10 +92,12 @@ import Profile from "../client/pages/Account/profile";
 import UserProfile from "../client/layouts/components/User/UserProfile";
 import DefaultPage from "../client/layouts/Default/DefaultPage";
 import Library from "../client/pages/User/Library";
-
+import AdminLayout from "@/admin/pages/AdminLayout/Dashboard";
+import DetailTracksList from "@/components/AlbumTracksList/DetailTracksList";
 import AdminDashboard from "@/admin/pages/AdminLayout/Dashboard";
 import ManageAlbums from "@/admin/pages/AdminLayout/ManageAlbums";
 import ManageArtists from "@/admin/pages/AdminLayout/ManageArtists";
+
 // Các route sử dụng layout HomeLayout
 const layoutRoutes = [
     {
@@ -112,6 +114,10 @@ const layoutRoutes = [
     },
     {
         path: config.routes.playlist_tracks_list(':id'),
+        component: DetailTracksList,
+    },
+    {
+        path: config.routes.liked_songs_collection,
         component: AlbumTracksList,
     },
     {

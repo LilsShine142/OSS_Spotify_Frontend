@@ -69,7 +69,7 @@ const BoxCard = ({ playlist, width, variant = "default" }) => {
       onMouseLeave={() => setIsHovered(false)}
     >
       <Link
-        to={type && id ? `${type}/${id}` : "/default-page"} // Không / trước type thì cần giữ trong layout /home, tạm thời gắn default-page, sau có thể bỏ và áp dụng cho trang khác
+        to={type && id ? `/${type}/${id}` : "/default-page"} // Không / trước type thì cần giữ trong layout /home, tạm thời gắn default-page, sau có thể bỏ và áp dụng cho trang khác
         state={{ fromHome: true }}
         className="relative"
       >
