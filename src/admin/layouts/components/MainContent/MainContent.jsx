@@ -1,4 +1,5 @@
 import { assets } from "@/assets/assets";
+import React from "react";
 
 export default function MainContent({ children }) {
   return (
@@ -37,14 +38,15 @@ export default function MainContent({ children }) {
 
       {/* Content Area */}
       <div className="p-6">
-        {children || (
+        {React.Children.count(children) === 0 ? (
           <div className="text-center py-10">
-            <h3 className="text-2xl font-bold mb-2">
-              Chào mừng đến với Spotify Admin
-            </h3>
+            <h3 className="text-2xl font-bold mb-2">Chào mừng đến với Spotify Admin</h3>
             <p className="text-gray-400">Dữ liệu sẽ render tại đây</p>
           </div>
+        ) : (
+          children
         )}
+
       </div>
     </div>
   );

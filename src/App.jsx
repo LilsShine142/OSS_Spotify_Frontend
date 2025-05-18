@@ -28,6 +28,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { PlayerProvider } from "./context/PlayerContext/PlayerContext";
 import { layoutRoutes, standaloneRoutes, adminRoutes } from "./routes";
 import HomeLayout from "./client/pages/Home/home";
+import AdminLayout from "./admin/pages/AdminLayout/Dashboard";
 
 function App() {
   return (
@@ -53,12 +54,14 @@ function App() {
             );
           })}
 
-          {adminRoutes.map((route, index) => {
-            const Element = route.component;
-            return (
-              <Route key={index} path={route.path} element={<Element />} />
-            );
-          })}
+
+          <Route path="/admin" element={<AdminLayout />}>
+            {adminRoutes.map((route, index) => {
+              const Element = route.component;
+              return <Route key={index} path={route.path} element={<Element />} />;
+            })}
+          </Route>
+
         </Routes>
       </BrowserRouter>
     </PlayerProvider>
