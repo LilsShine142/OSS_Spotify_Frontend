@@ -32,6 +32,10 @@ const routes = {
     // login: '/login',
     // register: '/register',
 
+    // Auth
+    login: '/login',
+    register: '/register',
+
     // User
     artist: (id) => `/artist/${id}`,
     album_tracks_list: (id) => `/album/${id}`,
@@ -40,14 +44,21 @@ const routes = {
     home: '/home',
     login: '/login',
     register: 'register',
-    account: 'account',
-    account_profile: 'account/profile',
+    library: '/library',
+    account: '/account',
+    account_profile: '/account/profile',
+
     user_profile: (id) => `/user/profile/${id}`,
-    default_page: '*',
-    library: "/library", // ✅ Thêm dòng này
 
     // Admin
-    admin_dashboard: '/admin',
+    admin_dashboard: '/admin/dashboard',
+    admin_users: '/admin/users',
+    admin_songs: '/admin/songs',
+    admin_playlists: '/admin/playlists',
+    admin_albums: '/admin/albums',
+    admin_artists: '/admin/artists',
+
+    default_page: '*',
 };
 
 export default routes;
