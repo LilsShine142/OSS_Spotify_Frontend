@@ -69,14 +69,14 @@ export default function AdminSidebar() {
             { label: "Thêm nghệ sĩ", path: "/admin/create-artist" },
           ],
         },
-        {
-          icon: <FiList />,
-          label: "Playlist",
-          sub: [
-            { label: "Tất cả playlists", path: "/admin/playlists" },
-            { label: "Tạo playlist", path: "/admin/create-playlist" },
-          ],
-        },
+        // {
+        //   icon: <FiList />,
+        //   label: "Playlist",
+        //   sub: [
+        //     { label: "Tất cả playlists", path: "/admin/playlists" },
+        //     { label: "Tạo playlist", path: "/admin/create-playlist" },
+        //   ],
+        // },
       ],
     },
     {
