@@ -26,7 +26,7 @@ export default function EditArtist() {
 
       console.log("Fetching artist with ID:", artistId);
       try {
-        const res = await axios.get(`http://127.0.0.1:8000/spotify_app/artists/${artistId}/`, {
+        const res = await axios.get(`http://127.0.0.1:8000/spotify_app/artists/${artistId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         console.log("Artist data:", res.data);
@@ -79,7 +79,7 @@ export default function EditArtist() {
     setLoading(true);
     try {
       const res = await axios.put(
-        `http://127.0.0.1:8000/spotify_app/artists/${artistId}/update/`,
+        `http://127.0.0.1:8000/spotify_app/artists/${artistId}/update`,
         payload,
         {
           headers: { Authorization: `Bearer ${token}` },
