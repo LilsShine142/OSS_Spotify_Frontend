@@ -1,224 +1,212 @@
 import React, { useState, useEffect } from 'react';
-import { FaComments, FaRobot, FaPlus, FaSignInAlt } from 'react-icons/fa';
+import { toast } from 'react-toastify';
 import CreateRoomModal from './CreateRoomModal';
+import ChatRoom from './ChatRoom';
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
-const ChatSection = ({ isOpen, onClose, userId }) => {
-  const [activeTab, setActiveTab] = useState('group');
+const ChatSection = ({ userId }) => {
+  const [rooms, setRooms] = useState([]);
+  const [selectedRoom, setSelectedRoom] = useState(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showJoinModal, setShowJoinModal] = useState(false);
   const [roomCode, setRoomCode] = useState('');
   const [joinError, setJoinError] = useState('');
-  const [rooms, setRooms] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [isSidebarMinimized, setIsSidebarMinimized] = useState(false);
 
   useEffect(() => {
-    if (isOpen && userId) {
-      fetchUserRooms();
+    if (!userId) {
+      console.error('No user ID provided to ChatSection');
+      toast.error('Please log in to use chat');
+      return;
     }
-  }, [isOpen, userId]);
+    loadRooms();
+  }, [userId]);
 
-  const fetchUserRooms = async () => {
-    setLoading(true);
-    setError('');
+  const loadRooms = async () => {
     try {
-      console.log('Fetching rooms for user:', userId);
-      const response = await fetch(`/chatting/rooms/user/?user_id=${userId}`, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-        },
-        credentials: 'include',
-      });
-
-      console.log('Response status:', response.status);
-      const responseText = await response.text();
-      console.log('Raw response:', responseText);
-
+      console.log('Loading rooms for user:', userId);
+      const response = await fetch(`/chatting/rooms/user/?user_id=${userId}`);
       if (!response.ok) {
-        throw new Error(`Failed to fetch rooms: ${response.status} ${responseText}`);
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to load rooms');
       }
-
-      let data;
-      try {
-        data = JSON.parse(responseText);
-      } catch (e) {
-        console.error('Failed to parse JSON response:', e);
-        throw new Error('Invalid response format from server');
-      }
-
-      console.log('Parsed response data:', data);
-      
-      if (!data.results) {
-        throw new Error('No rooms data in response');
-      }
-
+      const data = await response.json();
+      console.log('Rooms loaded successfully:', data.results);
       setRooms(data.results);
-    } catch (err) {
-      console.error('Error fetching rooms:', err);
-      setError(err.message || 'Failed to load rooms. Please try again.');
+    } catch (error) {
+      console.error('Error loading rooms:', error);
+      toast.error(error.message || 'Failed to load rooms');
     } finally {
       setLoading(false);
     }
   };
 
   const handleRoomCreated = (newRoom) => {
-    setRooms(prevRooms => [newRoom, ...prevRooms]);
+    setRooms(prev => [newRoom, ...prev]);
+    setSelectedRoom(newRoom);
   };
 
   const handleJoinRoom = async () => {
-    if (!roomCode || roomCode.length !== 6) {
-      setJoinError('Please enter a valid 6-character room code');
+    if (!roomCode) {
+      setJoinError('Please enter a room code');
       return;
     }
 
     try {
-      const response = await fetch(`/chatting/rooms/find/${roomCode}/`, {
-        method: 'GET',
+      const findResponse = await fetch(`/chatting/rooms/find/${roomCode}/`);
+      const findData = await findResponse.json();
+
+      if (!findResponse.ok) {
+        setJoinError('Room not found');
+        return;
+      }
+
+      const joinResponse = await fetch(`/chatting/rooms/${findData.room_id}/join/`, {
+        method: 'POST',
         headers: {
-          'Accept': 'application/json',
+          'Content-Type': 'application/json',
         },
-        credentials: 'include',
+        body: JSON.stringify({ user_id: userId }),
       });
 
-      const data = await response.json();
-      
-      if (response.ok && data.status === 'success') {
-        // If room found, try to join it
-        const joinResponse = await fetch(`/chatting/rooms/${data.room_id}/join/`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-          },
-          credentials: 'include',
-          body: JSON.stringify({ user_id: userId }),
-        });
-
-        const joinData = await joinResponse.json();
-        
-        if (joinResponse.ok) {
-          // Refresh rooms list
-          fetchUserRooms();
-          setShowJoinModal(false);
-          setRoomCode('');
-          setJoinError('');
-        } else {
-          setJoinError(joinData.error || 'Failed to join room');
-        }
+      if (joinResponse.ok) {
+        toast.success('Joined room successfully');
+        await loadRooms();
+        setShowJoinModal(false);
+        setRoomCode('');
+        setJoinError('');
       } else {
-        setJoinError('Room not found');
+        const data = await joinResponse.json();
+        setJoinError(data.error || 'Failed to join room');
       }
-    } catch (err) {
-      console.error('Error joining room:', err);
-      setJoinError('Failed to join room. Please try again.');
+    } catch (error) {
+      console.error('Error joining room:', error);
+      setJoinError('Failed to join room');
     }
   };
 
-  if (!isOpen) return null;
+  const handleLeaveRoom = async () => {
+    setSelectedRoom(null);
+    await loadRooms();
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-full bg-[#121212]">
+        <div className="text-white">Loading rooms...</div>
+      </div>
+    );
+  }
 
   return (
-    <div className="fixed right-0 top-0 h-full w-80 bg-[#181818] shadow-lg z-50">
-      <div className="p-4 border-b border-gray-700">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold text-white">Chat</h2>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-white"
-          >
-            &times;
-          </button>
+    <div className="flex h-full bg-[#121212]">
+      {/* Sidebar - Made even smaller with toggle */}
+      <div className={`${isSidebarMinimized ? 'w-12' : 'w-48'} bg-[#181818] border-r border-[#282828] flex flex-col transition-all duration-300 relative`}>
+        {/* Toggle button - Moved inside sidebar */}
+        <button
+          onClick={() => setIsSidebarMinimized(!isSidebarMinimized)}
+          className="absolute -right-3 top-3 bg-[#282828] text-white p-1.5 rounded-full hover:bg-[#333333] transition-colors z-10 border border-[#404040]"
+        >
+          {isSidebarMinimized ? <FaChevronRight size={10} /> : <FaChevronLeft size={10} />}
+        </button>
+
+        <div className="p-2 border-b border-[#282828]">
+          {!isSidebarMinimized && (
+            <>
+              <h2 className="text-base font-bold text-white mb-2">Chat Rooms</h2>
+              <div className="space-y-1.5">
+                <button
+                  onClick={() => setShowCreateModal(true)}
+                  className="w-full px-2 py-1.5 bg-[#1DB954] text-white rounded-full text-xs font-medium hover:bg-[#1ed760] transition-colors duration-200"
+                >
+                  Create Room
+                </button>
+                <button
+                  onClick={() => setShowJoinModal(true)}
+                  className="w-full px-2 py-1.5 bg-[#282828] text-white rounded-full text-xs font-medium hover:bg-[#333333] transition-colors duration-200"
+                >
+                  Join Room
+                </button>
+              </div>
+            </>
+          )}
         </div>
-        <div className="flex space-x-4">
-          <button
-            className={`flex items-center space-x-2 px-4 py-2 rounded ${
-              activeTab === 'group' ? 'bg-green-500 text-white' : 'text-gray-400 hover:text-white'
-            }`}
-            onClick={() => setActiveTab('group')}
-          >
-            <FaComments />
-            <span>Group Chat</span>
-          </button>
-          <button
-            className={`flex items-center space-x-2 px-4 py-2 rounded ${
-              activeTab === 'ai' ? 'bg-green-500 text-white' : 'text-gray-400 hover:text-white'
-            }`}
-            onClick={() => setActiveTab('ai')}
-          >
-            <FaRobot />
-            <span>AI Chat</span>
-          </button>
+
+        <div className="flex-1 overflow-y-auto">
+          {!isSidebarMinimized && (
+            rooms.length === 0 ? (
+              <div className="text-center text-gray-400 mt-2 p-2">
+                <p className="text-xs mb-0.5">No rooms yet</p>
+                <p className="text-[10px]">Create or join a room</p>
+              </div>
+            ) : (
+              <div className="p-1.5">
+                {rooms.map(room => (
+                  <button
+                    key={room._id}
+                    onClick={() => setSelectedRoom(room)}
+                    className={`w-full p-2 text-left rounded-lg mb-1 transition-all duration-200 ${
+                      selectedRoom?._id === room._id
+                        ? 'bg-[#1DB954] text-white shadow-lg'
+                        : 'text-gray-300 hover:bg-[#282828] hover:shadow-md'
+                    }`}
+                  >
+                    <div className="font-medium text-xs mb-0.5 truncate">{room.name}</div>
+                    <div className="text-[10px] opacity-75">
+                      {room.is_host ? 'You are host' : 'Member'}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )
+          )}
         </div>
       </div>
 
-      {activeTab === 'group' && (
-        <div className="p-4">
-          <div className="flex gap-2">
-            <button
-              onClick={() => setShowCreateModal(true)}
-              className="flex-1 flex items-center justify-center space-x-2 bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition-colors"
-            >
-              <FaPlus />
-              <span>Create Room</span>
-            </button>
-            <button
-              onClick={() => setShowJoinModal(true)}
-              className="flex-1 flex items-center justify-center space-x-2 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors"
-            >
-              <FaSignInAlt />
-              <span>Join Room</span>
-            </button>
-          </div>
-
-          <div className="mt-4">
-            <h3 className="text-white font-semibold mb-2">Your Rooms</h3>
-            {loading ? (
-              <div className="text-gray-400">Loading rooms...</div>
-            ) : error ? (
-              <div className="text-red-400">{error}</div>
-            ) : rooms.length === 0 ? (
-              <div className="text-gray-400">No rooms yet. Create one to get started!</div>
-            ) : (
-              <div className="space-y-3 max-h-[calc(100vh-300px)] overflow-y-auto pr-2">
-                {rooms.map(room => (
-                  <div
-                    key={room._id}
-                    className="p-4 bg-[#242424] rounded-lg hover:bg-[#2a2a2a] cursor-pointer transition-all duration-200 border border-transparent hover:border-green-500/20 group"
-                  >
-                    <div className="flex justify-between items-start mb-2">
-                      <div className="flex-1">
-                        <h4 className="text-white font-medium group-hover:text-green-400 transition-colors">{room.name}</h4>
-                        <p className="text-gray-400 text-sm mt-1 line-clamp-2">{room.description || 'No description'}</p>
-                      </div>
-                      {room.is_host && (
-                        <span className="text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded-full border border-green-500/30">
-                          Host
-                        </span>
-                      )}
-                    </div>
-                    <div className="flex items-center justify-between mt-3 text-xs">
-                      <div className="flex items-center text-gray-500">
-                        <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-                        Host: {room.host.name}
-                      </div>
-                      <div className="text-gray-500">
-                        {new Date(room.created_at).toLocaleDateString()}
-                      </div>
-                    </div>
-                  </div>
-                ))}
+      {/* Chat area */}
+      <div className="flex-1 bg-[#121212] flex flex-col">
+        {selectedRoom ? (
+          <div className="flex-1 flex flex-col">
+            {/* Room header */}
+            <div className="p-3 border-b border-[#282828] bg-[#181818]">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-bold text-white">{selectedRoom.name}</h3>
+                  <p className="text-xs text-gray-400 mt-0.5">
+                    {selectedRoom.is_host ? 'You are the host' : 'You are a member'}
+                  </p>
+                </div>
+                <button
+                  onClick={handleLeaveRoom}
+                  className="px-2 py-1 text-xs text-gray-400 hover:text-white transition-colors"
+                >
+                  Leave Room
+                </button>
               </div>
-            )}
+            </div>
+            
+            {/* Chat messages area */}
+            <div className="flex-1">
+              <ChatRoom
+                room={selectedRoom}
+                userId={userId}
+                onLeave={handleLeaveRoom}
+                isSidebarMinimized={isSidebarMinimized}
+              />
+            </div>
           </div>
-        </div>
-      )}
+        ) : (
+          <div className="flex items-center justify-center h-full">
+            <div className="text-center text-gray-400">
+              <p className="text-lg font-bold mb-1.5">Select a room to start chatting</p>
+              <p className="text-sm">or create a new one</p>
+            </div>
+          </div>
+        )}
+      </div>
 
-      {activeTab === 'ai' && (
-        <div className="p-4">
-          <div className="text-gray-400">AI Chat coming soon...</div>
-        </div>
-      )}
-
+      {/* Modals */}
       {showCreateModal && (
         <CreateRoomModal
           isOpen={showCreateModal}
@@ -229,10 +217,10 @@ const ChatSection = ({ isOpen, onClose, userId }) => {
       )}
 
       {showJoinModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-[#242424] p-6 rounded-lg w-96">
-            <h3 className="text-white text-xl font-semibold mb-4">Join Room</h3>
-            <div className="mb-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75">
+          <div className="bg-[#181818] p-4 rounded-xl w-[350px] shadow-2xl">
+            <h3 className="text-lg font-bold text-white mb-3">Join Room</h3>
+            <div className="mb-3">
               <input
                 type="text"
                 value={roomCode}
@@ -242,10 +230,10 @@ const ChatSection = ({ isOpen, onClose, userId }) => {
                   setJoinError('');
                 }}
                 placeholder="Enter 6-character room code"
-                className="w-full p-2 bg-[#181818] text-white rounded border border-gray-700 focus:border-green-500 focus:outline-none"
+                className="w-full p-2 bg-[#282828] text-white rounded-lg border border-[#404040] focus:border-[#1DB954] focus:outline-none text-xs"
               />
               {joinError && (
-                <p className="text-red-500 text-sm mt-1">{joinError}</p>
+                <p className="text-red-500 text-xs mt-1.5">{joinError}</p>
               )}
             </div>
             <div className="flex justify-end space-x-2">
@@ -255,13 +243,13 @@ const ChatSection = ({ isOpen, onClose, userId }) => {
                   setRoomCode('');
                   setJoinError('');
                 }}
-                className="px-4 py-2 text-gray-400 hover:text-white transition-colors"
+                className="px-2 py-1.5 text-gray-400 hover:text-white transition-colors font-medium text-xs"
               >
                 Cancel
               </button>
               <button
                 onClick={handleJoinRoom}
-                className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
+                className="px-2 py-1.5 bg-[#1DB954] text-white rounded-full font-medium hover:bg-[#1ed760] transition-colors text-xs"
               >
                 Join
               </button>

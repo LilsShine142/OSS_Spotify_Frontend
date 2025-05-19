@@ -303,11 +303,13 @@ const Header = () => {
       </div>
 
       {/* Chat Section */}
-      <ChatSection 
-        isOpen={isChatOpen} 
-        onClose={() => setIsChatOpen(false)}
-        userId={detailedUser?.user?.data?._id}
-      />
+      {isChatOpen && (
+        <div className="fixed top-[9%] right-0 w-[800px] h-[91vh] bg-gradient-to-b from-[#0d1a2d] to-black shadow-lg z-50 border-l border-gray-700 overflow-y-auto overflow-x-hidden scrollbar-w-3 scrollbar scrollbar-thumb-gray-700 scrollbar-track-transparent">
+          <ChatSection 
+            userId={detailedUser?.user?.data?._id}
+          />
+        </div>
+      )}
     </div>
   );
 };
