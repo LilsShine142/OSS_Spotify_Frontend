@@ -98,6 +98,7 @@ export const assets = {
     sobin_artist,
     orange_artist,
     rose_artist,
+    song1,
 }
 
 export const albumsData = [

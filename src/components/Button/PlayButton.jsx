@@ -1,17 +1,106 @@
-import React, { useContext } from "react";
+// import React, { useContext } from "react";
+// import { RenderIcon } from "./RenderIcon";
+// import { assets } from "../../assets/assets";
+// import { PlayerContext } from "../../context/PlayerContext/PlayerContext";
+
+// const PlayButton = ({
+//   isActive = true,
+//   size = "medium",
+//   itemId,
+//   itemType,
+//   variant = "list",
+//   isBar = false,
+//   isPlaying: propIsPlaying, // Nhận từ props (tuỳ chọn)
+//   onTogglePlay: propOnTogglePlay, // Nhận từ props (tuỳ chọn)
+// }) => {
+//   const sizeClasses = {
+//     small: "w-8 h-8",
+//     medium: "w-12 h-12",
+//     large: "w-14 h-14",
+//   };
+
+//   // Lấy từ Context nếu không truyền từ props
+//   const { nowPlaying, setNowPlaying } = useContext(PlayerContext);
+//   console.log("nowPlaying", nowPlaying);
+//   const contextIsPlaying =
+//     nowPlaying?.id === itemId && nowPlaying.type === itemType;
+
+//   // Ưu tiên dùng prop nếu được truyền, không thì dùng context
+//   const isPlaying =
+//     propIsPlaying !== undefined ? propIsPlaying : contextIsPlaying;
+
+//   const handleToggle = (e) => {
+//     e.stopPropagation();
+
+//     if (propOnTogglePlay) {
+//       // Nếu có callback từ props thì gọi nó
+//       propOnTogglePlay();
+//     } else {
+//       // Ngược lại dùng Context
+//       if (isPlaying) {
+//         setNowPlaying({ id: null, type: null });
+//       } else {
+//         setNowPlaying({ id: itemId, type: itemType });
+//       }
+//     }
+//   };
+
+//   if (!isActive) return null;
+
+//   const positionClasses =
+//     variant === "list"
+//       ? "right-0 top-1/2 -translate-y-1/2"
+//       : variant === "playlist" || variant === "artist" || variant === "album"
+//       ? "right-[15px] bottom-[85px]"
+//       : "";
+
+//   return (
+//     <div
+//       className={`absolute ${positionClasses} ${positionClasses} p-[6px] flex items-center justify-center `}
+//     >
+//       <div
+//         className={`${isBar ? "bg-white" : " bg-green-500"} rounded-full ${
+//           sizeClasses[size]
+//         } p-2 flex items-center justify-center hover:scale-110 transition-transform shadow-lg`}
+//         onClick={handleToggle}
+//       >
+//         <RenderIcon
+//           iconName={isPlaying ? assets.pause_icon : assets.play_icon}
+//           altText={isPlaying ? "Tạm dừng" : "Phát"}
+//           className="w-4 h-4"
+//           isPlayPause={true}
+//         />
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default PlayButton;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import React from "react";
 import { RenderIcon } from "./RenderIcon";
 import { assets } from "../../assets/assets";
-import { PlayerContext } from "../../context/PlayerContext/PlayerContext";
+import { usePlayer } from "../../context/PlayerContext/PlayerContext";
 
 const PlayButton = ({
   isActive = true,
   size = "medium",
-  itemId,
-  itemType,
+  track, // object bài hát
   variant = "list",
   isBar = false,
-  isPlaying: propIsPlaying, // Nhận từ props (tuỳ chọn)
-  onTogglePlay: propOnTogglePlay, // Nhận từ props (tuỳ chọn)
 }) => {
   const sizeClasses = {
     small: "w-8 h-8",
@@ -19,28 +108,19 @@ const PlayButton = ({
     large: "w-14 h-14",
   };
 
-  // Lấy từ Context nếu không truyền từ props
-  const { nowPlaying, setNowPlaying } = useContext(PlayerContext);
-  const contextIsPlaying =
-    nowPlaying.id === itemId && nowPlaying.type === itemType;
+  const { playerState, play, pause } = usePlayer();
 
-  // Ưu tiên dùng prop nếu được truyền, không thì dùng context
-  const isPlaying =
-    propIsPlaying !== undefined ? propIsPlaying : contextIsPlaying;
+  // Kiểm tra xem bài hát hiện tại có đang phát không
+  const isCurrentTrack = playerState.currentTrack?._id === track?._id;
+  const isPlaying = isCurrentTrack && playerState.isPlaying;
 
   const handleToggle = (e) => {
     e.stopPropagation();
 
-    if (propOnTogglePlay) {
-      // Nếu có callback từ props thì gọi nó
-      propOnTogglePlay();
+    if (isPlaying) {
+      pause();
     } else {
-      // Ngược lại dùng Context
-      if (isPlaying) {
-        setNowPlaying({ id: null, type: null });
-      } else {
-        setNowPlaying({ id: itemId, type: itemType });
-      }
+      play(track);
     }
   };
 
@@ -55,10 +135,10 @@ const PlayButton = ({
 
   return (
     <div
-      className={`absolute ${positionClasses} ${positionClasses} p-[6px] flex items-center justify-center `}
+      className={`absolute ${positionClasses} p-[6px] flex items-center justify-center`}
     >
       <div
-        className={`${isBar ? "bg-white" : " bg-green-500"} rounded-full ${
+        className={`${isBar ? "bg-white" : "bg-green-500"} rounded-full ${
           sizeClasses[size]
         } p-2 flex items-center justify-center hover:scale-110 transition-transform shadow-lg`}
         onClick={handleToggle}
