@@ -31,6 +31,7 @@ import HomeLayout from "./client/pages/Home/home";
 import AdminLayout from "./admin/pages/AdminLayout/Dashboard";
 import ManageAlbums from "./admin/pages/AdminLayout/ManageAlbums";
 import CreateAlbum from "./admin/pages/AdminLayout/CreateAlbum";
+import EditAlbum from "./admin/pages/AdminLayout/EditAlbum";
 import ManageTracks from "./admin/pages/AdminLayout/ManageTracks";
 import CreateTrack from "./admin/pages/AdminLayout/CreateTrack";
 import ManagePlaylist from "./admin/pages/AdminLayout/ManagePlaylists";
@@ -80,8 +81,8 @@ function App() {
 
           <Route path="/admin" element={<AdminLayout />}>
             <Route path="albums" element={<ManageAlbums />} />
-            <Route path="create-album" element={<CreateAlbum />} /> {/* ✅ ĐÃ SỬA */}
-            {/* <Route path="albums" element={<ManageAlbums />} /> */}
+            <Route path="create-album" element={<CreateAlbum />} /> 
+            <Route path="edit-album/:albumId" element={<EditAlbum />} />
             <Route path="tracks" element={<ManageTracks />} />
             <Route path="create-track" element={<CreateTrack />} />
             <Route path="playlists" element={<ManagePlaylist />} />

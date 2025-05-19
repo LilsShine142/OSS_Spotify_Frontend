@@ -1,9 +1,8 @@
-
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-export default function CreateAlbum() {
+export default function EditAlbum() {
   const [albumName, setAlbumName] = useState("");
   const [artistId, setArtistId] = useState("");
   const [releaseDate, setReleaseDate] = useState("");
@@ -13,11 +12,18 @@ export default function CreateAlbum() {
   const [coverFile, setCoverFile] = useState(null);
   const [artists, setArtists] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [fetchingArtists, setFetchingArtists] = useState(true);
+  const [fetching, setFetching] = useState(true);
   const navigate = useNavigate();
+  const { albumId } = useParams();
 
   useEffect(() => {
-    async function fetchArtists() {
+    if (!albumId) {
+      alert("Không tìm thấy ID album!");
+      navigate("/admin/albums");
+      return;
+    }
+
+    const fetchArtistsAndAlbum = async () => {
       const userData = JSON.parse(localStorage.getItem("userData"));
       const token = userData?.token;
       if (!token) {
@@ -25,36 +31,47 @@ export default function CreateAlbum() {
         navigate("/login");
         return;
       }
+
       try {
-        setFetchingArtists(true);
-        const res = await axios.get("http://localhost:8000/spotify_app/artists/", {
+        const artistsRes = await axios.get("http://localhost:8000/spotify_app/artists/", {
           headers: { Authorization: `Bearer ${token}` },
         });
-        console.log("Artists response:", res.data);
-        const data = res.data.results || res.data || [];
-        setArtists(Array.isArray(data) ? data : []);
+        console.log("Artists response:", artistsRes.data); // Debug response
+        const artistData = artistsRes.data.results || artistsRes.data || [];
+        setArtists(Array.isArray(artistData) ? artistData : []);
+
+        const albumRes = await axios.get(`http://localhost:8000/spotify_app/albums/${albumId}/`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const album = albumRes.data;
+        setAlbumName(album.album_name || "");
+        setArtistId(album.artist || "");
+        setReleaseDate(album.release_date ? album.release_date.split("T")[0] : "");
+        setTotalTracks(album.total_tracks || "");
+        setIsfromDB(album.isfromDB ?? true);
+        setIsHidden(album.isHidden ?? false);
       } catch (error) {
-        console.error("Lỗi tải nghệ sĩ:", error.response);
-        alert("Không thể tải danh sách nghệ sĩ. Vui lòng thử lại.");
+        const errorMsg = error.response?.data?.error || "Lấy dữ liệu album thất bại.";
+        alert(errorMsg);
+        console.error("Error fetching data:", error.response);
+        navigate("/admin/albums");
       } finally {
-        setFetchingArtists(false);
+        setFetching(false);
       }
-    }
-    fetchArtists();
-  }, [navigate]);
+    };
+
+    fetchArtistsAndAlbum();
+  }, [albumId, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!albumName.trim()) {
       alert("Tên album không được để trống!");
       return;
     }
     if (!artistId) {
       alert("Vui lòng chọn nghệ sĩ cho album!");
-      return;
-    }
-    if (!releaseDate) {
-      alert("Ngày phát hành không được để trống!");
       return;
     }
 
@@ -71,43 +88,40 @@ export default function CreateAlbum() {
     formData.append("artist", artistId);
     formData.append("release_date", releaseDate);
     formData.append("total_tracks", totalTracks || "0");
-    formData.append("isfromDB", isfromDB ? "true" : "false");
-    formData.append("isHidden", isHidden ? "true" : "false");
-    if (coverFile) {
-      formData.append("cover_img", coverFile);
-    }
+    formData.append("isfromDB", isfromDB.toString());
+    formData.append("isHidden", isHidden.toString());
+    if (coverFile) formData.append("cover_img", coverFile);
 
     setLoading(true);
     try {
-      await axios.post("http://localhost:8000/spotify_app/albums/create/", formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      alert("Tạo album thành công!");
+      await axios.put(
+        `http://localhost:8000/spotify_app/albums/${albumId}/update/`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      alert("Cập nhật album thành công!");
       navigate("/admin/albums");
     } catch (error) {
-      let errorMsg = "Tạo album thất bại.";
-      if (error.response?.data) {
-        if (error.response.data.error) {
-          errorMsg = error.response.data.error;
-        } else if (error.response.data.details) {
-          errorMsg = `Lỗi: ${Object.entries(error.response.data.details)
-            .map(([field, errors]) => `${field}: ${Array.isArray(errors) ? errors.join(", ") : errors}`)
-            .join("; ")}`;
-        }
-      }
+      const errorMsg = error.response?.data?.error || "Cập nhật album thất bại.";
       alert(errorMsg);
-      console.error("Error creating album:", error.response);
+      console.error("Error updating album:", error.response);
     } finally {
       setLoading(false);
     }
   };
 
+  if (fetching) {
+    return <div className="p-6 text-white text-center">Đang tải dữ liệu...</div>;
+  }
+
   return (
     <div className="p-6 max-w-md mx-auto text-white">
-      <h1 className="text-3xl font-bold mb-6">Tạo Album mới</h1>
+      <h1 className="text-3xl font-bold mb-6">Chỉnh sửa Album</h1>
       <form
         onSubmit={handleSubmit}
         className="bg-[#121212] p-8 rounded-lg flex flex-col gap-6"
@@ -130,11 +144,11 @@ export default function CreateAlbum() {
             value={artistId}
             onChange={(e) => setArtistId(e.target.value)}
             required
-            disabled={fetchingArtists}
+            disabled={fetching}
             className="p-3 rounded bg-[#282828] text-white border border-gray-700 focus:border-green-500 outline-none transition"
           >
             <option value="">-- Chọn nghệ sĩ --</option>
-            {fetchingArtists ? (
+            {fetching ? (
               <option disabled>Đang tải...</option>
             ) : artists.length > 0 ? (
               artists.map((artist) => (
@@ -154,7 +168,6 @@ export default function CreateAlbum() {
             type="date"
             value={releaseDate}
             onChange={(e) => setReleaseDate(e.target.value)}
-            required
             className="p-3 rounded bg-[#282828] text-white border border-gray-700 focus:border-green-500 outline-none transition"
           />
         </label>
@@ -213,7 +226,7 @@ export default function CreateAlbum() {
             disabled={loading}
             className="bg-green-600 hover:bg-green-700 disabled:opacity-50 px-6 py-3 rounded-full font-semibold transition"
           >
-            {loading ? "Đang tạo..." : "Tạo album"}
+            {loading ? "Đang cập nhật..." : "Cập nhật album"}
           </button>
         </div>
       </form>
