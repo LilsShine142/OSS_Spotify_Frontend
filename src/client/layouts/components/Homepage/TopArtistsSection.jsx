@@ -1,26 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import PlaylistCarousel from "@/components/BoxCard/PlaylistCarousel";
 
-export const artists = []; // Initialize as empty
-
-const TopArtistsSection = () => {
-    const [artistsData, setArtistsData] = useState([]);
-
-    useEffect(() => {
-        const fetchArtists = async () => {
-            try {
-                const response = await fetch("http://127.0.0.1:8000/spotify_api/top-artists/");
-                const data = await response.json();
-                setArtistsData(data); // Update state
-                artists.push(...data); // Save as JSON without altering frontend structure
-            } catch (error) {
-                console.error("Error fetching top artists:", error);
-            }
-        };
-
-        fetchArtists();
-    }, []);
-
+const TopArtistsSection = ({ artists = [] }) => {
     return (
         <section className="flex flex-col">
             <div className="flex justify-between items-center">
@@ -30,7 +11,7 @@ const TopArtistsSection = () => {
                 </button>
             </div>
             <div className="flex pb-4 scrollbar-hide -ml-6">
-                <PlaylistCarousel playlists={artistsData} variant="artist" />
+                <PlaylistCarousel playlists={artists} variant="artist" />
             </div>
         </section>
     );

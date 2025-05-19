@@ -16,5 +16,18 @@ export default defineConfig({
   server: {
     host: '127.0.0.1',
     port: 5173,
-},
+    proxy: {
+      '/chatting': {
+        target: 'http://127.0.0.1:8000',
+        changeOrigin: true,
+        secure: false,
+      },
+      '/ws': {
+        target: 'ws://127.0.0.1:8001',
+        ws: true,
+        changeOrigin: true,
+        secure: false,
+      }
+    }
+  },
 });
