@@ -111,7 +111,7 @@ export default function AdminSidebar() {
         {
           icon: <FiBarChart2 />,
           label: "Thống kê người dùng",
-          sub: [{ label: "Tổng quan", path: "/admin/statistica" }],
+          sub: [{ label: "Tổng quan", path: "/admin/statistical" }],
         },
         {
           icon: <FiTrendingUp />,
