@@ -1,8 +1,7 @@
-
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
+import { uploadToCloudinary } from "../../../services/CloudUploadService/CloudService";
 export default function CreateAlbum() {
   const [albumName, setAlbumName] = useState("");
   const [artistId, setArtistId] = useState("");
@@ -27,14 +26,17 @@ export default function CreateAlbum() {
       }
       try {
         setFetchingArtists(true);
-        const res = await axios.get("http://localhost:8000/spotify_app/artists/", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await axios.get(
+          "http://localhost:8000/spotify_app/artists/",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         console.log("Artists response:", res.data);
         const data = res.data.results || res.data || [];
         setArtists(Array.isArray(data) ? data : []);
       } catch (error) {
-        console.error("Lỗi tải nghệ sĩ:", error.response);
+        console.error("Lỗi tải nghệ sĩ:", error.response?.data);
         alert("Không thể tải danh sách nghệ sĩ. Vui lòng thử lại.");
       } finally {
         setFetchingArtists(false);
@@ -57,6 +59,14 @@ export default function CreateAlbum() {
       alert("Ngày phát hành không được để trống!");
       return;
     }
+    if (totalTracks && totalTracks < 0) {
+      alert("Số lượng bài hát không thể âm!");
+      return;
+    }
+    if (coverFile && !coverFile.type.startsWith("image/")) {
+      alert("Vui lòng chọn file ảnh (jpg, png, ...)");
+      return;
+    }
 
     const userData = JSON.parse(localStorage.getItem("userData"));
     const token = userData?.token;
@@ -74,17 +84,34 @@ export default function CreateAlbum() {
     formData.append("isfromDB", isfromDB ? "true" : "false");
     formData.append("isHidden", isHidden ? "true" : "false");
     if (coverFile) {
-      formData.append("cover_img", coverFile);
+      let imageUrl = coverFile;
+
+      // Nếu profileImg là một file mới chọn (File object)
+      if (profileImg instanceof File) {
+        imageUrl = await uploadToCloudinary(profileImg, (progress) => {
+          console.log("Upload progress:", progress);
+        });
+      }
+      formData.append("cover_img", imageUrl);
+    }
+
+    for (let [key, value] of formData.entries()) {
+      console.log(`FormData: ${key} =`, value);
     }
 
     setLoading(true);
     try {
-      await axios.post("http://localhost:8000/spotify_app/albums/create/", formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const res = await axios.post(
+        "http://localhost:8000/spotify_app/albums/create/",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      console.log("Create album response:", res.data);
       alert("Tạo album thành công!");
       navigate("/admin/albums");
     } catch (error) {
@@ -94,12 +121,17 @@ export default function CreateAlbum() {
           errorMsg = error.response.data.error;
         } else if (error.response.data.details) {
           errorMsg = `Lỗi: ${Object.entries(error.response.data.details)
-            .map(([field, errors]) => `${field}: ${Array.isArray(errors) ? errors.join(", ") : errors}`)
+            .map(
+              ([field, errors]) =>
+                `${field}: ${
+                  Array.isArray(errors) ? errors.join(", ") : errors
+                }`
+            )
             .join("; ")}`;
         }
       }
       alert(errorMsg);
-      console.error("Error creating album:", error.response);
+      console.error("Error creating album:", error.response?.data);
     } finally {
       setLoading(false);
     }
@@ -120,6 +152,7 @@ export default function CreateAlbum() {
             onChange={(e) => setAlbumName(e.target.value)}
             placeholder="Nhập tên album"
             required
+            disabled={loading}
             className="p-3 rounded bg-[#282828] text-white border border-gray-700 placeholder-gray-400 focus:border-green-500 outline-none transition"
           />
         </label>
@@ -130,7 +163,7 @@ export default function CreateAlbum() {
             value={artistId}
             onChange={(e) => setArtistId(e.target.value)}
             required
-            disabled={fetchingArtists}
+            disabled={loading || fetchingArtists}
             className="p-3 rounded bg-[#282828] text-white border border-gray-700 focus:border-green-500 outline-none transition"
           >
             <option value="">-- Chọn nghệ sĩ --</option>
@@ -155,6 +188,7 @@ export default function CreateAlbum() {
             value={releaseDate}
             onChange={(e) => setReleaseDate(e.target.value)}
             required
+            disabled={loading}
             className="p-3 rounded bg-[#282828] text-white border border-gray-700 focus:border-green-500 outline-none transition"
           />
         </label>
@@ -166,6 +200,7 @@ export default function CreateAlbum() {
             value={totalTracks}
             onChange={(e) => setTotalTracks(e.target.value)}
             placeholder="Nhập số lượng bài hát"
+            disabled={loading}
             className="p-3 rounded bg-[#282828] text-white border border-gray-700 focus:border-green-500 outline-none transition"
           />
         </label>
@@ -176,6 +211,7 @@ export default function CreateAlbum() {
             type="checkbox"
             checked={isfromDB}
             onChange={(e) => setIsfromDB(e.target.checked)}
+            disabled={loading}
             className="h-5 w-5 text-green-600"
           />
         </label>
@@ -186,6 +222,7 @@ export default function CreateAlbum() {
             type="checkbox"
             checked={isHidden}
             onChange={(e) => setIsHidden(e.target.checked)}
+            disabled={loading}
             className="h-5 w-5 text-green-600"
           />
         </label>
@@ -196,6 +233,7 @@ export default function CreateAlbum() {
             type="file"
             accept="image/*"
             onChange={(e) => setCoverFile(e.target.files[0])}
+            disabled={loading}
             className="text-white"
           />
         </label>
@@ -204,6 +242,7 @@ export default function CreateAlbum() {
           <button
             type="button"
             onClick={() => navigate("/admin/albums")}
+            disabled={loading}
             className="text-gray-400 hover:text-white transition"
           >
             Hủy

@@ -47,6 +47,7 @@ const routes = {
     library: '/library',
     account: '/account',
     account_profile: '/account/profile',
+    premium: '/premium',
 
     user_profile: (id) => `/user/profile/${id}`,
 
@@ -57,8 +58,9 @@ const routes = {
     admin_playlists: '/admin/playlists',
     admin_albums: '/admin/albums',
     admin_artists: '/admin/artists',
-    // User Management
-    admin_users_list: '/admin/userslist',
+    admin_users: '/admin/users',
+    admin_users_new: '/admin/users/new',
+    admin_statistical: '/admin/statistical',
 
     default_page: '*',
 };

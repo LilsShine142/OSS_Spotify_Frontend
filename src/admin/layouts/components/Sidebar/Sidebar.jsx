@@ -68,14 +68,14 @@ export default function AdminSidebar() {
             { label: "Thêm nghệ sĩ", path: "/admin/create-artist" },
           ],
         },
-        {
-          icon: <FiList />,
-          label: "Playlist",
-          sub: [
-            { label: "Tất cả playlists", path: "/admin/playlists" },
-            { label: "Tạo playlist", path: "/admin/create-playlist" },
-          ],
-        },
+        // {
+        //   icon: <FiList />,
+        //   label: "Playlist",
+        //   sub: [
+        //     { label: "Tất cả playlists", path: "/admin/playlists" },
+        //     { label: "Tạo playlist", path: "/admin/create-playlist" },
+        //   ],
+        // },
       ],
     },
     {
@@ -85,8 +85,8 @@ export default function AdminSidebar() {
           icon: <FiUsers />,
           label: "Người dùng",
           sub: [
-            { label: "Danh sách người dùng", path: "/admin/userslist" },
-            { label: "Tạo người dùng", path: "/users/new" },
+            { label: "Danh sách người dùng", path: "/admin/users" },
+            { label: "Tạo người dùng", path: "/admin/users/new" },
           ],
         },
         {
@@ -110,7 +110,7 @@ export default function AdminSidebar() {
         {
           icon: <FiBarChart2 />,
           label: "Thống kê người dùng",
-          sub: [{ label: "Tổng quan", path: "/stats/users" }],
+          sub: [{ label: "Tổng quan", path: "/admin/statistical" }],
         },
         {
           icon: <FiTrendingUp />,

@@ -56,27 +56,27 @@ const ChatSection = ({ userId }) => {
     try {
       const findResponse = await fetch(`/chatting/rooms/find/${roomCode}/`);
       const findData = await findResponse.json();
-
+      
       if (!findResponse.ok) {
         setJoinError('Room not found');
         return;
       }
 
       const joinResponse = await fetch(`/chatting/rooms/${findData.room_id}/join/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ user_id: userId }),
-      });
-
-      if (joinResponse.ok) {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ user_id: userId }),
+        });
+        
+        if (joinResponse.ok) {
         toast.success('Joined room successfully');
         await loadRooms();
-        setShowJoinModal(false);
-        setRoomCode('');
-        setJoinError('');
-      } else {
+          setShowJoinModal(false);
+          setRoomCode('');
+          setJoinError('');
+        } else {
         const data = await joinResponse.json();
         setJoinError(data.error || 'Failed to join room');
       }
@@ -104,34 +104,34 @@ const ChatSection = ({ userId }) => {
       {/* Sidebar - Made even smaller with toggle */}
       <div className={`${isSidebarMinimized ? 'w-12' : 'w-48'} bg-[#181818] border-r border-[#282828] flex flex-col transition-all duration-300 relative`}>
         {/* Toggle button - Moved inside sidebar */}
-        <button
+          <button
           onClick={() => setIsSidebarMinimized(!isSidebarMinimized)}
           className="absolute -right-3 top-3 bg-[#282828] text-white p-1.5 rounded-full hover:bg-[#333333] transition-colors z-10 border border-[#404040]"
         >
           {isSidebarMinimized ? <FaChevronRight size={10} /> : <FaChevronLeft size={10} />}
-        </button>
+          </button>
 
         <div className="p-2 border-b border-[#282828]">
           {!isSidebarMinimized && (
             <>
               <h2 className="text-base font-bold text-white mb-2">Chat Rooms</h2>
               <div className="space-y-1.5">
-                <button
-                  onClick={() => setShowCreateModal(true)}
+            <button
+              onClick={() => setShowCreateModal(true)}
                   className="w-full px-2 py-1.5 bg-[#1DB954] text-white rounded-full text-xs font-medium hover:bg-[#1ed760] transition-colors duration-200"
-                >
+            >
                   Create Room
-                </button>
-                <button
-                  onClick={() => setShowJoinModal(true)}
+            </button>
+            <button
+              onClick={() => setShowJoinModal(true)}
                   className="w-full px-2 py-1.5 bg-[#282828] text-white rounded-full text-xs font-medium hover:bg-[#333333] transition-colors duration-200"
-                >
+            >
                   Join Room
-                </button>
+            </button>
               </div>
             </>
           )}
-        </div>
+          </div>
 
         <div className="flex-1 overflow-y-auto">
           {!isSidebarMinimized && (
@@ -160,9 +160,9 @@ const ChatSection = ({ userId }) => {
                 ))}
               </div>
             )
-          )}
+            )}
+          </div>
         </div>
-      </div>
 
       {/* Chat area */}
       <div className="flex-1 bg-[#121212] flex flex-col">
@@ -202,8 +202,8 @@ const ChatSection = ({ userId }) => {
               <p className="text-lg font-bold mb-1.5">Select a room to start chatting</p>
               <p className="text-sm">or create a new one</p>
             </div>
-          </div>
-        )}
+        </div>
+      )}
       </div>
 
       {/* Modals */}

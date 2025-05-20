@@ -19,7 +19,6 @@ export const PlayerProvider = ({ children }) => {
     repeatMode: "off", // 'off', 'all', 'one'
     wasPlayingBeforeSeek: false,
   });
-  const [queue, setQueue] = useState([]);
 
   const audioRef = useRef(null);
 
@@ -34,7 +33,7 @@ export const PlayerProvider = ({ children }) => {
         track.artists?.map((a) => a.name).join(", ") ||
         "Unknown Artist",
       coverImage: track.img || track.coverImage || "/default-cover.jpg",
-      audioUrl: track.audio_file || track.url,
+      audioUrl: track.audioUrl || track.url,
       duration: track.duration || 0,
     };
     // setQueue(trackQueue); // Lưu queue (từ bài hiện tại trở đi)
@@ -61,10 +60,6 @@ export const PlayerProvider = ({ children }) => {
     }
   };
 
-  // Hàm tiếp tục phát
-  // const resume = () => {
-  //   setPlayerState((prev) => ({ ...prev, isPlaying: true }));
-  // };
   // Hàm resume tiếp tục từ thời gian hiện tại
   const resume = () => {
     if (audioRef.current && playerState.currentTrack) {
@@ -154,23 +149,6 @@ export const PlayerProvider = ({ children }) => {
     }));
   };
 
-  const handleClick = (track, index) => {
-    const slicedList = allTracks.slice(index); // phần còn lại từ bài hiện tại trở đi
-    play(track, slicedList);
-  };
-
-  // Hàm chuyển bài tiếp theo
-  const playNextTrack = () => {
-    const nextIndex = playerState.currentIndex + 1;
-    play(playerState.currentTrack, nextIndex);
-  };
-
-  // Hàm chuyển bài trước
-  const playPreviousTrack = () => {
-    // Logic chuyển bài trước
-    // Cần implement dựa trên danh sách bài hát hiện có
-  };
-
   // Hàm điều chỉnh volume
   const setVolume = (volume) => {
     if (audioRef.current) {
@@ -219,8 +197,6 @@ export const PlayerProvider = ({ children }) => {
         audioRef,
         toggleShuffle,
         toggleRepeat,
-        playNextTrack,
-        playPreviousTrack,
         setVolume,
       }}
     >
@@ -228,11 +204,10 @@ export const PlayerProvider = ({ children }) => {
       {/* Audio element ẩn */}
       <audio
         ref={audioRef}
-        // Gắn cứng url tạm thời
         src={
-          playerState.currentTrack
-            ? "https://res.cloudinary.com/ddlso6ofq/raw/upload/v1747581594/wpkiiahs1ggwlctnuuhz.mp3"
-            : undefined
+          playerState.currentTrack?.audioUrl
+            ? playerState.currentTrack?.audioUrl
+            : "https://res.cloudinary.com/ddlso6ofq/raw/upload/v1747581594/wpkiiahs1ggwlctnuuhz.mp3"
         }
         onTimeUpdate={handleTimeUpdate}
         onLoadedData={handleLoadedData}

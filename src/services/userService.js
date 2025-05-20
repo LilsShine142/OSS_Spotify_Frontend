@@ -95,46 +95,47 @@ export const handleUpdateUserInfo = async (data) => {
     }
 };
 
-
 export const getUserInfoFromAPI = async () => {
     try {
-
-        const userStorage = localStorage.getItem("user");
+        const userStorage = localStorage.getItem("userData");
         const user = userStorage ? JSON.parse(userStorage) : null;
 
-        const url = `http://127.0.0.1:8000/user_management/get_user_info/${user.id}/`;
+        if (!user || !user.token || !user.user?.data?._id) {
+            return { success: false, message: "Thông tin người dùng không hợp lệ." };
+        }
 
-        // Gửi yêu cầu GET để lấy thông tin người dùng
+        const userId = user.user.data._id;
+        const url = `http://127.0.0.1:8000/user_management/get_user_info/${userId}/`;
+
         const response = await axios.get(url, {
             headers: {
-                "Authorization": `Bearer ${user.access_token}`,
+                "Authorization": `Bearer ${user.token}`,
                 "Content-Type": "application/json"
             }
         });
 
-        // Kiểm tra phản hồi từ server
+        console.log("Trước khi lấy")
+        console.log(response.data)
+
         if (response.data.success) {
             return { success: true, user: response.data.data };
         } else {
             return { success: false, message: response.data.error || "Không thể lấy thông tin người dùng." };
         }
     } catch (error) {
-        // Xử lý lỗi trong quá trình gửi yêu cầu
         if (error.response) {
             const errorMessage = error.response.data.error || "Có lỗi xảy ra khi lấy thông tin người dùng.";
-
-            // Kiểm tra mã lỗi
             if (error.response.status === 401) {
-                localStorage.removeItem("user"); // Xóa thông tin người dùng nếu token hết hạn
+                localStorage.removeItem("userData");
                 return { success: false, message: "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại." };
             }
-
             return { success: false, message: errorMessage };
         } else {
             return { success: false, message: "Có lỗi xảy ra. Vui lòng thử lại." };
         }
     }
 };
+
 
 export const getUserInfo = async (userId, token) => {
     try {

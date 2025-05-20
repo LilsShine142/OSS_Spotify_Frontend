@@ -34,8 +34,6 @@ import CreateAlbum from "./admin/pages/AdminLayout/CreateAlbum";
 import EditAlbum from "./admin/pages/AdminLayout/EditAlbum";
 import ManageTracks from "./admin/pages/AdminLayout/ManageTracks";
 import CreateTrack from "./admin/pages/AdminLayout/CreateTrack";
-import ManagePlaylist from "./admin/pages/AdminLayout/ManagePlaylists";
-import CreatePlaylist from "./admin/pages/AdminLayout/CreatePlaylist";
 import ManageArtists from "./admin/pages/AdminLayout/ManageArtists";
 import CreateArtist from "./admin/pages/AdminLayout/CreateArtist";
 import EditArtist from "./admin/pages/AdminLayout/EditArtist";
@@ -85,8 +83,6 @@ function App() {
             <Route path="edit-album/:albumId" element={<EditAlbum />} />
             <Route path="tracks" element={<ManageTracks />} />
             <Route path="create-track" element={<CreateTrack />} />
-            <Route path="playlists" element={<ManagePlaylist />} />
-            <Route path="create-playlist" element={<CreatePlaylist />} />
             <Route path="artists" element={<ManageArtists />} />
             <Route path="create-artist" element={<CreateArtist />} />
             <Route path="edit-artist/:artistId" element={<EditArtist />} />

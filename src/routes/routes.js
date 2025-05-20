@@ -97,8 +97,10 @@ import DetailTracksList from "@/components/AlbumTracksList/DetailTracksList";
 import AdminDashboard from "@/admin/pages/AdminLayout/Dashboard";
 import ManageAlbums from "@/admin/pages/AdminLayout/ManageAlbums";
 import ManageArtists from "@/admin/pages/AdminLayout/ManageArtists";
-import admin_users_list from "@/admin/pages/UserManagement/UserList";
-import { comment } from "postcss";
+import ManageUsers from "@/admin/pages/AdminLayout/ManageUsers";
+import ManageNewUser from "@/admin/pages/AdminLayout/ManageNewUser";
+import Statistical from "@/admin/pages/AdminLayout/Statistical";
+import PremiumPage from "../client/layouts/components/Premium/PremiumPage";
 
 // Các route sử dụng layout HomeLayout
 const layoutRoutes = [
@@ -127,8 +129,12 @@ const layoutRoutes = [
         component: UserProfile,
     },
     {
-        path: config.routes.library, // ✅ Thêm Library vào layoutRoutes
+        path: config.routes.library,
         component: Library,
+    },
+    {
+        path: config.routes.premium,
+        component: PremiumPage,
     },
 ];
 
@@ -145,7 +151,9 @@ const standaloneRoutes = [
 const adminRoutes = [
     { path: config.routes.admin_albums, component: ManageAlbums },
     { path: config.routes.admin_artists, component: ManageArtists },
-    { path: config.routes.admin_users_list, comment: admin_users_list },
+    { path: config.routes.admin_users, component: ManageUsers },
+    { path: config.routes.admin_users_new, component: ManageNewUser },
+    { path: config.routes.admin_statistical, component: Statistical },
 ];
 
 export { layoutRoutes, standaloneRoutes, adminRoutes };

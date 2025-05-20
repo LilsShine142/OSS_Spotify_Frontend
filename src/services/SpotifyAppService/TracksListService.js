@@ -8,7 +8,7 @@ export const getTracksListByPlaylistId = async (playlistId, token) => {
             },
         });
         console.log("response", response);
-        if (response.data.success) {
+        if (response.data) {
             return { success: true, Playlist: response.data };
         } else {
             return { success: false, message: response.data.error };

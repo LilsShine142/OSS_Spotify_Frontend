@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
-
+import { uploadToCloudinary } from "../../../services/CloudUploadService/CloudService";
 export default function EditAlbum() {
   const [albumName, setAlbumName] = useState("");
   const [artistId, setArtistId] = useState("");
@@ -33,25 +33,34 @@ export default function EditAlbum() {
       }
 
       try {
-        const artistsRes = await axios.get("http://localhost:8000/spotify_app/artists/", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const artistsRes = await axios.get(
+          "http://localhost:8000/spotify_app/artists/",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         console.log("Artists response:", artistsRes.data); // Debug response
         const artistData = artistsRes.data.results || artistsRes.data || [];
         setArtists(Array.isArray(artistData) ? artistData : []);
 
-        const albumRes = await axios.get(`http://localhost:8000/spotify_app/albums/${albumId}/`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const albumRes = await axios.get(
+          `http://localhost:8000/spotify_app/albums/${albumId}/`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         const album = albumRes.data;
         setAlbumName(album.album_name || "");
         setArtistId(album.artist || "");
-        setReleaseDate(album.release_date ? album.release_date.split("T")[0] : "");
+        setReleaseDate(
+          album.release_date ? album.release_date.split("T")[0] : ""
+        );
         setTotalTracks(album.total_tracks || "");
         setIsfromDB(album.isfromDB ?? true);
         setIsHidden(album.isHidden ?? false);
       } catch (error) {
-        const errorMsg = error.response?.data?.error || "Lấy dữ liệu album thất bại.";
+        const errorMsg =
+          error.response?.data?.error || "Lấy dữ liệu album thất bại.";
         alert(errorMsg);
         console.error("Error fetching data:", error.response);
         navigate("/admin/albums");
@@ -90,7 +99,17 @@ export default function EditAlbum() {
     formData.append("total_tracks", totalTracks || "0");
     formData.append("isfromDB", isfromDB.toString());
     formData.append("isHidden", isHidden.toString());
-    if (coverFile) formData.append("cover_img", coverFile);
+    if (coverFile) {
+      let imageUrl = coverFile;
+
+      // Nếu profileImg là một file mới chọn (File object)
+      if (coverFile instanceof File) {
+        imageUrl = await uploadToCloudinary(profileImg, (progress) => {
+          console.log("Upload progress:", progress);
+        });
+      }
+    }
+    formData.append("cover_img", imageUrl);
 
     setLoading(true);
     try {
@@ -107,7 +126,8 @@ export default function EditAlbum() {
       alert("Cập nhật album thành công!");
       navigate("/admin/albums");
     } catch (error) {
-      const errorMsg = error.response?.data?.error || "Cập nhật album thất bại.";
+      const errorMsg =
+        error.response?.data?.error || "Cập nhật album thất bại.";
       alert(errorMsg);
       console.error("Error updating album:", error.response);
     } finally {
@@ -116,7 +136,9 @@ export default function EditAlbum() {
   };
 
   if (fetching) {
-    return <div className="p-6 text-white text-center">Đang tải dữ liệu...</div>;
+    return (
+      <div className="p-6 text-white text-center">Đang tải dữ liệu...</div>
+    );
   }
 
   return (
