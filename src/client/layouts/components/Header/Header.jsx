@@ -205,68 +205,71 @@ const Header = () => {
         {/* Avatar với dropdown */}
         {/* Nếu đã đăng nhập */}
         {detailedUser ? (
-          <div className="relative" ref={dropdownRef}>
-            <div
-              className="flex items-center cursor-pointer hover:bg-slate-700 rounded-full p-2 bg-gray-800 hover:scale-110 transition-transform"
-              onClick={handleDropDownToggle}
-            >
-              <img
-                className="w-8 h-8 rounded-full cursor-pointer"
-                src={assets.avatar}
-                alt="Avatar"
-              />
-            </div>
-
-            {/* Dropdown menu */}
-            {isDropDownOpen && (
-              <div className="absolute right-0 mt-2 w-56 bg-[#282828] rounded-md shadow-lg py-1 z-50">
-                {menuSections.map((section, sectionIndex) => (
-                  <div key={`section-${sectionIndex}`}>
-                    {/* Phần thông tin user */}
-                    {section.title === "user-info" && (
-                      <div className="px-4 py-2 relative border-b border-[#7c7c7c] border-opacity-50 mx-2">
-                        <p className="text-sm font-semibold text-green-500">
-                          Hello, {section.content.text}
-                        </p>
-                      </div>
-                    )}
-
-                    {/* Phần menu chính */}
-                    {section.title === "main-menu" && (
-                      <div className="py-1">
-                        {section.items.map((item, itemIndex) => (
-                          <div
-                            key={`menu-item-${itemIndex}`}
-                            onClick={() => handleMenuClick(item.link)}
-                            className="flex items-center justify-between px-4 py-2 mx-2 text-sm text-white hover:bg-[#3E3E3E] hover:rounded-[2px] hover:underline transition-colors"
-                          >
-                            {item.title}
-                            {item.icon}
-                          </div>
-                        ))}
-                      </div>
-                    )}
-
-                    {/* Phần đăng xuất */}
-                    {section.title === "logout-section" && (
-                      <div className="py-1 relative border-t border-[#7c7c7c] border-opacity-50 mx-2">
-                        {section.items.map((item, itemIndex) => (
-                          <Link
-                            key={`logout-item-${itemIndex}`}
-                            to={item.link}
-                            className="flex items-center justify-between px-4 py-2 text-sm text-white hover:bg-[#3E3E3E] hover:rounded-[2px] hover:underline transition-colors"
-                          >
-                            {item.title}
-                            {item.icon}
-                          </Link>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ))}
+          (console.log("detailedUser", detailedUser),
+          (
+            <div className="relative" ref={dropdownRef}>
+              <div
+                className="flex items-center cursor-pointer hover:bg-slate-700 rounded-full p-2 bg-gray-800 hover:scale-110 transition-transform"
+                onClick={handleDropDownToggle}
+              >
+                <img
+                  className="w-8 h-8 rounded-full cursor-pointer"
+                  src={detailedUser.user?.data?.profile_pic || assets.avatar}
+                  alt="Avatar"
+                />
               </div>
-            )}
-          </div>
+
+              {/* Dropdown menu */}
+              {isDropDownOpen && (
+                <div className="absolute right-0 mt-2 w-56 bg-[#282828] rounded-md shadow-lg py-1 z-50">
+                  {menuSections.map((section, sectionIndex) => (
+                    <div key={`section-${sectionIndex}`}>
+                      {/* Phần thông tin user */}
+                      {section.title === "user-info" && (
+                        <div className="px-4 py-2 relative border-b border-[#7c7c7c] border-opacity-50 mx-2">
+                          <p className="text-sm font-semibold text-green-500">
+                            Hello, {section.content.text}
+                          </p>
+                        </div>
+                      )}
+
+                      {/* Phần menu chính */}
+                      {section.title === "main-menu" && (
+                        <div className="py-1">
+                          {section.items.map((item, itemIndex) => (
+                            <div
+                              key={`menu-item-${itemIndex}`}
+                              onClick={() => handleMenuClick(item.link)}
+                              className="flex items-center justify-between px-4 py-2 mx-2 text-sm text-white hover:bg-[#3E3E3E] hover:rounded-[2px] hover:underline transition-colors"
+                            >
+                              {item.title}
+                              {item.icon}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Phần đăng xuất */}
+                      {section.title === "logout-section" && (
+                        <div className="py-1 relative border-t border-[#7c7c7c] border-opacity-50 mx-2">
+                          {section.items.map((item, itemIndex) => (
+                            <Link
+                              key={`logout-item-${itemIndex}`}
+                              to={item.link}
+                              className="flex items-center justify-between px-4 py-2 text-sm text-white hover:bg-[#3E3E3E] hover:rounded-[2px] hover:underline transition-colors"
+                            >
+                              {item.title}
+                              {item.icon}
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))
         ) : (
           // Nếu chưa đăng nhập
           <div className="flex gap-4">
