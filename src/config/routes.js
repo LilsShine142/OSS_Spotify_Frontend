@@ -47,6 +47,7 @@ const routes = {
     library: '/library',
     account: '/account',
     account_profile: '/account/profile',
+    premium: '/premium',
 
     user_profile: (id) => `/user/profile/${id}`,
 
