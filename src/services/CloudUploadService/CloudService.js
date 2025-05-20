@@ -1,11 +1,11 @@
-import { axiosInstance } from "../lib/axios/axios";
+import { axiosInstance } from "../../lib/axios/axios";
 import axios from "axios";
 
 // Upload ảnh lên Cloudinary
 export const uploadToCloudinary = async (file, onProgress) => {
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("upload_preset", "cloud_htttdn");
+    formData.append("upload_preset", "cloudinary_OSSD");
     try {
         const response = await axios.post(
             "https://api.cloudinary.com/v1_1/ddlso6ofq/image/upload",

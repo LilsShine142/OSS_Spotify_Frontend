@@ -97,6 +97,8 @@ import DetailTracksList from "@/components/AlbumTracksList/DetailTracksList";
 import AdminDashboard from "@/admin/pages/AdminLayout/Dashboard";
 import ManageAlbums from "@/admin/pages/AdminLayout/ManageAlbums";
 import ManageArtists from "@/admin/pages/AdminLayout/ManageArtists";
+import admin_users_list from "@/admin/pages/UserManagement/UserList";
+import { comment } from "postcss";
 
 // Các route sử dụng layout HomeLayout
 const layoutRoutes = [
@@ -143,6 +145,7 @@ const standaloneRoutes = [
 const adminRoutes = [
     { path: config.routes.admin_albums, component: ManageAlbums },
     { path: config.routes.admin_artists, component: ManageArtists },
+    { path: config.routes.admin_users_list, comment: admin_users_list },
 ];
 
 export { layoutRoutes, standaloneRoutes, adminRoutes };

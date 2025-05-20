@@ -58,7 +58,6 @@ export default function AdminSidebar() {
           sub: [
             { label: "Tất cả album", path: "/admin/albums" },
             { label: "Tạo album", path: "/admin/create-album" },
-
           ],
         },
         {
@@ -86,7 +85,7 @@ export default function AdminSidebar() {
           icon: <FiUsers />,
           label: "Người dùng",
           sub: [
-            { label: "Danh sách người dùng", path: "/users" },
+            { label: "Danh sách người dùng", path: "/admin/userslist" },
             { label: "Tạo người dùng", path: "/users/new" },
           ],
         },

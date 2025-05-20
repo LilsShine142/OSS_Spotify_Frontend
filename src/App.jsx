@@ -39,6 +39,7 @@ import CreatePlaylist from "./admin/pages/AdminLayout/CreatePlaylist";
 import ManageArtists from "./admin/pages/AdminLayout/ManageArtists";
 import CreateArtist from "./admin/pages/AdminLayout/CreateArtist";
 import EditArtist from "./admin/pages/AdminLayout/EditArtist";
+import UserList from "./admin/pages/UserManagement/UserList";
 // configAxios.js hoặc ngay đầu file App.js
 import axios from "axios";
 
@@ -78,10 +79,9 @@ function App() {
             );
           })}
 
-
           <Route path="/admin" element={<AdminLayout />}>
             <Route path="albums" element={<ManageAlbums />} />
-            <Route path="create-album" element={<CreateAlbum />} /> 
+            <Route path="create-album" element={<CreateAlbum />} />
             <Route path="edit-album/:albumId" element={<EditAlbum />} />
             <Route path="tracks" element={<ManageTracks />} />
             <Route path="create-track" element={<CreateTrack />} />
@@ -90,13 +90,14 @@ function App() {
             <Route path="artists" element={<ManageArtists />} />
             <Route path="create-artist" element={<CreateArtist />} />
             <Route path="edit-artist/:artistId" element={<EditArtist />} />
+            <Route path="userslist" element={<UserList />} />
             {adminRoutes.map((route, index) => {
               const Element = route.component;
-              return <Route key={index} path={route.path} element={<Element />} />;
+              return (
+                <Route key={index} path={route.path} element={<Element />} />
+              );
             })}
-        </Route>
-
-
+          </Route>
         </Routes>
       </BrowserRouter>
     </PlayerProvider>
