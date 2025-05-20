@@ -36,6 +36,7 @@ import lilwuyn_artist from './lilwuyn_artist.jpg'
 import sobin_artist from './sobin_artist.jpg'
 import orange_artist from './orange_artist.jpg'
 import rose_artist from './rose_artist.jpg'
+import x_volume from './x_volume.png'
 import img1 from './img1.jpg'
 import img2 from './img2.jpg'
 import img3 from './img3.jpg'
@@ -83,6 +84,7 @@ export const assets = {
     arrow_right,
     spotify_logo,
     clock_icon,
+    x_volume,
     down,
     avatar,
     danhdoi_album,
@@ -98,6 +100,7 @@ export const assets = {
     sobin_artist,
     orange_artist,
     rose_artist,
+    song1,
 }
 
 export const albumsData = [

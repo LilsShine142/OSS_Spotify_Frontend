@@ -200,7 +200,7 @@ function ManageTracks() {
                   <td className="py-3 px-4 text-gray-300">
                     {track.audio_file ? (
                       <audio controls className="w-32 rounded bg-black">
-                        <source src={track.audio_file} type="audio/mpeg" />
+                        <source src={track.audio_file || undefined} type="audio/mpeg" />
                       </audio>
                     ) : (
                       "Không có"
