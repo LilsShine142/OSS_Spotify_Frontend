@@ -1,22 +1,19 @@
 import axios from 'axios';
-import { spotifyAuthService } from '../../lib/constaints/constants'; // Đảm bảo bạn đã cấu hình CLIENT_ID và CLIENT_SECRET trong file config
 
-// Hàm chính để lấy Access Token
 export const getSpotifyAccessToken = async () => {
     try {
-        // Tạo body dạng x-www-form-urlencoded
-        const body = new URLSearchParams();
-        body.append('grant_type', 'client_credentials');
-        body.append('client_id', spotifyAuthService.CLIENT_ID);
-        body.append('client_secret', spotifyAuthService.CLIENT_SECRET);
-        console.log('body', body.toString());
-        // Gọi API với Content-Type là x-www-form-urlencoded
+        // 1. Tạo Basic Auth token từ biến môi trường (dùng import.meta.env thay vì process.env)
+        const authString = `${import.meta.env.VITE_SPOTIFY_CLIENT_ID}:${import.meta.env.VITE_SPOTIFY_CLIENT_SECRET}`;
+        const base64Auth = btoa(authString); // Sử dụng btoa vì chạy ở client-side
+
+        // 2. Gọi API Spotify
         const response = await axios.post(
-            spotifyAuthService.SPOTIFY_AUTH_URL,
-            body.toString(),
+            import.meta.env.VITE_SPOTIFY_AUTH_URL,
+            new URLSearchParams({ grant_type: 'client_credentials' }),
             {
                 headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Authorization': `Basic ${base64Auth}`
                 }
             }
         );
@@ -28,7 +25,10 @@ export const getSpotifyAccessToken = async () => {
         return response.data.access_token;
 
     } catch (error) {
-        console.error('Lỗi khi lấy Access Token từ Spotify:', error);
-        throw error;
+        console.error('[Spotify Auth Error]', {
+            status: error.response?.status,
+            error: error.response?.data ?? error.message
+        });
+        throw new Error('Xác thực Spotify thất bại: ' + (error.response?.data?.error_description || error.message));
     }
 };
