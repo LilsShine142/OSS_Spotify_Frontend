@@ -98,6 +98,7 @@ import { IoPlay } from "react-icons/io5";
 import { HiOutlineDownload } from "react-icons/hi";
 import { assets } from "@/assets/assets";
 import { formatDurationFromHHMMSS } from "@/lib/utils";
+import { useNavigate } from "react-router-dom";
 
 const TrackItem = ({
   track,
@@ -111,10 +112,16 @@ const TrackItem = ({
   onDownload, // Thêm prop onDownload từ component cha
 }) => {
   const [isHovered, setIsHovered] = useState(false);
-
+  const navigate = useNavigate();
   const handleDownloadClick = (e) => {
     e.stopPropagation(); // Ngăn chặn sự kiện click lan ra phần tử cha
     onDownload(track._id);
+  };
+
+  // Hàm xử lý khi click vào tên bài hát
+  const handleTitleClick = (e, trackId) => {
+    e.stopPropagation(); // Ngăn sự kiện lan ra phần tử cha
+    navigate(`/track/${trackId}/video`); // Chuyển đến trang chi tiết bài hát
   };
 
   return (
@@ -172,13 +179,14 @@ const TrackItem = ({
         </div>
 
         <div className="flex flex-col">
-          <p
-            className={`font-medium truncate ${
+          <button
+            onClick={(e) => handleTitleClick(e, track._id)} // Thêm sự kiện click
+            className={`font-medium truncate text-left ${
               isCurrentTrack ? "text-green-500" : "text-white"
-            }`}
+            } hover:underline`} // Thêm hover:underline
           >
             {track.title}
-          </p>
+          </button>
           <p className="text-gray-400 text-sm truncate">
             {
               (track.artists?.map((artist) => artist.name).join(", ") ||

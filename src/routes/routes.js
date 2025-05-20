@@ -101,7 +101,7 @@ import ManageUsers from "@/admin/pages/AdminLayout/ManageUsers";
 import ManageNewUser from "@/admin/pages/AdminLayout/ManageNewUser";
 import Statistical from "@/admin/pages/AdminLayout/Statistical";
 import PremiumPage from "../client/layouts/components/Premium/PremiumPage";
-
+import trackVideo from "../client/layouts/components/TrackVideo/TrackVideo";
 // Các route sử dụng layout HomeLayout
 const layoutRoutes = [
     {
@@ -135,6 +135,10 @@ const layoutRoutes = [
     {
         path: config.routes.premium,
         component: PremiumPage,
+    },
+    {
+        path: config.routes.track_video(':id'),
+        component: trackVideo,
     },
 ];
 
