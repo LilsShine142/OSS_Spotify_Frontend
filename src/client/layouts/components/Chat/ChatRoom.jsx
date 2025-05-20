@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { toast } from 'react-toastify';
 import { FaPaperPlane, FaUser } from 'react-icons/fa';
+import RoomPlaylist from './RoomPlaylist';
 
 const ChatRoom = ({ room, userId, onLeave, isSidebarMinimized }) => {
   const [messages, setMessages] = useState([]);
@@ -23,11 +24,26 @@ const ChatRoom = ({ room, userId, onLeave, isSidebarMinimized }) => {
 
     const loadMessages = async () => {
       try {
-        console.log('Loading messages for room:', room._id);
-        const response = await fetch(`/chatting/rooms/${room._id}/messages/`);
-        if (!response.ok) {
-          throw new Error('Failed to load messages');
+        const userData = JSON.parse(localStorage.getItem('userData'));
+        const token = userData?.token;
+
+        if (!token) {
+          console.error('No authentication token found');
+          toast.error('Please log in to access messages');
+          return;
         }
+
+        const response = await fetch(`http://127.0.0.1:8000/chatting/rooms/${room._id}/messages/`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
         const data = await response.json();
         console.log('Messages loaded successfully:', data);
         
@@ -50,8 +66,7 @@ const ChatRoom = ({ room, userId, onLeave, isSidebarMinimized }) => {
 
     const connectWebSocket = () => {
       try {
-        const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-        const wsUrl = `${wsProtocol}//${window.location.host}/ws/chat/${room._id}/`;
+        const wsUrl = `ws://127.0.0.1:8001/ws/chat/${room._id}/`;
         console.log('Connecting to WebSocket:', wsUrl);
         
         const newSocket = new WebSocket(wsUrl);
@@ -328,6 +343,9 @@ const ChatRoom = ({ room, userId, onLeave, isSidebarMinimized }) => {
           </form>
         </div>
       </div>
+
+      {/* Room Playlist */}
+      <RoomPlaylist room={room} socket={socket} />
     </div>
   );
 };

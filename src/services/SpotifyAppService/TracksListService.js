@@ -7,12 +7,8 @@ export const getTracksListByPlaylistId = async (playlistId, token) => {
                 Authorization: `Bearer ${token}`,
             },
         });
-        console.log("response", response);
-        if (response.data.success) {
-            return { success: true, Playlist: response.data };
-        } else {
-            return { success: false, message: response.data.error };
-        }
+        console.log("response.data", response.data);
+         return response.data;
     } catch (error) {
         console.error("Lỗi khi lấy playlists:", error);
 

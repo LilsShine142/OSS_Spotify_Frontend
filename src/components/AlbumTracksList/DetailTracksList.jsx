@@ -36,8 +36,9 @@ const DetailTracksList = () => {
       const accessToken = Cookies.get("access_token");
       try {
         const data = await getTracksListByPlaylistId(typeId, accessToken);
-        if (data.success) {
-          setAlbumData(data.Playlist);
+        console.log("data", data);
+        if (data) {
+          // setAlbumData(data.Playlist);
           setTracksListData(data);
           // setCurrentTrackId(data.Playlist?.tracks?.[0]?.id || null); // set track đầu tiên làm track hiện tại
           setLoading(false);
@@ -281,7 +282,7 @@ const DetailTracksList = () => {
       <div className="px-6">
         <TrackListHeader columns={Trackcolumns} />
         <div>
-          {tracksListData.Playlist?.songs?.map((track, index) => (
+          {tracksListData?.songs?.map((track, index) => (
             <TrackItem
               key={track._id}
               track={track}

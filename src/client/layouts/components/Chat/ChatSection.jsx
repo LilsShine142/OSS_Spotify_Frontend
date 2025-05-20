@@ -25,18 +25,32 @@ const ChatSection = ({ userId }) => {
 
   const loadRooms = async () => {
     try {
-      console.log('Loading rooms for user:', userId);
-      const response = await fetch(`/chatting/rooms/user/?user_id=${userId}`);
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to load rooms');
+      const userData = JSON.parse(localStorage.getItem('userData'));
+      const token = userData?.token;
+
+      if (!token) {
+        console.error('No authentication token found');
+        toast.error('Please log in to access chat rooms');
+        return;
       }
+
+      const response = await fetch(`http://127.0.0.1:8000/chatting/rooms/user/?user_id=${userId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
       const data = await response.json();
       console.log('Rooms loaded successfully:', data.results);
       setRooms(data.results);
     } catch (error) {
       console.error('Error loading rooms:', error);
-      toast.error(error.message || 'Failed to load rooms');
+      toast.error('Failed to load chat rooms');
     } finally {
       setLoading(false);
     }
@@ -54,7 +68,7 @@ const ChatSection = ({ userId }) => {
     }
 
     try {
-      const findResponse = await fetch(`/chatting/rooms/find/${roomCode}/`);
+      const findResponse = await fetch(`http://127.0.0.1:8000/chatting/rooms/find/${roomCode}/`);
       const findData = await findResponse.json();
       
       if (!findResponse.ok) {
@@ -62,7 +76,7 @@ const ChatSection = ({ userId }) => {
         return;
       }
 
-      const joinResponse = await fetch(`/chatting/rooms/${findData.room_id}/join/`, {
+      const joinResponse = await fetch(`http://127.0.0.1:8000/chatting/rooms/${findData.room_id}/join/`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -102,7 +116,7 @@ const ChatSection = ({ userId }) => {
   return (
     <div className="flex h-full bg-[#121212]">
       {/* Sidebar - Made even smaller with toggle */}
-      <div className={`${isSidebarMinimized ? 'w-12' : 'w-48'} bg-[#181818] border-r border-[#282828] flex flex-col transition-all duration-300 relative`}>
+      <div className={`${isSidebarMinimized ? 'w-12' : 'w-48'} bg-[#181818] border-r border-[#282828] flex flex-col transition-all duration-300 relative h-full`}>
         {/* Toggle button - Moved to top left */}
         <button
           onClick={() => setIsSidebarMinimized(!isSidebarMinimized)}
@@ -111,7 +125,8 @@ const ChatSection = ({ userId }) => {
           {isSidebarMinimized ? <FaChevronRight size={10} /> : <FaChevronLeft size={10} />}
         </button>
 
-        <div className="p-2 border-b border-[#282828]">
+        {/* Header section - Fixed height */}
+        <div className="p-2 border-b border-[#282828] bg-[#181818] flex-shrink-0">
           {!isSidebarMinimized && (
             <>
               <h2 className="text-base font-bold text-white mb-2 pl-10">Chat Rooms</h2>
@@ -133,7 +148,8 @@ const ChatSection = ({ userId }) => {
           )}
           </div>
 
-        <div className="flex-1 overflow-y-auto">
+        {/* Scrollable content - Takes remaining height */}
+        <div className="flex-1 overflow-y-auto bg-[#181818]">
           {!isSidebarMinimized && (
             rooms.length === 0 ? (
               <div className="text-center text-gray-400 mt-2 p-2">

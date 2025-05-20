@@ -17,16 +17,28 @@ const CreateRoomModal = ({ isOpen, onClose, onRoomCreated, userId }) => {
     setLoading(true);
     setError('');
     try {
+      const userData = JSON.parse(localStorage.getItem('userData'));
+      const token = userData?.token;
+
+      if (!token) {
+        console.error('No authentication token found');
+        toast.error('Please log in to create a room');
+        return;
+      }
+
       const requestData = {
         name,
         description,
         host: userId,
+        is_private: false,
+        password: null
       };
       console.log('Creating room with data:', requestData);
       
-      const response = await fetch('/chatting/rooms/create/', {
+      const response = await fetch('http://127.0.0.1:8000/chatting/rooms/create/', {
         method: 'POST',
         headers: {
+          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
