@@ -1,131 +1,229 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import {
   uploadFileAudioToCloudinary,
   uploadToCloudinary,
 } from "../../../services/CloudUploadService/CloudService";
-export default function CreateTrack() {
+
+const CreateTrack = () => {
   const [title, setTitle] = useState("");
   const [albumId, setAlbumId] = useState("");
   const [audioFile, setAudioFile] = useState(null);
   const [videoFile, setVideoFile] = useState(null);
-  const [img, setImg] = useState("");
+  const [img, setImg] = useState(null);
   const [albums, setAlbums] = useState([]);
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
+  const [audioProgress, setAudioProgress] = useState(0);
+  const [videoProgress, setVideoProgress] = useState(0);
+  const [imgProgress, setImgProgress] = useState(0);
+  const [audioDuration, setAudioDuration] = useState(null);
   const navigate = useNavigate();
 
+  // Lấy danh sách albums
   useEffect(() => {
     const fetchAlbums = async () => {
-      const userData = JSON.parse(localStorage.getItem("userData"));
-      const token = userData?.token;
-
-      if (!token) {
-        console.error("No token found");
-        alert("Vui lòng đăng nhập với quyền admin để tạo bài hát.");
-        navigate("/login");
-        return;
-      }
-
+      console.log("Fetching albums...");
       try {
         setFetching(true);
-        const res = await axios.get(
-          "http://localhost:8000/spotify_app/albums/",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+        const res = await axios.get("http://localhost:8000/spotify_app/albums/");
         console.log("Albums response:", res.data);
         setAlbums(Array.isArray(res.data) ? res.data : []);
       } catch (error) {
-        console.error("Lỗi tải album:", error.response?.data);
-        alert(error.response?.data?.error || "Không tải được danh sách album.");
+        console.error("Error fetching albums:", error);
+        toast.error("Không thể tải danh sách album!");
       } finally {
         setFetching(false);
       }
     };
-
     fetchAlbums();
-  }, [navigate]);
+  }, []);
+
+  // Tính duration của audio file
+  useEffect(() => {
+    if (audioFile) {
+      const audio = new Audio(URL.createObjectURL(audioFile));
+      audio.addEventListener("loadedmetadata", () => {
+        const duration = Math.round(audio.duration);
+        const hours = Math.floor(duration / 3600);
+        const minutes = Math.floor((duration % 3600) / 60);
+        const seconds = duration % 60;
+        const formattedDuration = `${hours.toString().padStart(2, "0")}:${minutes
+          .toString()
+          .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+        setAudioDuration(formattedDuration);
+        console.log("Audio duration:", formattedDuration);
+      });
+    }
+  }, [audioFile]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("Form submission started...");
+    console.log("Form data:", { title, albumId, audioFile, videoFile, img });
+
+    // Kiểm tra dữ liệu đầu vào
     if (!title.trim()) {
-      alert("Tên bài hát không được để trống!");
+      toast.error("Tên bài hát không được để trống!");
       return;
     }
     if (!audioFile) {
-      alert("Vui lòng chọn file âm thanh!");
+      toast.error("Vui lòng chọn file âm thanh!");
       return;
     }
-
-    // Kiểm tra định dạng file
     if (audioFile && !audioFile.type.startsWith("audio/")) {
-      alert("File âm thanh không hợp lệ. Vui lòng chọn file MP3, WAV, v.v.");
+      toast.error("File âm thanh không hợp lệ. Vui lòng chọn file MP3, WAV, v.v.");
+      return;
+    }
+    if (audioFile && audioFile.size > 100 * 1024 * 1024) {
+      toast.error("File âm thanh quá lớn. Vui lòng chọn file dưới 100MB.");
       return;
     }
     if (videoFile && !videoFile.type.startsWith("video/")) {
-      alert("File video không hợp lệ. Vui lòng chọn file MP4, v.v.");
+      toast.error("File video không hợp lệ. Vui lòng chọn file MP4, v.v.");
+      return;
+    }
+    if (videoFile && videoFile.size > 100 * 1024 * 1024) {
+      toast.error("File video quá lớn. Vui lòng chọn file dưới 100MB.");
+      return;
+    }
+    if (img && !img.type.startsWith("image/")) {
+      toast.error("File ảnh không hợp lệ. Vui lòng chọn file JPG, PNG, v.v.");
+      return;
+    }
+    if (img && img.size > 10 * 1024 * 1024) {
+      toast.error("File ảnh quá lớn. Vui lòng chọn file dưới 10MB.");
+      return;
+    }
+    if (albumId && !/^[0-9a-fA-F]{24}$/.test(albumId)) {
+      toast.error("ID album không hợp lệ!");
+      return;
+    }
+    if (albumId) {
+      const selectedAlbum = albums.find((album) => album._id === albumId);
+      if (!selectedAlbum) {
+        toast.error("Album đã chọn không tồn tại! Vui lòng chọn lại.");
+        return;
+      }
+    }
+    if (!audioDuration) {
+      toast.error("Không thể xác định độ dài file âm thanh!");
+      return;
+    }
+
+    if (!window.confirm("Bạn có chắc muốn tạo bài hát này?")) {
       return;
     }
 
     const userData = JSON.parse(localStorage.getItem("userData"));
     const token = userData?.token;
-
     if (!token) {
       console.error("No token found for upload");
-      alert("Vui lòng đăng nhập với quyền admin để tạo bài hát.");
+      toast.error("Vui lòng đăng nhập với quyền admin để tạo bài hát.");
       navigate("/login");
       return;
     }
 
     const formData = new FormData();
     formData.append("title", title);
-    if (albumId && albumId !== "") formData.append("album_id", albumId); // Chỉ gửi album_id nếu có giá trị
-    const audio_file = await uploadFileAudioToCloudinary(
-      audioFile,
-      (progress) => {
-        console.log("Upload progress:", progress);
+    if (albumId) formData.append("album_id", albumId);
+    formData.append("duration", audioDuration);
+
+    setLoading(true);
+
+    // Upload audio file
+    try {
+      console.log("Uploading audio file to Cloudinary...");
+      const audioUrl = await uploadFileAudioToCloudinary(audioFile, (progress) => {
+        setAudioProgress(progress);
+        console.log("Audio upload progress:", progress);
+      });
+      if (!audioUrl || !audioUrl.startsWith("https://res.cloudinary.com/")) {
+        throw new Error("Upload file âm thanh thất bại: URL không hợp lệ.");
       }
-    );
-    formData.append("audio_file", audio_file);
-    if (videoFile) {
-      const video_file = await uploadFileAudioToCloudinary(
-        videoFile,
-        (progress) => {
-          console.log("Upload progress:", progress);
-        }
-      );
-      formData.append("video_file", video_file);
+      console.log("Uploaded audio URL:", audioUrl);
+      formData.append("audio_file", audioUrl);
+    } catch (error) {
+      console.error("Error uploading audio:", error.response?.data || error.message);
+      const errorMsg =
+        error.response?.data?.error?.message ||
+        "Không thể upload file âm thanh. Kiểm tra upload preset hoặc kết nối Cloudinary.";
+      toast.error(errorMsg);
+      setLoading(false);
+      return;
     }
 
-    if (img.trim()) {
-      const imageUrl = await uploadToCloudinary(img, (progress) => {
-        console.log("Upload progress:", progress);
-      });
-      formData.append("img", imageUrl);
+    // Upload video file
+    if (videoFile) {
+      try {
+        console.log("Uploading video file to Cloudinary...");
+        const videoUrl = await uploadFileAudioToCloudinary(videoFile, (progress) => {
+          setVideoProgress(progress);
+          console.log("Video upload progress:", progress);
+        });
+        if (!videoUrl || !videoUrl.startsWith("https://res.cloudinary.com/")) {
+          throw new Error("Upload file video thất bại: URL không hợp lệ.");
+        }
+        console.log("Uploaded video URL:", videoUrl);
+        formData.append("video_file", videoUrl);
+      } catch (error) {
+        console.error("Error uploading video:", error.response?.data || error.message);
+        const errorMsg =
+          error.response?.data?.error?.message ||
+          "Không thể upload file video. Kiểm tra upload preset hoặc kết nối Cloudinary.";
+        toast.error(errorMsg);
+        setLoading(false);
+        return;
+      }
+    }
+
+    // Upload image file
+    if (img) {
+      try {
+        console.log("Uploading image file to Cloudinary...");
+        const imgUrl = await uploadToCloudinary(img, (progress) => {
+          setImgProgress(progress);
+          console.log("Image upload progress:", progress);
+        });
+        if (!imgUrl || !imgUrl.startsWith("https://res.cloudinary.com/")) {
+          throw new Error("Upload ảnh thất bại: URL không hợp lệ.");
+        }
+        console.log("Uploaded image URL:", imgUrl);
+        formData.append("img", imgUrl);
+      } catch (error) {
+        console.error("Error uploading image:", error.response?.data || error.message);
+        const errorMsg =
+          error.response?.data?.error?.message ||
+          "Không thể upload file ảnh. Kiểm tra upload preset hoặc kết nối Cloudinary.";
+        toast.error(errorMsg);
+        setLoading(false);
+        return;
+      }
     }
 
     // Debug FormData
+    console.log("FormData entries:");
     for (let [key, value] of formData.entries()) {
-      console.log(`FormData: ${key} =`, value);
+      console.log(`  ${key}: ${value}`);
     }
 
-    setLoading(true);
+    // Gửi request tới backend
     try {
+      console.log("Sending request to backend...");
       const res = await axios.post(
         "http://localhost:8000/spotify_app/songs/upload/",
         formData,
         {
           headers: {
-            "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${token}`,
           },
         }
       );
       console.log("Upload response:", res.data);
-      alert("Tạo bài hát thành công!");
+      toast.success("Tạo bài hát thành công!");
       navigate("/admin/tracks");
     } catch (error) {
       console.error("Error creating track:", error.response?.data);
@@ -134,21 +232,24 @@ export default function CreateTrack() {
         errorMsg = "Bạn không có quyền admin hoặc token không hợp lệ.";
         navigate("/login");
       } else if (error.response?.status === 400) {
-        errorMsg = error.response?.data?.error || "Dữ liệu không hợp lệ.";
-        if (error.response?.data?.details) {
-          errorMsg = Object.entries(error.response.data.details)
-            .map(
-              ([field, errors]) =>
-                `${field}: ${
-                  Array.isArray(errors) ? errors.join(", ") : errors
-                }`
-            )
+        if (error.response?.data?.audio_file) {
+          errorMsg = `Lỗi file âm thanh: ${error.response.data.audio_file}`;
+        } else if (error.response?.data?.album_id) {
+          errorMsg = `Lỗi album: Album với ID ${albumId} không tồn tại.`;
+        } else {
+          errorMsg = Object.entries(error.response?.data || {})
+            .map(([field, errors]) => `${field}: ${Array.isArray(errors) ? errors.join(", ") : errors}`)
             .join("; ");
         }
+      } else if (error.response?.status === 500) {
+        errorMsg = "Lỗi server: Vui lòng kiểm tra cấu hình model hoặc serializer.";
       }
-      alert(`Lỗi: ${errorMsg}`);
+      toast.error(`Lỗi: ${errorMsg}`);
     } finally {
       setLoading(false);
+      setAudioProgress(0);
+      setVideoProgress(0);
+      setImgProgress(0);
     }
   };
 
@@ -192,7 +293,7 @@ export default function CreateTrack() {
             <option value="">-- Chọn album (tùy chọn) --</option>
             {albums.map((album) => (
               <option key={album._id} value={album._id}>
-                {album.album_name || "Không tên"}
+                {album.album_name || "Không tên"} - {album.artist_name}
               </option>
             ))}
           </select>
@@ -208,6 +309,26 @@ export default function CreateTrack() {
             disabled={loading}
             className="text-white"
           />
+          {audioFile && (
+            <div className="mt-2">
+              <audio controls className="w-full rounded bg-[#282828]">
+                <source src={URL.createObjectURL(audioFile)} type={audioFile.type} />
+              </audio>
+              {audioProgress > 0 && audioProgress < 100 && (
+                <div className="flex items-center gap-2 mt-2">
+                  <progress
+                    value={audioProgress}
+                    max="100"
+                    className="w-full h-1 bg-gray-700 rounded"
+                  />
+                  <span className="text-sm text-gray-400">{audioProgress}%</span>
+                </div>
+              )}
+              {audioDuration && (
+                <p className="text-sm text-gray-400 mt-2">Thời lượng: {audioDuration}</p>
+              )}
+            </div>
+          )}
         </label>
 
         <label className="flex flex-col gap-2 text-gray-300 text-sm font-medium">
@@ -219,18 +340,53 @@ export default function CreateTrack() {
             disabled={loading}
             className="text-white"
           />
+          {videoFile && (
+            <div className="mt-2">
+              <video controls className="w-full rounded bg-[#282828]">
+                <source src={URL.createObjectURL(videoFile)} type={videoFile.type} />
+              </video>
+              {videoProgress > 0 && videoProgress < 100 && (
+                <div className="flex items-center gap-2 mt-2">
+                  <progress
+                    value={videoProgress}
+                    max="100"
+                    className="w-full h-1 bg-gray-700 rounded"
+                  />
+                  <span className="text-sm text-gray-400">{videoProgress}%</span>
+                </div>
+              )}
+            </div>
+          )}
         </label>
 
         <label className="flex flex-col gap-2 text-gray-300 text-sm font-medium">
-          URL ảnh bài hát (jpg, png, ...)
+          Ảnh bìa (jpg, png, ...)
           <input
             type="file"
-            value={img}
-            onChange={(e) => setImg(e.target.value)}
-            placeholder="Nhập URL ảnh bài hát (tùy chọn)"
+            accept="image/*"
+            onChange={(e) => setImg(e.target.files[0])}
             disabled={loading}
-            className="p-3 rounded bg-[#282828] text-white border border-gray-700 placeholder-gray-400 focus:border-green-500 outline-none transition"
+            className="text-white"
           />
+          {img && (
+            <div className="mt-2">
+              <img
+                src={URL.createObjectURL(img)}
+                alt="Preview"
+                className="w-32 h-32 object-cover rounded"
+              />
+              {imgProgress > 0 && imgProgress < 100 && (
+                <div className="flex items-center gap-2 mt-2">
+                  <progress
+                    value={imgProgress}
+                    max="100"
+                    className="w-full h-1 bg-gray-700 rounded"
+                  />
+                  <span className="text-sm text-gray-400">{imgProgress}%</span>
+                </div>
+              )}
+            </div>
+          )}
         </label>
 
         <div className="flex justify-end gap-4">
@@ -253,4 +409,6 @@ export default function CreateTrack() {
       </form>
     </div>
   );
-}
+};
+
+export default CreateTrack;
