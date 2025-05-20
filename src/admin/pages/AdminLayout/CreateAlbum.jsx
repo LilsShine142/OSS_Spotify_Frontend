@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { uploadToCloudinary } from "../../../services/CloudUploadService/CloudService";
+
 export default function CreateAlbum() {
   const [albumName, setAlbumName] = useState("");
   const [artistId, setArtistId] = useState("");
@@ -20,24 +23,20 @@ export default function CreateAlbum() {
       const userData = JSON.parse(localStorage.getItem("userData"));
       const token = userData?.token;
       if (!token) {
-        alert("Bạn chưa đăng nhập!");
+        toast.error("Bạn chưa đăng nhập!");
         navigate("/login");
         return;
       }
       try {
         setFetchingArtists(true);
-        const res = await axios.get(
-          "http://localhost:8000/spotify_app/artists/",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        console.log("Artists response:", res.data);
+        const res = await axios.get("http://localhost:8000/spotify_app/artists", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         const data = res.data.results || res.data || [];
         setArtists(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error("Lỗi tải nghệ sĩ:", error.response?.data);
-        alert("Không thể tải danh sách nghệ sĩ. Vui lòng thử lại.");
+        toast.error("Không thể tải danh sách nghệ sĩ. Vui lòng thử lại.");
       } finally {
         setFetchingArtists(false);
       }
@@ -47,31 +46,33 @@ export default function CreateAlbum() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Kiểm tra dữ liệu đầu vào
     if (!albumName.trim()) {
-      alert("Tên album không được để trống!");
+      toast.error("Tên album không được để trống!");
       return;
     }
     if (!artistId) {
-      alert("Vui lòng chọn nghệ sĩ cho album!");
+      toast.error("Vui lòng chọn nghệ sĩ cho album!");
       return;
     }
     if (!releaseDate) {
-      alert("Ngày phát hành không được để trống!");
+      toast.error("Ngày phát hành không được để trống!");
       return;
     }
     if (totalTracks && totalTracks < 0) {
-      alert("Số lượng bài hát không thể âm!");
+      toast.error("Số lượng bài hát không thể âm!");
       return;
     }
     if (coverFile && !coverFile.type.startsWith("image/")) {
-      alert("Vui lòng chọn file ảnh (jpg, png, ...)");
+      toast.error("Vui lòng chọn file ảnh (jpg, png, ...)");
       return;
     }
 
     const userData = JSON.parse(localStorage.getItem("userData"));
     const token = userData?.token;
     if (!token) {
-      alert("Bạn chưa đăng nhập!");
+      toast.error("Bạn chưa đăng nhập!");
       navigate("/login");
       return;
     }
@@ -81,38 +82,49 @@ export default function CreateAlbum() {
     formData.append("artist", artistId);
     formData.append("release_date", releaseDate);
     formData.append("total_tracks", totalTracks || "0");
-    formData.append("isfromDB", isfromDB ? "true" : "false");
-    formData.append("isHidden", isHidden ? "true" : "false");
-    if (coverFile) {
-      let imageUrl = coverFile;
+    formData.append("isfromDB", isfromDB);
+    formData.append("isHidden", isHidden);
 
-      // Nếu profileImg là một file mới chọn (File object)
-      if (profileImg instanceof File) {
-        imageUrl = await uploadToCloudinary(profileImg, (progress) => {
+    // Xử lý ảnh bìa
+    if (coverFile) {
+      try {
+        console.log("Uploading cover image to Cloudinary...");
+        const imageUrl = await uploadToCloudinary(coverFile, (progress) => {
           console.log("Upload progress:", progress);
         });
+        if (!imageUrl) {
+          throw new Error("Upload ảnh thất bại: Không nhận được URL từ Cloudinary.");
+        }
+        console.log("Uploaded image URL:", imageUrl);
+        formData.append("cover_img", imageUrl);
+      } catch (error) {
+        console.error("Error uploading to Cloudinary:", error);
+        toast.error("Không thể upload ảnh bìa. Vui lòng thử lại.");
+        setLoading(false);
+        return;
       }
-      formData.append("cover_img", imageUrl);
     }
 
+    // Debug FormData
     for (let [key, value] of formData.entries()) {
       console.log(`FormData: ${key} =`, value);
     }
 
     setLoading(true);
     try {
+      console.log("Sending request to create album...");
       const res = await axios.post(
         "http://localhost:8000/spotify_app/albums/create/",
         formData,
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
+            // Không cần set Content-Type, axios tự động xử lý cho FormData
           },
         }
       );
       console.log("Create album response:", res.data);
-      alert("Tạo album thành công!");
+      toast.success("Tạo album thành công!");
       navigate("/admin/albums");
     } catch (error) {
       let errorMsg = "Tạo album thất bại.";
@@ -120,18 +132,13 @@ export default function CreateAlbum() {
         if (error.response.data.error) {
           errorMsg = error.response.data.error;
         } else if (error.response.data.details) {
-          errorMsg = `Lỗi: ${Object.entries(error.response.data.details)
-            .map(
-              ([field, errors]) =>
-                `${field}: ${
-                  Array.isArray(errors) ? errors.join(", ") : errors
-                }`
-            )
-            .join("; ")}`;
+          errorMsg = Object.entries(error.response.data.details)
+            .map(([field, errors]) => `${field}: ${Array.isArray(errors) ? errors.join(", ") : errors}`)
+            .join("; ");
         }
       }
-      alert(errorMsg);
       console.error("Error creating album:", error.response?.data);
+      toast.error(errorMsg);
     } finally {
       setLoading(false);
     }
@@ -200,6 +207,7 @@ export default function CreateAlbum() {
             value={totalTracks}
             onChange={(e) => setTotalTracks(e.target.value)}
             placeholder="Nhập số lượng bài hát"
+            min="0"
             disabled={loading}
             className="p-3 rounded bg-[#282828] text-white border border-gray-700 focus:border-green-500 outline-none transition"
           />
