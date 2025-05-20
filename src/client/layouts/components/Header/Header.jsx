@@ -188,12 +188,12 @@ const Header = () => {
 
       {/* Nút Premium + Cài đặt + Avatar */}
       <div className="flex items-center gap-6 pr-[100px]">
-        <button 
+        {/* <button 
           className="bg-white text-black px-4 py-1 text-sm font-bold rounded-full hover:scale-110 transition-transform duration-200 hover:opacity-80"
           onClick={() => navigate('/premium')}
         >
           Khám phá Premium
-        </button>
+        </button> */}
         <img
           className="w-4 cursor-pointer brightness-50 invert hover:invert-0 hover:brightness-100 hover:scale-110 transition-transform duration-200"
           src={assets.bell_icon}
@@ -307,7 +307,7 @@ const Header = () => {
 
       {/* Chat Section */}
       {isChatOpen && (
-        <div className="fixed top-[9%] right-0 w-[800px] h-[91vh] bg-gradient-to-b from-[#0d1a2d] to-black shadow-lg z-50 border-l border-gray-700 overflow-y-auto overflow-x-hidden scrollbar-w-3 scrollbar scrollbar-thumb-gray-700 scrollbar-track-transparent">
+        <div className="fixed top-[9%] right-0 w-[700px] h-[91vh] bg-gradient-to-b from-[#0d1a2d] to-black shadow-lg z-50 border-l border-gray-700 overflow-y-auto overflow-x-hidden scrollbar-w-3 scrollbar scrollbar-thumb-gray-700 scrollbar-track-transparent">
       <ChatSection 
         userId={detailedUser?.user?.data?._id}
       />

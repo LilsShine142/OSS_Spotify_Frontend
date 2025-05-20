@@ -103,18 +103,18 @@ const ChatSection = ({ userId }) => {
     <div className="flex h-full bg-[#121212]">
       {/* Sidebar - Made even smaller with toggle */}
       <div className={`${isSidebarMinimized ? 'w-12' : 'w-48'} bg-[#181818] border-r border-[#282828] flex flex-col transition-all duration-300 relative`}>
-        {/* Toggle button - Moved inside sidebar */}
-          <button
+        {/* Toggle button - Moved to top left */}
+        <button
           onClick={() => setIsSidebarMinimized(!isSidebarMinimized)}
-          className="absolute -right-3 top-3 bg-[#282828] text-white p-1.5 rounded-full hover:bg-[#333333] transition-colors z-10 border border-[#404040]"
+          className="absolute left-2 top-3 bg-[#282828] text-white p-1.5 rounded-full hover:bg-[#333333] transition-colors z-10 border border-[#404040]"
         >
           {isSidebarMinimized ? <FaChevronRight size={10} /> : <FaChevronLeft size={10} />}
-          </button>
+        </button>
 
         <div className="p-2 border-b border-[#282828]">
           {!isSidebarMinimized && (
             <>
-              <h2 className="text-base font-bold text-white mb-2">Chat Rooms</h2>
+              <h2 className="text-base font-bold text-white mb-2 pl-10">Chat Rooms</h2>
               <div className="space-y-1.5">
             <button
               onClick={() => setShowCreateModal(true)}
