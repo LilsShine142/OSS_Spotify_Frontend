@@ -53,6 +53,9 @@ const routes = {
     admin_playlists: '/admin/playlists',
     admin_albums: '/admin/albums',
     admin_artists: '/admin/artists',
+    admin_users: '/admin/users',
+    admin_users_new: '/admin/users/new',
+    admin_statistical: '/admin/statistical',
 
     default_page: '*',
 };
