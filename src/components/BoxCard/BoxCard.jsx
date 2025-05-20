@@ -69,7 +69,7 @@ const BoxCard = ({ playlist, width, variant = "default" }) => {
       onMouseLeave={() => setIsHovered(false)}
     >
       <Link
-        to={type && id ? `${type}/${id}` : "/default-page"} // Không / trước type thì cần giữ trong layout /home, tạm thời gắn default-page, sau có thể bỏ và áp dụng cho trang khác
+        to={type && id ? `/${type}/${id}` : "/default-page"} // Không / trước type thì cần giữ trong layout /home, tạm thời gắn default-page, sau có thể bỏ và áp dụng cho trang khác
         state={{ fromHome: true }}
         className="relative"
       >
@@ -108,6 +108,11 @@ const BoxCard = ({ playlist, width, variant = "default" }) => {
         {variant === "artist" && (
           <p className="text-gray-400 text-sm text-left">
             {playlist.label || "Nghệ sĩ"}
+          </p>
+        )}
+        {variant === "album" && (
+          <p className="text-gray-400 text-sm text-left">
+            {playlist.album_name || playlist.album?.name || "Unknown Album"}
           </p>
         )}
       </div>

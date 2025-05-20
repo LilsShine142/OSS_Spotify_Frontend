@@ -12,8 +12,8 @@ const PlaylistItem = ({ item, width, type }) => {
 
   const getItemInfo = () => {
     if (type === "likedsongs") return { id: item._id, type: "likedsongs" };
-    if (type === "playlists") return { id: item._id, type: "playlists" };
-    if (type === "artists") return { id: item._id, type: "artists" };
+    if (type === "playlist") return { id: item._id, type: "playlist" };
+    if (type === "artist") return { id: item._id, type: "artist" };
     return {
       id: item.id,
       type: item.type || "album", // Tùy xem db có type hay không
@@ -23,7 +23,13 @@ const PlaylistItem = ({ item, width, type }) => {
   const { id } = getItemInfo();
   return (
     <Link
-      to={type && id ? `${type}/${id}` : "/default-page"} // Không / trước type thì cần giữ trong layout /home, tạm thời gắn default-page, sau có thể bỏ và áp dụng cho trang khác
+      to={
+        type === "likedsongs"
+          ? `/collection/${type}`
+          : type && id
+          ? `/${type}/${id}`
+          : "/default-page"
+      } // Không / trước type thì cần giữ trong layout /home, tạm thời gắn default-page, sau có thể bỏ và áp dụng cho trang khác
       state={{ fromHome: true }}
       className="relative"
     >
@@ -56,9 +62,9 @@ const PlaylistItem = ({ item, width, type }) => {
             </p>
             {type === "likedsongs" ? (
               <p className="text-gray-400 text-sm">
-                Danh sách phát • {item.songCount || 0} bài hát
+                Danh sách phát • {item.total || 0} bài hát
               </p>
-            ) : type === "playlists" ? (
+            ) : type === "playlist" ? (
               <p className="text-gray-400 text-sm">
                 Danh sách phát • {item.user_id}
               </p>
@@ -156,11 +162,11 @@ const Playlists = ({ width }) => {
       <PlaylistItem item={likedSongs} width={width} type="likedsongs" />
       {/* Danh sách phát cá nhân */}
       {playlists.map((playlist) => (
-        <PlaylistItem item={playlist} width={width} type="playlists" />
+        <PlaylistItem item={playlist} width={width} type="playlist" />
       ))}
       {/* Nghệ sĩ đã theo dõi */}
       {artists.map((artist) => (
-        <PlaylistItem item={artist} width={width} type="artists" />
+        <PlaylistItem item={artist} width={width} type="artist" />
       ))}
     </CustomScrollbar>
   );

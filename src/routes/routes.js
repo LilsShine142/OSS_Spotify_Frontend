@@ -92,13 +92,16 @@ import Profile from "../client/pages/Account/profile";
 import UserProfile from "../client/layouts/components/User/UserProfile";
 import DefaultPage from "../client/layouts/Default/DefaultPage";
 import Library from "../client/pages/User/Library";
-
+import AdminLayout from "@/admin/pages/AdminLayout/Dashboard";
+import DetailTracksList from "@/components/AlbumTracksList/DetailTracksList";
 import AdminDashboard from "@/admin/pages/AdminLayout/Dashboard";
 import ManageAlbums from "@/admin/pages/AdminLayout/ManageAlbums";
 import ManageArtists from "@/admin/pages/AdminLayout/ManageArtists";
 import ManageUsers from "@/admin/pages/AdminLayout/ManageUsers";
 import ManageNewUser from "@/admin/pages/AdminLayout/ManageNewUser";
 import Statistical from "@/admin/pages/AdminLayout/Statistical";
+import PremiumPage from "../client/layouts/components/Premium/PremiumPage";
+
 // Các route sử dụng layout HomeLayout
 const layoutRoutes = [
     {
@@ -115,6 +118,10 @@ const layoutRoutes = [
     },
     {
         path: config.routes.playlist_tracks_list(':id'),
+        component: DetailTracksList,
+    },
+    {
+        path: config.routes.liked_songs_collection,
         component: AlbumTracksList,
     },
     {
@@ -122,8 +129,12 @@ const layoutRoutes = [
         component: UserProfile,
     },
     {
-        path: config.routes.library, // ✅ Thêm Library vào layoutRoutes
+        path: config.routes.library,
         component: Library,
+    },
+    {
+        path: config.routes.premium,
+        component: PremiumPage,
     },
 ];
 

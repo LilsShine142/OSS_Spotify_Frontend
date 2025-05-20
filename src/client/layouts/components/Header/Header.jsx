@@ -9,6 +9,7 @@ import {
   FaDownload,
   FaCog,
   FaSignOutAlt,
+  FaComments,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -16,9 +17,12 @@ import { setActiveContent } from "../../../../redux/features/activeContent/activ
 import { getUserInfo } from "@/services/userService"; // nếu nó có tồn tại trong service
 import { UserContext } from "@/context/AuthContext/AuthContext";
 import Cookies from "js-cookie";
+import ChatSection from "../Chat/ChatSection";
+import { toast } from "react-toastify";
 
 const Header = () => {
   const [isDropDownOpen, setIsDropDownOpen] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
   const { user } = useContext(UserContext); // Lấy user từ context
   const [detailedUser, setDetailedUser] = useState(null); // Thông tin chi tiết của user
   const dropdownRef = useRef(null);
@@ -80,6 +84,15 @@ const Header = () => {
     dispatch(setActiveContent(contentType)); // Lưu trạng thái nội dung được chọn
     setIsDropDownOpen(false);
     navigate(contentType); // chỉ dùng nếu `contentType` là đường dẫn hợp lệ
+  };
+
+  const handleChatToggle = () => {
+    if (!detailedUser?.user?.data) {
+      toast.warning("Please login to use chat feature");
+      navigate("/login");
+      return;
+    }
+    setIsChatOpen(!isChatOpen);
   };
 
   // Menu Bar
@@ -175,15 +188,12 @@ const Header = () => {
 
       {/* Nút Premium + Cài đặt + Avatar */}
       <div className="flex items-center gap-6 pr-[100px]">
-        <button className="bg-white text-black px-4 py-1 text-sm font-bold rounded-full hover:scale-110 transition-transform duration-200 hover:opacity-80">
+        <button 
+          className="bg-white text-black px-4 py-1 text-sm font-bold rounded-full hover:scale-110 transition-transform duration-200 hover:opacity-80"
+          onClick={() => navigate('/premium')}
+        >
           Khám phá Premium
         </button>
-        {/* <div className="flex items-center gap-2 cursor-pointer brightness-50 invert hover:invert-0 hover:brightness-100 hover:scale-110 transition-transform duration-200">
-          <img className="w-5 invert" src={assets.down} alt="Cài đặt" />
-          <p className="font-bold text-sm text-gray-400 hover:text-white">
-            Cài đặt ứng dụng
-          </p>
-        </div> */}
         <img
           className="w-4 cursor-pointer brightness-50 invert hover:invert-0 hover:brightness-100 hover:scale-110 transition-transform duration-200"
           src={assets.bell_icon}
@@ -271,7 +281,38 @@ const Header = () => {
             </Link>
           </div>
         )}
+        <button 
+          className="text-white hover:text-green-500 transition-colors duration-200"
+          onClick={handleChatToggle}
+        >
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className="hover:scale-110 transition-transform"
+          >
+            <path
+              d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2ZM20 16H6L4 18V4H20V16Z"
+              fill="currentColor"
+            />
+            <path
+              d="M7 9H17V11H7V9ZM7 12H14V14H7V12Z"
+              fill="currentColor"
+            />
+          </svg>
+        </button>
       </div>
+
+      {/* Chat Section */}
+      {isChatOpen && (
+        <div className="fixed top-[9%] right-0 w-[800px] h-[91vh] bg-gradient-to-b from-[#0d1a2d] to-black shadow-lg z-50 border-l border-gray-700 overflow-y-auto overflow-x-hidden scrollbar-w-3 scrollbar scrollbar-thumb-gray-700 scrollbar-track-transparent">
+      <ChatSection 
+        userId={detailedUser?.user?.data?._id}
+      />
+        </div>
+      )}
     </div>
   );
 };
