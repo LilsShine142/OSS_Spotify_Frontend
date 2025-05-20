@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { Pencil, Trash2, Eye, EyeOff } from "lucide-react";
+import { Pencil, Trash2, Eye, EyeOff, RefreshCw } from "lucide-react";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function ManageTracks() {
   const [tracks, setTracks] = useState([]);
@@ -12,7 +14,7 @@ function ManageTracks() {
   useEffect(() => {
     const userData = JSON.parse(localStorage.getItem("userData"));
     if (!userData?.token) {
-      alert("Vui lòng đăng nhập với quyền admin để quản lý bài hát.");
+      toast.error("Vui lòng đăng nhập với quyền admin để quản lý bài hát.");
       navigate("/login");
     } else {
       fetchTracks();
@@ -24,7 +26,7 @@ function ManageTracks() {
     const token = userData?.token;
 
     if (!token) {
-      alert("Vui lòng đăng nhập với quyền admin.");
+      toast.error("Vui lòng đăng nhập với quyền admin.");
       navigate("/login");
       return;
     }
@@ -37,43 +39,43 @@ function ManageTracks() {
       console.log("Tracks response:", res.data);
       setTracks(Array.isArray(res.data) ? res.data : []);
     } catch (error) {
-      console.error("Error fetching tracks:", error.response?.data);
-      alert(error.response?.data?.error || "Lấy dữ liệu bài hát thất bại.");
+      console.error("Error fetching tracks:", error);
+      toast.error(error.response?.data?.error || "Lấy dữ liệu bài hát thất bại.");
     } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async (id) => {
-    if (!id) {
-      alert("ID bài hát không hợp lệ!");
+    console.log("Deleting track with ID:", id);
+    if (!id || !/^[0-9a-fA-F]{24}$/.test(id)) {
+      toast.error("ID bài hát không hợp lệ!");
       return;
     }
-
     const userData = JSON.parse(localStorage.getItem("userData"));
     const token = userData?.token;
-
     if (!token) {
-      alert("Vui lòng đăng nhập với quyền admin.");
+      toast.error("Vui lòng đăng nhập với quyền admin.");
       navigate("/login");
       return;
     }
-
     if (window.confirm("Bạn có chắc muốn xóa bài hát này?")) {
       try {
-        await axios.delete(`http://localhost:8000/songs/${id}/delete/`, {
+        await axios.delete(`http://localhost:8000/spotify_app/songs/${id}/delete/`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         fetchTracks();
-        alert("Xóa bài hát thành công.");
+        toast.success("Xóa bài hát thành công.");
       } catch (error) {
         console.error("Error deleting track:", error.response?.data);
         const errorMsg = error.response?.data?.error || "Xóa bài hát thất bại.";
         if (error.response?.status === 401) {
-          alert("Bạn không có quyền admin hoặc token không hợp lệ.");
+          toast.error("Bạn không có quyền admin hoặc token không hợp lệ.");
           navigate("/login");
+        } else if (error.response?.status === 404) {
+          toast.error("Bài hát không tồn tại.");
         } else {
-          alert(`Lỗi: ${errorMsg}`);
+          toast.error(`Lỗi: ${errorMsg}`);
         }
       }
     }
@@ -82,41 +84,45 @@ function ManageTracks() {
   const handleToggleVisibility = async (id, isHidden) => {
     const userData = JSON.parse(localStorage.getItem("userData"));
     const token = userData?.token;
-
     if (!token) {
-      alert("Vui lòng đăng nhập với quyền admin.");
+      toast.error("Vui lòng đăng nhập với quyền admin.");
       navigate("/login");
       return;
     }
-
     const action = isHidden ? "hiện" : "ẩn";
     if (window.confirm(`Bạn có chắc muốn ${action} bài hát này?`)) {
       try {
-        await axios.put(
-          `http://localhost:8000/songs/${id}/${isHidden ? "unhide" : "hide"}/`,
-          {},
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+        const endpoint = isHidden
+          ? `http://localhost:8000/spotify_app/songs/${id}/unhide/`
+          : `http://localhost:8000/spotify_app/songs/${id}/hide/`;
+        await axios.put(endpoint, {}, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         fetchTracks();
-        alert(`Bài hát đã được ${action} thành công.`);
+        toast.success(`Bài hát đã được ${action} thành công.`);
       } catch (error) {
         console.error("Error toggling visibility:", error.response?.data);
         const errorMsg = error.response?.data?.error || `Không thể ${action} bài hát.`;
         if (error.response?.status === 401) {
-          alert("Bạn không có quyền admin hoặc token không hợp lệ.");
+          toast.error("Bạn không có quyền admin hoặc token không hợp lệ.");
           navigate("/login");
+        } else if (error.response?.status === 404) {
+          toast.error("Bài hát không tồn tại.");
         } else {
-          alert(`Lỗi: ${errorMsg}`);
+          toast.error(`Lỗi: ${errorMsg}`);
         }
       }
     }
   };
 
-  const formatDuration = (timeStr) => {
-    if (!timeStr) return "0:00";
-    const [hours, minutes, seconds] = timeStr.split(":").map(Number);
+  const formatDuration = (duration) => {
+    if (!duration) return "0:00";
+    if (typeof duration === "number") {
+      const minutes = Math.floor(duration / 60);
+      const seconds = Math.floor(duration % 60);
+      return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+    }
+    const [hours, minutes, seconds] = duration.split(":").map(Number);
     const totalMinutes = hours * 60 + minutes;
     return `${totalMinutes}:${seconds < 10 ? "0" : ""}${seconds}`;
   };
@@ -136,12 +142,27 @@ function ManageTracks() {
         <h1 className="text-3xl font-bold uppercase tracking-wide">
           Quản lý bài hát
         </h1>
-        <button
-          onClick={() => navigate("/admin/create-track")}
-          className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-full font-semibold transition"
-        >
-          + Thêm bài hát
-        </button>
+        <div className="flex gap-4">
+          <button
+            onClick={fetchTracks}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-full font-semibold transition flex items-center gap-2"
+            title="Làm mới danh sách"
+            disabled={loading}
+          >
+            {loading ? (
+              <span className="animate-spin">↻</span>
+            ) : (
+              <RefreshCw size={20} />
+            )}
+            Làm mới
+          </button>
+          <button
+            onClick={() => navigate("/admin/create-track")}
+            className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-full font-semibold transition"
+          >
+            + Thêm bài hát
+          </button>
+        </div>
       </div>
 
       <input
@@ -186,13 +207,14 @@ function ManageTracks() {
                       src={track.img || "/default-cover.png"}
                       alt={track.title || "Unknown"}
                       className="w-12 h-12 rounded object-cover shadow"
+                      onError={(e) => (e.target.src = "/default-cover.png")}
                     />
                   </td>
                   <td className="py-3 px-4 font-medium truncate" title={track.title || "Unknown"}>
                     {track.title || "Unknown"}
                   </td>
                   <td className="py-3 px-4 text-gray-300">
-                    {track.album_id?.album_name || "Chưa có"}
+                    {track.album?.album_name || "Chưa có"}
                   </td>
                   <td className="py-3 px-4 text-gray-400">
                     {formatDuration(track.duration || "00:00:00")}
@@ -200,7 +222,7 @@ function ManageTracks() {
                   <td className="py-3 px-4 text-gray-300">
                     {track.audio_file ? (
                       <audio controls className="w-32 rounded bg-black">
-                        <source src={track.audio_file || undefined} type="audio/mpeg" />
+                        <source src={track.audio_file} type="audio/mpeg" />
                       </audio>
                     ) : (
                       "Không có"
