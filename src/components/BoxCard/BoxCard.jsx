@@ -110,6 +110,11 @@ const BoxCard = ({ playlist, width, variant = "default" }) => {
             {playlist.label || "Nghệ sĩ"}
           </p>
         )}
+        {variant === "album" && (
+          <p className="text-gray-400 text-sm text-left">
+            {playlist.album_name || playlist.album?.name || "Unknown Album"}
+          </p>
+        )}
       </div>
     </div>
   );

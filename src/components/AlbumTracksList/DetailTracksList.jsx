@@ -11,7 +11,10 @@ import { HiDotsHorizontal } from "react-icons/hi";
 import LoadingSpinner from "../Loading/LoadingSpinner";
 import Cookies from "js-cookie";
 import { getTracksListByPlaylistId } from "@/services/SpotifyAppService/TracksListService";
-import { IoPlay } from "react-icons/io5";
+import TrackListHeader from "./TrackListHeader";
+import TrackItem from "./TrackItem";
+import { Trackcolumns } from "@/lib/constaints/constants";
+
 const DetailTracksList = () => {
   const { id: typeId } = useParams();
   const [albumData, setAlbumData] = useState(null);
@@ -19,15 +22,13 @@ const DetailTracksList = () => {
   const [artistInfo, setArtistInfo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  // const [isPlaying, setIsPlaying] = useState(false);
-  const [currentTrackId, setCurrentTrackId] = useState(null);
-  const [isHovered, setIsHovered] = useState(false);
   const [bestImage, setBestImage] = useState({
     url: "/default-image.png",
     width: 60,
     height: 60,
   });
-  const { play, nowPlaying, playerState } = useContext(PlayerContext);
+  const { playerState, play, pause, resume, togglePlayPause } =
+    useContext(PlayerContext);
   const [hoveredTrackId, setHoveredTrackId] = useState(null);
 
   useEffect(() => {
@@ -38,7 +39,7 @@ const DetailTracksList = () => {
         if (data.success) {
           setAlbumData(data.Playlist);
           setTracksListData(data);
-          setCurrentTrackId(data.Playlist?.tracks?.[0]?.id || null); // set track đầu tiên làm track hiện tại
+          // setCurrentTrackId(data.Playlist?.tracks?.[0]?.id || null); // set track đầu tiên làm track hiện tại
           setLoading(false);
           getBestImage(data.Playlist?.image || assets.avatar);
         } else {
@@ -125,28 +126,6 @@ const DetailTracksList = () => {
   //   const seconds = Math.floor((ms % 60000) / 1000);
   //   return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
   // };
-  const formatDurationFromHHMMSS = (timeStr) => {
-    // Tách theo dấu ":"
-    const parts = timeStr.split(":").map(Number);
-
-    let totalSeconds = 0;
-
-    if (parts.length === 3) {
-      // HH:MM:SS
-      totalSeconds = parts[0] * 3600 + parts[1] * 60 + parts[2];
-    } else if (parts.length === 2) {
-      // MM:SS
-      totalSeconds = parts[0] * 60 + parts[1];
-    } else {
-      // Không đúng định dạng
-      return "0:00";
-    }
-
-    const minutes = Math.floor(totalSeconds / 60);
-    const seconds = totalSeconds % 60;
-
-    return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
-  };
 
   const getCredits = (trackArtists) => {
     if (trackArtists.length <= 1) return "";
@@ -156,30 +135,34 @@ const DetailTracksList = () => {
       .join(", ");
   };
 
-  // const handlePlayButtonClick = (trackId) => {
-  //   if (isPlaying && currentTrackId === trackId) {
-  //     setIsPlaying(false);
-  //   } else {
-  //     setIsPlaying(true);
-  //     setCurrentTrackId(trackId);
-  //   }
-  // };
   // Hàm tách chuỗi date chỉ lấy năm
   const getYearFromDate = (dateString) => {
     const date = new Date(dateString); // Chuyển chuỗi thành đối tượng Date
     return date.getFullYear(); // Trả về năm từ đối tượng Date
   };
 
-  // Hàm phát bài hát
-const handlePlayTrack = (track) => {
-    play({
-      _id: track._id,
-      title: track.title,
-      artist: track.artists?.map((artist) => artist.name).join(", ") || "Nghệ sĩ",
-      img: track.img || bestImage.url,
-      audioUrl: track.audio_file, // Đảm bảo đúng key
-      duration: track.duration,
-    });
+  const handlePlayTrack = (track, currentTrackindex) => {
+    console.log("Playing track._id:", track._id);
+    console.log("playerState.currentTrack", playerState.currentTrack);
+    if (playerState.currentTrack?._id === track._id) {
+      console.log("playerState.isPlaying", playerState.isPlaying);
+      // Nếu đang phát cùng track thì toggle play/pause
+      console.log("Đang phát track này");
+      playerState.isPlaying ? pause() : resume();
+    } else {
+      // Nếu là track khác thì phát track mới
+      play(
+        {
+          _id: track._id,
+          title: track.title,
+          artist: track.artists?.map((a) => a.name).join(", ") || "Nghệ sĩ",
+          img: track.img || bestImage.url,
+          audioUrl: track.audio_file,
+          duration: track.duration,
+        },
+        currentTrackindex
+      );
+    }
   };
 
   const isTrackPlaying = (trackId) => {
@@ -196,8 +179,6 @@ const handlePlayTrack = (track) => {
   if (error) return <div className="text-red-500 p-4">Lỗi: {error}</div>;
   if (!tracksListData)
     return <div className="text-white p-4">Không tìm thấy dữ liệu album</div>;
-  console.log("image", bestImage); // Kiểm tra ảnh bìa album
-  console.log("albumData", albumData); // Kiểm tra danh sách bài hát
 
   // Tính tổng thời gian album (tính bằng mili giây)
   const totalDurationMs = tracksListData.Playlist?.songs?.reduce(
@@ -252,15 +233,17 @@ const handlePlayTrack = (track) => {
         {/* Player Controls */}
         <div className="flex items-center gap-4 py-4 p-20">
           <div className="relative">
-            {/* <PlayButton
+            <PlayButton
               isActive={true}
               size="medium"
-              itemId={2}
-              itemType="album"
-              variant="list"
-              isPlaying={isPlaying}
-              onTogglePlay={handlePlayTrack}
-            /> */}
+              // itemId={2}
+              // itemType="album"
+              // variant="list"
+              isPlaying={playerState.isPlaying}
+              onTogglePlay={() => {
+                handlePlayTrack(playerState.currentIndex || 0);
+              }}
+            />
           </div>
 
           <button className="hover:scale-110 transition-transform">
@@ -294,101 +277,22 @@ const handlePlayTrack = (track) => {
         </div>
       </div>
 
+      {/* BẢNG DANH SÁCH BÀI HÁT */}
       <div className="px-6">
-        {/* Header - Tiêu đề cột */}
-        <div className="grid grid-cols-12 gap-4 items-center text-gray-400 border-b border-gray-800 py-1">
-          <div className="col-span-1 text-center text-sm font-medium">#</div>
-          <div className="col-span-6 text-sm font-medium pl-2">Tiêu đề</div>
-          <div className="col-span-3 text-sm font-medium pl-2">Album</div>
-          <div className="col-span-2 text-right text-sm font-medium pr-12">
-            Thời gian
-          </div>
-        </div>
-
-        {/* Danh sách bài hát */}
-        <div className="">
+        <TrackListHeader columns={Trackcolumns} />
+        <div>
           {tracksListData.Playlist?.songs?.map((track, index) => (
-            <div
+            <TrackItem
               key={track._id}
-              className={`grid grid-cols-12 gap-4 items-center py-3 group hover:bg-gray-900/50 transition-colors
-                ${isTrackPlaying(track._id) ? "bg-gray-800/50" : ""}`}
-              onClick={() => handlePlayTrack(track)}
-              onMouseEnter={() => setHoveredTrackId(track._id)}
+              track={track}
+              index={index}
+              isPlaying={playerState.isPlaying}
+              isCurrentTrack={isTrackPlaying(track._id)}
+              onPlayTrack={() => handlePlayTrack(track, index)}
+              onMouseEnter={setHoveredTrackId}
               onMouseLeave={() => setHoveredTrackId(null)}
-            >
-              {/* Số thứ tự */}
-              {/* <div className="col-span-1 text-center text-gray-400 group-hover:text-white">
-                {index + 1}
-              </div> */}
-              <div className="col-span-1 text-center text-gray-400 group-hover:text-white">
-                {isTrackPlaying(track._id) ? (
-                  <div className="flex justify-center">
-                    <div className="w-4 h-4 relative">
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-full h-2 bg-green-500 animate-pulse"></div>
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  index + 1
-                )}
-              </div>
-
-              {/* Tiêu đề bài hát */}
-              <div className="col-span-6 flex items-center pl-2 gap-3">
-                <div className="relative w-10 h-10">
-                  <img
-                    src={track.img || assets.avatar}
-                    alt={track.title}
-                    className="w-10 h-10 object-cover rounded-md"
-                  />
-                  {/* Nút Play xuất hiện khi hover */}
-                  {/* Nút Play - HIỂN THỊ KHI HOVER HOẶC ĐANG PHÁT */}
-                  <div
-                    className={`absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 rounded-md
-                      ${
-                        hoveredTrackId === track._id ||
-                        isTrackPlaying(track._id)
-                          ? "opacity-100"
-                          : "opacity-0"
-                      } transition-opacity`}
-                  >
-                    <IoPlay
-                      size={20}
-                      className={`text-white ${
-                        isTrackPlaying(track._id) ? "text-green-500" : ""
-                      }`}
-                    />
-                  </div>
-                </div>
-
-                <div className="flex flex-col">
-                  <p
-                    className={`font-medium truncate ${
-                      isTrackPlaying(track._id)
-                        ? "text-green-500"
-                        : "text-white"
-                    }`}
-                  >
-                    {track.title}
-                  </p>
-                  <p className="text-gray-400 text-sm truncate">
-                    {track.artists?.map((artist) => artist.name).join(", ") ||
-                      "Nghệ sĩ"}
-                  </p>
-                </div>
-              </div>
-              {/* Album */}
-              <div className="col-span-3 text-gray-400 group-hover:text-white pl-2 truncate">
-                {track.artists?.name || "Album"}
-                {/* {track.artists?.length > 1 && `, ${getCredits(track.artists)}`} */}
-              </div>
-
-              {/* Thời gian */}
-              <div className="col-span-1 text-right text-gray-400 group-hover:text-white pr-2">
-                {formatDurationFromHHMMSS(track.duration)}
-              </div>
-            </div>
+              hoveredTrackId={hoveredTrackId}
+            />
           ))}
         </div>
       </div>

@@ -1,228 +1,3 @@
-// import React, { createContext, useState, useRef, useEffect } from "react";
-
-// export const PlayerContext = createContext();
-
-// export const PlayerProvider = ({ children }) => {
-//   const audioRef = useRef(new Audio());
-//   const [playerState, setPlayerState] = useState({
-//     isPlaying: false,
-//     currentTime: 0,
-//     duration: 0,
-//     volume: 0.7,
-//   });
-
-//   const [nowPlaying, setNowPlaying] = useState({
-//     _id: null,
-//     title: "",
-//     artist: "Unknown Artist", // Mặc định nếu không có thông tin
-//     coverImage: null, // Hoặc URL hình ảnh mặc định
-//     audioUrl: "",
-//     duration: "00:00", // Mặc định
-//   });
-
-//   // Xử lý khi bài hát thay đổi
-//   useEffect(() => {
-//     if (!nowPlaying.audioUrl) {
-//       console.log("Không có audioUrl");
-//       return;
-//     }
-
-//     const audio = audioRef.current;
-//     console.log("Setting audio source:", nowPlaying.audioUrl);
-
-//     // Reset audio element
-//     audio.pause();
-//     audio.currentTime = 0;
-
-//     // Thiết lập nguồn mới
-//     audio.src = nowPlaying.audioUrl;
-//     audio.volume = playerState.volume;
-
-//     const playAudio = async () => {
-//       try {
-//         await audio.play();
-//         console.log("Đang phát audio");
-//         setPlayerState((prev) => ({ ...prev, isPlaying: true }));
-//       } catch (err) {
-//         console.error("Lỗi khi phát audio:", err);
-//         setPlayerState((prev) => ({ ...prev, isPlaying: false }));
-//       }
-//     };
-
-//     playAudio();
-
-//     return () => {
-//       audio.pause();
-//     };
-//   }, [nowPlaying.audioUrl]); // Chỉ chạy lại khi audioUrl thay đổi
-
-//   // Các hàm xử lý phát nhạc (giữ nguyên như trước)
-//   const play = (track) => {
-//     setNowPlaying({
-//       _id: track._id,
-//       title: track.title,
-//       artist: track.artist || "Unknown Artist",
-//       coverImage: track.img || "/default-cover.jpg", // Ảnh mặc định
-//       audioUrl: track.audio_file, // Sử dụng audio_file từ dữ liệu của bạn
-//       duration: track.duration,
-//     });
-//     setPlayerState((prev) => ({ ...prev, isPlaying: true }));
-//   };
-
-//   const pause = () => {
-//     audioRef.current.pause();
-//     setPlayerState((prev) => ({ ...prev, isPlaying: false }));
-//   };
-
-//   const togglePlayPause = () => {
-//     if (playerState.isPlaying) {
-//       pause();
-//     } else {
-//       audioRef.current
-//         .play()
-//         .then(() => setPlayerState((prev) => ({ ...prev, isPlaying: true })))
-//         .catch((e) => console.error("Lỗi phát nhạc:", e));
-//     }
-//   };
-
-//   const seek = (time) => {
-//     audioRef.current.currentTime = time;
-//     setPlayerState((prev) => ({ ...prev, currentTime: time }));
-//   };
-
-//   const setVolume = (volume) => {
-//     audioRef.current.volume = volume;
-//     setPlayerState((prev) => ({ ...prev, volume }));
-//   };
-
-//   return (
-//     <PlayerContext.Provider
-//       value={{
-//         nowPlaying,
-//         playerState,
-//         audioRef,
-//         play,
-//         pause,
-//         togglePlayPause,
-//         seek,
-//         setVolume,
-//       }}
-//     >
-//       {children}
-//     </PlayerContext.Provider>
-//   );
-// };
-
-
-
-
-
-
-
-
-
-
-
-
-
-// import React, { createContext, useState } from "react";
-// import AudioPlayer from "react-h5-audio-player";
-// import "react-h5-audio-player/lib/styles.css";
-// import { assets } from "@/assets/assets";
-
-// export const PlayerContext = createContext();
-
-// export const PlayerProvider = ({ children }) => {
-//   const [playerState, setPlayerState] = useState({
-//     currentTrack: null,
-//     isPlaying: false,
-//   });
-
-//   const play = (track) => {
-//     setPlayerState({
-//       currentTrack: {
-//         _id: track._id,
-//         title: track.title,
-//         artist: track.artist || "Unknown Artist",
-//         coverImage: track.img || "/default-cover.jpg",
-//         audioUrl: track.audio_file,
-//         duration: track.duration,
-//       },
-//       isPlaying: true,
-//     });
-//   };
-
-//   const pause = () => {
-//     setPlayerState((prev) => ({ ...prev, isPlaying: false }));
-//   };
-//   console.log("PlayerProvider", playerState);
-//   return (
-//     <PlayerContext.Provider value={{ playerState, play, pause }}>
-//       {children}
-
-//       {/* Player cố định ở bottom */}
-//       {playerState.currentTrack && (
-//         <div className="fixed bottom-0 left-0 right-0 z-50">
-//           <AudioPlayer
-//             autoPlay
-//             src={assets.song1}
-//             onPlay={() =>
-//               setPlayerState((prev) => ({ ...prev, isPlaying: true }))
-//             }
-//             onPause={() =>
-//               setPlayerState((prev) => ({ ...prev, isPlaying: false }))
-//             }
-//             header={
-//               <div className="text-white flex items-center">
-//                 <img
-//                   src={playerState.currentTrack.coverImage}
-//                   alt="Cover"
-//                   className="w-10 h-10 rounded-md mr-3"
-//                 />
-//                 <div>
-//                   <div className="font-medium">
-//                     {playerState.currentTrack.title}
-//                   </div>
-//                   <div className="text-sm text-gray-400">
-//                     {playerState.currentTrack.artist}
-//                   </div>
-//                 </div>
-//               </div>
-//             }
-//             layout="horizontal-reverse"
-//             style={{
-//               background: "#181818",
-//               color: "white",
-//               borderRadius: "0",
-//             }}
-//             customProgressBarSection={['current-time', 'progress-bar', 'duration']}
-//             // customProgressBarSection={[
-//             //   <div key="time" className="text-white mx-2 text-sm">
-//             //     {playerState.currentTrack.duration}
-//             //   </div>,
-//             // ]}
-//           />
-//         </div>
-//       )}
-//     </PlayerContext.Provider>
-//   );
-// };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import React, {
   createContext,
   useContext,
@@ -239,71 +14,198 @@ export const PlayerProvider = ({ children }) => {
     isPlaying: false,
     currentTime: 0,
     duration: 0,
+    volume: 70,
+    isShuffled: false,
+    repeatMode: "off", // 'off', 'all', 'one'
+    wasPlayingBeforeSeek: false,
   });
+  const [queue, setQueue] = useState([]);
 
   const audioRef = useRef(null);
 
-  const play = (track) => {
+  // Hàm phát bài hát mới
+  const play = (track, index = 0) => {
+    console.log("Playing track:", track);
     const formattedTrack = {
-      _id: track._id,
-      title: track.title,
-      artist: track.artist || "Unknown Artist",
-      coverImage: track.img || "/default-cover.jpg",
-      audioUrl: track.audio_file,
+      _id: track._id || track.id,
+      title: track.title || track.name,
+      artist:
+        track.artist ||
+        track.artists?.map((a) => a.name).join(", ") ||
+        "Unknown Artist",
+      coverImage: track.img || track.coverImage || "/default-cover.jpg",
+      audioUrl: track.audio_file || track.url,
       duration: track.duration || 0,
     };
-
-    setPlayerState((prev) => ({
-      ...prev,
+    // setQueue(trackQueue); // Lưu queue (từ bài hiện tại trở đi)
+    setPlayerState({
       currentTrack: formattedTrack,
       isPlaying: true,
       currentTime: 0,
-    }));
+      duration: 0,
+      currentIndex: index,
+      wasPlayingBeforeSeek: false,
+    });
   };
 
+  // Hàm tạm dừng
   const pause = () => {
-    setPlayerState((prev) => ({ ...prev, isPlaying: false }));
-  };
-
-  const togglePlayPause = () => {
-    if (playerState.isPlaying) {
-      pause();
-    } else if (playerState.currentTrack) {
-      setPlayerState((prev) => ({ ...prev, isPlaying: true }));
+    if (audioRef.current) {
+      const currentTime = audioRef.current.currentTime;
+      audioRef.current.pause();
+      setPlayerState((prev) => ({
+        ...prev,
+        isPlaying: false,
+        currentTime, // Giữ nguyên currentTime
+      }));
     }
   };
 
-  const handleTimeUpdate = () => {
-    const current = audioRef.current?.currentTime || 0;
-    setPlayerState((prev) => ({ ...prev, currentTime: current }));
+  // Hàm tiếp tục phát
+  // const resume = () => {
+  //   setPlayerState((prev) => ({ ...prev, isPlaying: true }));
+  // };
+  // Hàm resume tiếp tục từ thời gian hiện tại
+  const resume = () => {
+    if (audioRef.current && playerState.currentTrack) {
+      audioRef.current
+        .play()
+        .then(() =>
+          setPlayerState((prev) => ({
+            ...prev,
+            isPlaying: true,
+          }))
+        )
+        .catch((error) => {
+          console.error("Resume failed:", error);
+          setPlayerState((prev) => ({ ...prev, isPlaying: false }));
+        });
+    }
   };
 
-  const handleLoadedData = () => {
-    const duration = audioRef.current?.duration || 0;
-    setPlayerState((prev) => ({ ...prev, duration }));
+  // Hàm toggle play/pause
+  const togglePlayPause = () => {
+    if (!playerState.currentTrack) return;
+    playerState.isPlaying ? pause() : resume();
   };
 
+  // Hàm xử lý khi bài hát kết thúc
   const handleEnded = () => {
     setPlayerState((prev) => ({ ...prev, isPlaying: false, currentTime: 0 }));
   };
 
+  // Hàm seek đến thời gian cụ thể
   const seek = (time) => {
     if (audioRef.current) {
+      const wasPlaying = playerState.isPlaying;
+      setPlayerState((prev) => ({
+        ...prev,
+        isPlaying: false,
+        wasPlayingBeforeSeek: wasPlaying,
+        currentTime: time,
+      }));
+
       audioRef.current.currentTime = time;
-      setPlayerState((prev) => ({ ...prev, currentTime: time }));
+
+      if (wasPlaying) {
+        setTimeout(() => {
+          setPlayerState((prev) => ({ ...prev, isPlaying: true }));
+        }, 100);
+      }
     }
   };
 
-  // Phát hoặc dừng audio tương ứng khi isPlaying thay đổi
+  // Hàm xử lý cập nhật thời gian hiện tại
+  const handleTimeUpdate = () => {
+    setPlayerState((prev) => ({
+      ...prev,
+      currentTime: audioRef.current?.currentTime || 0,
+    }));
+  };
+
+  // Hàm xử lý khi audio đã load
+  const handleLoadedData = () => {
+    setPlayerState((prev) => ({
+      ...prev,
+      duration: audioRef.current?.duration || 0,
+    }));
+  };
+
+  const handleLoadedMetadata = () => {
+    setPlayerState((prev) => ({
+      ...prev,
+      duration: audioRef.current?.duration || 0,
+    }));
+  };
+
+  // Hàm xử lý xáo trộn
+  const toggleShuffle = () => {
+    setPlayerState((prev) => ({
+      ...prev,
+      isShuffled: !prev.isShuffled,
+    }));
+  };
+
+  // Hàm xử lý lặp lại
+  const toggleRepeat = (mode) => {
+    setPlayerState((prev) => ({
+      ...prev,
+      repeatMode: mode,
+    }));
+  };
+
+  const handleClick = (track, index) => {
+    const slicedList = allTracks.slice(index); // phần còn lại từ bài hiện tại trở đi
+    play(track, slicedList);
+  };
+
+  // Hàm chuyển bài tiếp theo
+  const playNextTrack = () => {
+    const nextIndex = playerState.currentIndex + 1;
+    play(playerState.currentTrack, nextIndex);
+  };
+
+  // Hàm chuyển bài trước
+  const playPreviousTrack = () => {
+    // Logic chuyển bài trước
+    // Cần implement dựa trên danh sách bài hát hiện có
+  };
+
+  // Hàm điều chỉnh volume
+  const setVolume = (volume) => {
+    if (audioRef.current) {
+      audioRef.current.volume = volume / 100;
+    }
+    setPlayerState((prev) => ({ ...prev, volume }));
+  };
+
+  // Effect xử lý play/pause khi state thay đổi
   useEffect(() => {
     if (!audioRef.current) return;
 
     if (playerState.isPlaying) {
-      audioRef.current.play();
+      const playPromise = audioRef.current.play();
+
+      if (playPromise !== undefined) {
+        playPromise.catch((error) => {
+          console.error("Playback failed:", error);
+          setPlayerState((prev) => ({ ...prev, isPlaying: false }));
+        });
+      }
     } else {
       audioRef.current.pause();
     }
   }, [playerState.isPlaying, playerState.currentTrack]);
+
+  // Effect xử lý khi currentTime thay đổi từ bên ngoài (như seek bar)
+  useEffect(() => {
+    if (
+      audioRef.current &&
+      Math.abs(audioRef.current.currentTime - playerState.currentTime) > 0.1
+    ) {
+      audioRef.current.currentTime = playerState.currentTime;
+    }
+  }, [playerState.currentTime]);
 
   return (
     <PlayerContext.Provider
@@ -311,15 +213,32 @@ export const PlayerProvider = ({ children }) => {
         playerState,
         play,
         pause,
+        resume,
         togglePlayPause,
-        handleTimeUpdate,
-        handleLoadedData,
-        handleEnded,
         seek,
         audioRef,
+        toggleShuffle,
+        toggleRepeat,
+        playNextTrack,
+        playPreviousTrack,
+        setVolume,
       }}
     >
       {children}
+      {/* Audio element ẩn */}
+      <audio
+        ref={audioRef}
+        // Gắn cứng url tạm thời
+        src={
+          playerState.currentTrack
+            ? "https://res.cloudinary.com/ddlso6ofq/raw/upload/v1747581594/wpkiiahs1ggwlctnuuhz.mp3"
+            : undefined
+        }
+        onTimeUpdate={handleTimeUpdate}
+        onLoadedData={handleLoadedData}
+        onLoadedMetadata={handleLoadedMetadata}
+        onEnded={handleEnded}
+      />
     </PlayerContext.Provider>
   );
 };

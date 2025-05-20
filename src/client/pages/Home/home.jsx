@@ -4,15 +4,9 @@ import RightSidebar from "../../layouts/components/Sidebar/RightSidebar";
 import Header from "../../layouts/components/Header/Header";
 import MainContent from "../../layouts/components/MainContent/MaiContent";
 import NowPlayingBar from "../../layouts/components/Footer/NowPlayingBar";
-// import { PlayerContext } from "../../../context/PlayerContext/PlayerContext";
 import { PlayerProvider } from "../../../context/PlayerContext/PlayerContext";
 const Home = () => {
   const [sidebarWidth, setSidebarWidth] = useState(360);
-  // const { nowPlaying, setNowPlaying } = useContext(PlayerContext);
-
-  // Xác định currentSongId và currentAlbumId từ nowPlaying
-  // const currentSongId = nowPlaying.type === "song" ? nowPlaying.id : null;
-  // const currentAlbumId = nowPlaying.type === "album" ? nowPlaying.id : null;
 
   return (
     <PlayerProvider>
@@ -25,13 +19,6 @@ const Home = () => {
             sidebarWidth={sidebarWidth}
             currentSongId={30} // Tạm thời gắn cứng ID bài hát
           />
-          {/* <NowPlayingBar
-          currentSongId={currentSongId}
-          currentAlbumId={currentAlbumId}
-          isPlaying={!!nowPlaying.id}
-          nowPlaying={nowPlaying}
-          setNowPlaying={setNowPlaying}
-        /> */}
           <NowPlayingBar />
         </div>
       </div>
