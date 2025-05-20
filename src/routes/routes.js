@@ -97,6 +97,7 @@ import DetailTracksList from "@/components/AlbumTracksList/DetailTracksList";
 import AdminDashboard from "@/admin/pages/AdminLayout/Dashboard";
 import ManageAlbums from "@/admin/pages/AdminLayout/ManageAlbums";
 import ManageArtists from "@/admin/pages/AdminLayout/ManageArtists";
+import PremiumPage from "../client/layouts/components/Premium/PremiumPage";
 
 // Các route sử dụng layout HomeLayout
 const layoutRoutes = [
@@ -125,8 +126,12 @@ const layoutRoutes = [
         component: UserProfile,
     },
     {
-        path: config.routes.library, // ✅ Thêm Library vào layoutRoutes
+        path: config.routes.library,
         component: Library,
+    },
+    {
+        path: config.routes.premium,
+        component: PremiumPage,
     },
 ];
 
