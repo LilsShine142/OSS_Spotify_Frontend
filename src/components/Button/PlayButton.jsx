@@ -1,17 +1,16 @@
-import React, { useContext } from "react";
+import React from "react";
 import { RenderIcon } from "./RenderIcon";
 import { assets } from "../../assets/assets";
-import { PlayerContext } from "../../context/PlayerContext/PlayerContext";
+import { usePlayer } from "../../context/PlayerContext/PlayerContext";
 
 const PlayButton = ({
   isActive = true,
   size = "medium",
-  itemId,
-  itemType,
+  track = {}, // object bài hát (có thể undefined)
   variant = "list",
   isBar = false,
-  isPlaying: propIsPlaying, // Nhận từ props (tuỳ chọn)
-  onTogglePlay: propOnTogglePlay, // Nhận từ props (tuỳ chọn)
+  isPlaying, // Nhận từ props thay vì tự tính toán
+  onTogglePlay, // Nhận hàm toggle từ props
 }) => {
   const sizeClasses = {
     small: "w-8 h-8",
@@ -19,27 +18,22 @@ const PlayButton = ({
     large: "w-14 h-14",
   };
 
-  // Lấy từ Context nếu không truyền từ props
-  const { nowPlaying, setNowPlaying } = useContext(PlayerContext);
-  const contextIsPlaying =
-    nowPlaying.id === itemId && nowPlaying.type === itemType;
-
-  // Ưu tiên dùng prop nếu được truyền, không thì dùng context
-  const isPlaying =
-    propIsPlaying !== undefined ? propIsPlaying : contextIsPlaying;
+  const { playerState } = usePlayer();
 
   const handleToggle = (e) => {
     e.stopPropagation();
 
-    if (propOnTogglePlay) {
-      // Nếu có callback từ props thì gọi nó
-      propOnTogglePlay();
-    } else {
-      // Ngược lại dùng Context
-      if (isPlaying) {
-        setNowPlaying({ id: null, type: null });
+    // Nếu có truyền vào hàm onTogglePlay thì gọi nó
+    if (onTogglePlay) {
+      onTogglePlay();
+    }
+    // Nếu không thì dùng logic mặc định
+    else if (track) {
+      const isCurrentTrack = playerState.currentTrack?._id === track?._id;
+      if (isCurrentTrack && playerState.isPlaying) {
+        pause();
       } else {
-        setNowPlaying({ id: itemId, type: itemType });
+        play(track);
       }
     }
   };
@@ -55,10 +49,10 @@ const PlayButton = ({
 
   return (
     <div
-      className={`absolute ${positionClasses} ${positionClasses} p-[6px] flex items-center justify-center `}
+      className={`absolute ${positionClasses} p-[6px] flex items-center justify-center`}
     >
       <div
-        className={`${isBar ? "bg-white" : " bg-green-500"} rounded-full ${
+        className={`${isBar ? "bg-white" : "bg-green-500"} rounded-full ${
           sizeClasses[size]
         } p-2 flex items-center justify-center hover:scale-110 transition-transform shadow-lg`}
         onClick={handleToggle}

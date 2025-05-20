@@ -1,6 +1,7 @@
 import Cookies from "js-cookie";
 import { axiosInstance } from "../lib/axios/axios";
 import axios from "axios";
+import { toast } from "sonner";
 
 export const login = async (email, password) => {
     try {
@@ -59,6 +60,41 @@ export const handleLogin = async (data) => {
 
     }
 };
+
+
+export const handleRegister = async (data) => {
+  const { email, password, name, dob, gender, role } = data;
+
+  // Tạo payload chỉ với các trường có giá trị hợp lệ
+  const payload = {
+    email,
+    password,
+    name,
+    dob,
+    gender,
+  };
+
+  if (role) payload.role = role;
+
+  try {
+    const response = await axios.post('http://127.0.0.1:8000/user_management/register/', payload);
+
+    if (response.status === 201) {
+      return { message: "success" };
+    } else if (response.data?.error === 'Email already registered') {
+      return { message: "email_exists" };
+    } else {
+      return { message: "error" };
+    }
+  } catch (error) {
+    console.error('Lỗi kết nối:', error);
+    console.error('Chi tiết phản hồi:', error.response?.data);
+    toast.error('Lỗi kết nối, vui lòng thử lại!');
+    return { message: "network_error" };
+  }
+};
+
+
 
 
 

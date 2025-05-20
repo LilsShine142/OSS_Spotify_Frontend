@@ -44,16 +44,16 @@ function Profile() {
   
   useEffect(() => {
     const fetchUserData = async () => {
-      const userStorage = localStorage.getItem("user");
+      const userStorage = localStorage.getItem("userData");
       if (userStorage) {
         try {
           const user = await getUserInfoFromAPI();
           console.log(user.user);
-          setUserData(user.user);
-  
-          // Dùng trực tiếp user.user thay vì userData
+          
+
+          setUserData(user.user)
           setValue("name", user.user.name);
-          setValue("gender", user.user.gender || "male");
+          setValue("gender", user.user.gender);
   
           if (user.user.dob) {
             const dobDate = new Date(user.user.dob);
@@ -219,8 +219,8 @@ function Profile() {
                 className="bg-[#121212] border border-white p-3 rounded-[3px] text-white"
                 {...register("gender")}
               >
-                <option value="male">Nam</option>
-                <option value="female">Nữ</option>
+                <option value="Male">Nam</option>
+                <option value="Female">Nữ</option>
                 <option value="other">Khác</option>
               </select>
               {errors.gender && (
