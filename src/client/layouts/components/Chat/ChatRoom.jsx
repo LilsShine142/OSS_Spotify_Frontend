@@ -66,7 +66,16 @@ const ChatRoom = ({ room, userId, onLeave, isSidebarMinimized }) => {
 
     const connectWebSocket = () => {
       try {
-        const wsUrl = `ws://127.0.0.1:8001/ws/chat/${room._id}/`;
+        const userData = JSON.parse(localStorage.getItem('userData'));
+        const token = userData?.token;
+        
+        if (!token) {
+          console.error('No authentication token found');
+          toast.error('Please log in to access chat');
+          return;
+        }
+
+        const wsUrl = `ws://127.0.0.1:8001/ws/chat/${room._id}/?token=${token}`;
         console.log('Connecting to WebSocket:', wsUrl);
         
         const newSocket = new WebSocket(wsUrl);
@@ -86,6 +95,12 @@ const ChatRoom = ({ room, userId, onLeave, isSidebarMinimized }) => {
             const data = JSON.parse(event.data);
             console.log('Received message:', data);
             
+            if (data.type === 'error') {
+                console.error('WebSocket error:', data.message);
+                toast.error(data.message);
+                return;
+            }
+            
             if (data.type === 'chat_message') {
               // Check if message already exists to prevent duplicates
               setMessages(prev => {
@@ -103,6 +118,25 @@ const ChatRoom = ({ room, userId, onLeave, isSidebarMinimized }) => {
                   [data.message.user_id]: data.user
                 }));
               }
+            } else if (data.type === 'user_joined') {
+              console.log('User joined message received:', data);
+              // Handle room state sync
+              if (data.message && data.message.room_state) {
+                const roomState = data.message.room_state;
+                console.log('Syncing room state:', roomState);
+                
+                // If we're the user who just joined, we need to sync our player
+                if (data.message.user_id === userId) {
+                  // Pass the room state to RoomPlaylist component
+                  if (roomState.playing_song) {
+                    // Emit a custom event that RoomPlaylist can listen to
+                    const syncEvent = new CustomEvent('roomStateSync', {
+                      detail: roomState
+                    });
+                    window.dispatchEvent(syncEvent);
+                  }
+                }
+              }
             }
           } catch (error) {
             console.error('Error parsing WebSocket message:', error);
@@ -113,20 +147,16 @@ const ChatRoom = ({ room, userId, onLeave, isSidebarMinimized }) => {
           console.error('WebSocket error:', error);
           setConnectionStatus('error');
           toast.error('Connection error. Please try again.');
-          // Attempt to reconnect after 5 seconds
-          setTimeout(() => {
-            if (newSocket.readyState === WebSocket.CLOSED) {
-              console.log('Attempting to reconnect...');
-              connectWebSocket();
-            }
-          }, 5000);
         };
 
         newSocket.onclose = (event) => {
           console.log('WebSocket connection closed:', event.code, event.reason);
           setConnectionStatus('disconnected');
-          // Attempt to reconnect if the connection was closed unexpectedly
-          if (event.code !== 1000) {
+          
+          // Only attempt to reconnect if the connection was closed unexpectedly
+          // and we're not already trying to reconnect
+          if (event.code !== 1000 && connectionStatus !== 'reconnecting') {
+            setConnectionStatus('reconnecting');
             setTimeout(() => {
               console.log('Attempting to reconnect...');
               connectWebSocket();
@@ -137,7 +167,7 @@ const ChatRoom = ({ room, userId, onLeave, isSidebarMinimized }) => {
         setSocket(newSocket);
 
         return () => {
-          if (newSocket) {
+          if (newSocket && newSocket.readyState === WebSocket.OPEN) {
             newSocket.close(1000, 'Component unmounting');
           }
         };
@@ -145,10 +175,15 @@ const ChatRoom = ({ room, userId, onLeave, isSidebarMinimized }) => {
         console.error('Error setting up WebSocket:', error);
         setConnectionStatus('error');
         toast.error('Failed to connect to chat');
-        setTimeout(() => {
-          console.log('Attempting to reconnect...');
-          connectWebSocket();
-        }, 5000);
+        
+        // Only attempt to reconnect if we're not already trying to reconnect
+        if (connectionStatus !== 'reconnecting') {
+          setConnectionStatus('reconnecting');
+          setTimeout(() => {
+            console.log('Attempting to reconnect...');
+            connectWebSocket();
+          }, 5000);
+        }
       }
     };
 

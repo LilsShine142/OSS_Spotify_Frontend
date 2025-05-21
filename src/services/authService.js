@@ -14,13 +14,35 @@ export const login = async (email, password) => {
         );
 
         if (response.data && response.data.access_token) {
+            // Store token in both cookie and localStorage
             Cookies.set("access_token", response.data.access_token, { expires: 7 });
+            
+            // Store user data with token
+            const userData = {
+                token: response.data.access_token,
+                user: {
+                    data: {
+                        _id: response.data._id,
+                        name: response.data.name,
+                        email: response.data.email,
+                        role: response.data.role
+                    }
+                }
+            };
+            
+            localStorage.setItem("userData", JSON.stringify(userData));
 
+            // Set default authorization header
             axiosInstance.defaults.headers.common[
                 "Authorization"
             ] = `Bearer ${response.data.access_token}`;
 
-            return response.data;
+            return {
+                success: true,
+                _id: response.data._id,
+                role: response.data.role,
+                token: response.data.access_token
+            };
         } else {
             throw new Error("Invalid response format");
         }

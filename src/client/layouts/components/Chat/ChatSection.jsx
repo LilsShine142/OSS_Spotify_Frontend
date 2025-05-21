@@ -35,13 +35,22 @@ const ChatSection = ({ userId }) => {
       }
 
       const response = await fetch(`http://127.0.0.1:8000/chatting/rooms/user/?user_id=${userId}`, {
+        method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        credentials: 'include'
       });
 
       if (!response.ok) {
+        if (response.status === 401) {
+          // Token expired or invalid
+          localStorage.removeItem('userData');
+          toast.error('Session expired. Please log in again.');
+          return;
+        }
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
