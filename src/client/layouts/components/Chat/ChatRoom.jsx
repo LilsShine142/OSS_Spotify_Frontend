@@ -82,10 +82,10 @@ const ChatRoom = ({ room, userId, onLeave, isSidebarMinimized }) => {
               });
               
               // Update user info if available
-              if (data.message.user) {
+              if (data.user) {
                 setUsers(prev => ({
                   ...prev,
-                  [data.message.user_id]: data.message.user
+                  [data.message.user_id]: data.user
                 }));
               }
             }

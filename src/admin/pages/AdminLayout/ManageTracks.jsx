@@ -41,6 +41,7 @@ function ManageTracks() {
     } catch (error) {
       console.error("Error fetching tracks:", error);
       toast.error(error.response?.data?.error || "Lấy dữ liệu bài hát thất bại.");
+
     } finally {
       setLoading(false);
     }
@@ -49,12 +50,16 @@ function ManageTracks() {
   const handleDelete = async (id) => {
     console.log("Deleting track with ID:", id);
     if (!id || !/^[0-9a-fA-F]{24}$/.test(id)) {
+
       toast.error("ID bài hát không hợp lệ!");
       return;
+
+
     }
     const userData = JSON.parse(localStorage.getItem("userData"));
     const token = userData?.token;
     if (!token) {
+
       toast.error("Vui lòng đăng nhập với quyền admin.");
       navigate("/login");
       return;
@@ -76,15 +81,16 @@ function ManageTracks() {
           toast.error("Bài hát không tồn tại.");
         } else {
           toast.error(`Lỗi: ${errorMsg}`);
+
         }
-      }
     }
-  };
+};
 
   const handleToggleVisibility = async (id, isHidden) => {
     const userData = JSON.parse(localStorage.getItem("userData"));
     const token = userData?.token;
     if (!token) {
+
       toast.error("Vui lòng đăng nhập với quyền admin.");
       navigate("/login");
       return;
@@ -110,10 +116,10 @@ function ManageTracks() {
           toast.error("Bài hát không tồn tại.");
         } else {
           toast.error(`Lỗi: ${errorMsg}`);
+
         }
-      }
     }
-  };
+};
 
   const formatDuration = (duration) => {
     if (!duration) return "0:00";
