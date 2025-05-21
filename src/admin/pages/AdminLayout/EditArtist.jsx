@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
+import { uploadToCloudinary } from "../../../services/CloudUploadService/CloudService";
+import { updateArtist } from "../../../services/ArtistService/artistService";
+import cookies from "js-cookie";
 
 export default function EditArtist() {
   const [artistName, setArtistName] = useState("");
@@ -26,9 +29,12 @@ export default function EditArtist() {
 
       console.log("Fetching artist with ID:", artistId);
       try {
-        const res = await axios.get(`http://127.0.0.1:8000/spotify_app/artists/${artistId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await axios.get(
+          `http://127.0.0.1:8000/spotify_app/artists/${artistId}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         console.log("Artist data:", res.data);
         const artist = res.data;
         setArtistName(artist.artist_name || "");
@@ -38,7 +44,8 @@ export default function EditArtist() {
         setIsFromDB(artist.isfromDB !== false);
         setIsHidden(artist.isHidden || false);
       } catch (error) {
-        const errorMsg = error.response?.data?.error || "Lấy dữ liệu nghệ sĩ thất bại.";
+        const errorMsg =
+          error.response?.data?.error || "Lấy dữ liệu nghệ sĩ thất bại.";
         alert(errorMsg);
         console.error("Error fetching artist:", error.response);
         navigate("/admin/artists");
@@ -52,12 +59,9 @@ export default function EditArtist() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!artistName.trim()) {
-      alert("Tên nghệ sĩ không được để trống!");
-      return;
-    }
-
+    setLoading(true);
+    // const token = cookies.get("access_token");
+    // Tạm thời sử dụng localStorage để lấy token
     const userData = JSON.parse(localStorage.getItem("userData"));
     const token = userData?.token;
     if (!token) {
@@ -65,40 +69,43 @@ export default function EditArtist() {
       navigate("/login");
       return;
     }
-
-    const payload = {
-      artist_name: artistName,
-      biography,
-      profile_img: profileImg || null,
-      label: label || null,
-      isfromDB: isFromDB,
-      isHidden: isHidden,
-    };
-    console.log("Update payload:", payload);
-
-    setLoading(true);
     try {
-      const res = await axios.put(
-        `http://127.0.0.1:8000/spotify_app/artists/${artistId}/update`,
-        payload,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      console.log("Update artist response:", res.data);
-      alert("Cập nhật nghệ sĩ thành công!");
+      let imageUrl = profileImg;
+
+      // Nếu profileImg là một file mới chọn (File object)
+      if (profileImg instanceof File) {
+        imageUrl = await uploadToCloudinary(profileImg, (progress) => {
+          console.log("Upload progress:", progress);
+        });
+      }
+
+      // Payload gửi lên API của bạn (JSON)
+      const payload = {
+        _id: artistId,
+        artist_name: artistName,
+        biography: biography,
+        label: label,
+        isHidden: isHidden,
+        isfromDB: isFromDB,
+        profile_img: imageUrl,
+      };
+
+      console.log("Update payload:", payload);
+
+      const response = await updateArtist(payload, token);
+      console.log("Cập nhật thành công:", response.data);
       navigate("/admin/artists");
     } catch (error) {
-      const errorMsg = error.response?.data?.error || "Cập nhật nghệ sĩ thất bại.";
-      alert(errorMsg);
-      console.error("Error updating artist:", error.response);
+      console.error("Error updating artist:", error);
     } finally {
       setLoading(false);
     }
   };
 
   if (fetching) {
-    return <div className="p-6 text-white text-center">Đang tải dữ liệu...</div>;
+    return (
+      <div className="p-6 text-white text-center">Đang tải dữ liệu...</div>
+    );
   }
 
   return (
@@ -132,13 +139,17 @@ export default function EditArtist() {
         </label>
 
         <label className="flex flex-col gap-2 text-gray-300 text-sm font-medium">
-          Ảnh đại diện (URL)
+          Ảnh đại diện (tải lên)
           <input
-            type="url"
-            value={profileImg}
-            onChange={(e) => setProfileImg(e.target.value)}
+            type="file"
+            accept="image/*"
+            onChange={(e) => {
+              const file = e.target.files[0];
+              if (file) {
+                setProfileImg(file); // Giữ file trong state
+              }
+            }}
             className="p-3 rounded bg-[#282828] text-white placeholder-gray-400 border border-gray-700 focus:border-green-500 outline-none transition"
-            placeholder="Nhập URL ảnh đại diện"
           />
         </label>
 

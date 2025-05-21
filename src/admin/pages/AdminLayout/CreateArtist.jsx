@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
+import { uploadToCloudinary } from "../../../services/CloudUploadService/CloudService";
+import { createArtist } from "../../../services/ArtistService/artistService";
 export default function CreateArtist() {
   const [artistName, setArtistName] = useState("");
   const [biography, setBiography] = useState("");
@@ -27,10 +28,19 @@ export default function CreateArtist() {
       return;
     }
 
+    let imageUrl = profileImg;
+
+    // Nếu profileImg là một file mới chọn (File object)
+    if (profileImg instanceof File) {
+      imageUrl = await uploadToCloudinary(profileImg, (progress) => {
+        console.log("Upload progress:", progress);
+      });
+    }
+
     const payload = {
       artist_name: artistName,
-      biography,
-      profile_img: profileImg || null, // Gửi null nếu không có ảnh
+      biography: biography,
+      profile_img: imageUrl || null, // Gửi null nếu không có ảnh
       label: label || null,
       isfromDB: isFromDB,
       isHidden: isHidden,
@@ -38,13 +48,8 @@ export default function CreateArtist() {
 
     setLoading(true);
     try {
-      await axios.post(
-        "http://127.0.0.1:8000/spotify_app/artists/create",
-        payload,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const response = await createArtist(payload, token);
+      console.log("Thêm thành công:", response.data);
       alert("Thêm nghệ sĩ thành công!");
       navigate("/admin/artists");
     } catch (error) {
@@ -88,11 +93,15 @@ export default function CreateArtist() {
         <label className="flex flex-col gap-2 text-gray-300 text-sm font-medium">
           Ảnh đại diện (URL)
           <input
-            type="url"
-            value={profileImg}
-            onChange={(e) => setProfileImg(e.target.value)}
+            type="file"
+            accept="image/*"
+            onChange={(e) => {
+              const file = e.target.files[0];
+              if (file) {
+                setProfileImg(file); // Giữ file trong state
+              }
+            }}
             className="p-3 rounded bg-[#282828] text-white placeholder-gray-400 border border-gray-700 focus:border-green-500 outline-none transition"
-            placeholder="Nhập URL ảnh đại diện"
           />
         </label>
 

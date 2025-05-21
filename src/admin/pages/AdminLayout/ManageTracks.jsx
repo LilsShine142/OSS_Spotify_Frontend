@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Pencil, Trash2, Eye, EyeOff, RefreshCw } from "lucide-react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
 function ManageTracks() {
   const [tracks, setTracks] = useState([]);
   const [search, setSearch] = useState("");
@@ -13,7 +14,7 @@ function ManageTracks() {
   useEffect(() => {
     const userData = JSON.parse(localStorage.getItem("userData"));
     if (!userData?.token) {
-      alert("Vui lòng đăng nhập với quyền admin để quản lý bài hát.");
+      toast.error("Vui lòng đăng nhập với quyền admin để quản lý bài hát.");
       navigate("/login");
     } else {
       fetchTracks();
@@ -25,7 +26,7 @@ function ManageTracks() {
     const token = userData?.token;
 
     if (!token) {
-      alert("Vui lòng đăng nhập với quyền admin.");
+      toast.error("Vui lòng đăng nhập với quyền admin.");
       navigate("/login");
       return;
     }
@@ -39,7 +40,8 @@ function ManageTracks() {
       setTracks(Array.isArray(res.data) ? res.data : []);
     } catch (error) {
       console.error("Error fetching tracks:", error);
-      alert(error.response?.data?.error || "Lấy dữ liệu bài hát thất bại.");
+      toast.error(error.response?.data?.error || "Lấy dữ liệu bài hát thất bại.");
+
     } finally {
       setLoading(false);
     }
@@ -48,34 +50,38 @@ function ManageTracks() {
   const handleDelete = async (id) => {
     console.log("Deleting track with ID:", id);
     if (!id || !/^[0-9a-fA-F]{24}$/.test(id)) {
-        toast.error("ID bài hát không hợp lệ!");
-        return;
+
+      toast.error("ID bài hát không hợp lệ!");
+      return;
+
+
     }
     const userData = JSON.parse(localStorage.getItem("userData"));
     const token = userData?.token;
     if (!token) {
-        toast.error("Vui lòng đăng nhập với quyền admin.");
-        navigate("/login");
-        return;
+
+      toast.error("Vui lòng đăng nhập với quyền admin.");
+      navigate("/login");
+      return;
     }
     if (window.confirm("Bạn có chắc muốn xóa bài hát này?")) {
-        try {
-            await axios.delete(`http://localhost:8000/spotify_app/songs/${id}/delete/`, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            fetchTracks();
-            toast.success("Xóa bài hát thành công.");
-        } catch (error) {
-            console.error("Error deleting track:", error.response?.data);
-            const errorMsg = error.response?.data?.error || "Xóa bài hát thất bại.";
-            if (error.response?.status === 401) {
-                toast.error("Bạn không có quyền admin hoặc token không hợp lệ.");
-                navigate("/login");
-            } else if (error.response?.status === 404) {
-                toast.error("Bài hát không tồn tại.");
-            } else {
-                toast.error(`Lỗi: ${errorMsg}`);
-            }
+      try {
+        await axios.delete(`http://localhost:8000/spotify_app/songs/${id}/delete/`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        fetchTracks();
+        toast.success("Xóa bài hát thành công.");
+      } catch (error) {
+        console.error("Error deleting track:", error.response?.data);
+        const errorMsg = error.response?.data?.error || "Xóa bài hát thất bại.";
+        if (error.response?.status === 401) {
+          toast.error("Bạn không có quyền admin hoặc token không hợp lệ.");
+          navigate("/login");
+        } else if (error.response?.status === 404) {
+          toast.error("Bài hát không tồn tại.");
+        } else {
+          toast.error(`Lỗi: ${errorMsg}`);
+
         }
     }
 };
@@ -84,32 +90,33 @@ function ManageTracks() {
     const userData = JSON.parse(localStorage.getItem("userData"));
     const token = userData?.token;
     if (!token) {
-        toast.error("Vui lòng đăng nhập với quyền admin.");
-        navigate("/login");
-        return;
+
+      toast.error("Vui lòng đăng nhập với quyền admin.");
+      navigate("/login");
+      return;
     }
     const action = isHidden ? "hiện" : "ẩn";
     if (window.confirm(`Bạn có chắc muốn ${action} bài hát này?`)) {
-        try {
-            const endpoint = isHidden
-                ? `http://localhost:8000/spotify_app/songs/${id}/unhide/`
-                : `http://localhost:8000/spotify_app/songs/${id}/hide/`;
-            await axios.put(endpoint, {}, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            fetchTracks();
-            toast.success(`Bài hát đã được ${action} thành công.`);
-        } catch (error) {
-            console.error("Error toggling visibility:", error.response?.data);
-            const errorMsg = error.response?.data?.error || `Không thể ${action} bài hát.`;
-            if (error.response?.status === 401) {
-                toast.error("Bạn không có quyền admin hoặc token không hợp lệ.");
-                navigate("/login");
-            } else if (error.response?.status === 404) {
-                toast.error("Bài hát không tồn tại.");
-            } else {
-                toast.error(`Lỗi: ${errorMsg}`);
-            }
+      try {
+        const endpoint = isHidden
+          ? `http://localhost:8000/spotify_app/songs/${id}/unhide/`
+          : `http://localhost:8000/spotify_app/songs/${id}/hide/`;
+        await axios.put(endpoint, {}, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        fetchTracks();
+        toast.success(`Bài hát đã được ${action} thành công.`);
+      } catch (error) {
+        console.error("Error toggling visibility:", error.response?.data);
+        const errorMsg = error.response?.data?.error || `Không thể ${action} bài hát.`;
+        if (error.response?.status === 401) {
+          toast.error("Bạn không có quyền admin hoặc token không hợp lệ.");
+          navigate("/login");
+        } else if (error.response?.status === 404) {
+          toast.error("Bài hát không tồn tại.");
+        } else {
+          toast.error(`Lỗi: ${errorMsg}`);
+
         }
     }
 };

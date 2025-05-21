@@ -144,7 +144,10 @@ const Header = () => {
       <div className="flex flex-1 justify-center items-center max-w-2xl h-full gap-2 pl-[145px]">
         <div className="relative group">
           {/* Nút Home */}
-          <div className="flex items-center cursor-pointer hover:bg-slate-700 rounded-full p-2 bg-gray-800 hover:scale-110 transition-transform">
+          <div
+            className="flex items-center cursor-pointer hover:bg-slate-700 rounded-full p-2 bg-gray-800 hover:scale-110 transition-transform"
+            onClick={() => navigate("/home")}
+          >
             <img className="w-6" src={assets.home_icon} alt="Home" />
           </div>
           {/* Tooltip */}
@@ -188,9 +191,9 @@ const Header = () => {
 
       {/* Nút Premium + Cài đặt + Avatar */}
       <div className="flex items-center gap-6 pr-[100px]">
-        <button 
+        <button
           className="bg-white text-black px-4 py-1 text-sm font-bold rounded-full hover:scale-110 transition-transform duration-200 hover:opacity-80"
-          onClick={() => navigate('/premium')}
+          onClick={() => navigate("/premium")}
         >
           Khám phá Premium
         </button>
@@ -202,68 +205,71 @@ const Header = () => {
         {/* Avatar với dropdown */}
         {/* Nếu đã đăng nhập */}
         {detailedUser ? (
-          <div className="relative" ref={dropdownRef}>
-            <div
-              className="flex items-center cursor-pointer hover:bg-slate-700 rounded-full p-2 bg-gray-800 hover:scale-110 transition-transform"
-              onClick={handleDropDownToggle}
-            >
-              <img
-                className="w-8 h-8 rounded-full cursor-pointer"
-                src={assets.avatar}
-                alt="Avatar"
-              />
-            </div>
-
-            {/* Dropdown menu */}
-            {isDropDownOpen && (
-              <div className="absolute right-0 mt-2 w-56 bg-[#282828] rounded-md shadow-lg py-1 z-50">
-                {menuSections.map((section, sectionIndex) => (
-                  <div key={`section-${sectionIndex}`}>
-                    {/* Phần thông tin user */}
-                    {section.title === "user-info" && (
-                      <div className="px-4 py-2 relative border-b border-[#7c7c7c] border-opacity-50 mx-2">
-                        <p className="text-sm font-semibold text-green-500">
-                          Hello, {section.content.text}
-                        </p>
-                      </div>
-                    )}
-
-                    {/* Phần menu chính */}
-                    {section.title === "main-menu" && (
-                      <div className="py-1">
-                        {section.items.map((item, itemIndex) => (
-                          <div
-                            key={`menu-item-${itemIndex}`}
-                            onClick={() => handleMenuClick(item.link)}
-                            className="flex items-center justify-between px-4 py-2 mx-2 text-sm text-white hover:bg-[#3E3E3E] hover:rounded-[2px] hover:underline transition-colors"
-                          >
-                            {item.title}
-                            {item.icon}
-                          </div>
-                        ))}
-                      </div>
-                    )}
-
-                    {/* Phần đăng xuất */}
-                    {section.title === "logout-section" && (
-                      <div className="py-1 relative border-t border-[#7c7c7c] border-opacity-50 mx-2">
-                        {section.items.map((item, itemIndex) => (
-                          <Link
-                            key={`logout-item-${itemIndex}`}
-                            to={item.link}
-                            className="flex items-center justify-between px-4 py-2 text-sm text-white hover:bg-[#3E3E3E] hover:rounded-[2px] hover:underline transition-colors"
-                          >
-                            {item.title}
-                            {item.icon}
-                          </Link>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ))}
+          (console.log("detailedUser", detailedUser),
+          (
+            <div className="relative" ref={dropdownRef}>
+              <div
+                className="flex items-center cursor-pointer hover:bg-slate-700 rounded-full p-2 bg-gray-800 hover:scale-110 transition-transform"
+                onClick={handleDropDownToggle}
+              >
+                <img
+                  className="w-8 h-8 rounded-full cursor-pointer"
+                  src={detailedUser.user?.data?.profile_pic || assets.avatar}
+                  alt="Avatar"
+                />
               </div>
-            )}
-          </div>
+
+              {/* Dropdown menu */}
+              {isDropDownOpen && (
+                <div className="absolute right-0 mt-2 w-56 bg-[#282828] rounded-md shadow-lg py-1 z-50">
+                  {menuSections.map((section, sectionIndex) => (
+                    <div key={`section-${sectionIndex}`}>
+                      {/* Phần thông tin user */}
+                      {section.title === "user-info" && (
+                        <div className="px-4 py-2 relative border-b border-[#7c7c7c] border-opacity-50 mx-2">
+                          <p className="text-sm font-semibold text-green-500">
+                            Hello, {section.content.text}
+                          </p>
+                        </div>
+                      )}
+
+                      {/* Phần menu chính */}
+                      {section.title === "main-menu" && (
+                        <div className="py-1">
+                          {section.items.map((item, itemIndex) => (
+                            <div
+                              key={`menu-item-${itemIndex}`}
+                              onClick={() => handleMenuClick(item.link)}
+                              className="flex items-center justify-between px-4 py-2 mx-2 text-sm text-white hover:bg-[#3E3E3E] hover:rounded-[2px] hover:underline transition-colors"
+                            >
+                              {item.title}
+                              {item.icon}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Phần đăng xuất */}
+                      {section.title === "logout-section" && (
+                        <div className="py-1 relative border-t border-[#7c7c7c] border-opacity-50 mx-2">
+                          {section.items.map((item, itemIndex) => (
+                            <Link
+                              key={`logout-item-${itemIndex}`}
+                              to={item.link}
+                              className="flex items-center justify-between px-4 py-2 text-sm text-white hover:bg-[#3E3E3E] hover:rounded-[2px] hover:underline transition-colors"
+                            >
+                              {item.title}
+                              {item.icon}
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))
         ) : (
           // Nếu chưa đăng nhập
           <div className="flex gap-4">
@@ -281,7 +287,7 @@ const Header = () => {
             </Link>
           </div>
         )}
-        <button 
+        <button
           className="text-white hover:text-green-500 transition-colors duration-200"
           onClick={handleChatToggle}
         >
@@ -297,10 +303,7 @@ const Header = () => {
               d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2ZM20 16H6L4 18V4H20V16Z"
               fill="currentColor"
             />
-            <path
-              d="M7 9H17V11H7V9ZM7 12H14V14H7V12Z"
-              fill="currentColor"
-            />
+            <path d="M7 9H17V11H7V9ZM7 12H14V14H7V12Z" fill="currentColor" />
           </svg>
         </button>
       </div>
@@ -308,9 +311,7 @@ const Header = () => {
       {/* Chat Section */}
       {isChatOpen && (
         <div className="fixed top-[9%] right-0 w-[800px] h-[91vh] bg-gradient-to-b from-[#0d1a2d] to-black shadow-lg z-50 border-l border-gray-700 overflow-y-auto overflow-x-hidden scrollbar-w-3 scrollbar scrollbar-thumb-gray-700 scrollbar-track-transparent">
-      <ChatSection 
-        userId={detailedUser?.user?.data?._id}
-      />
+          <ChatSection userId={detailedUser?.user?.data?._id} />
         </div>
       )}
     </div>

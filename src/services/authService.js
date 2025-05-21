@@ -62,39 +62,128 @@ export const handleLogin = async (data) => {
 };
 
 
+// export const handleRegister = async (data) => {
+//     try {
+//         // Tạo FormData để có thể gửi file
+//         const formData = new FormData();
+
+//         // Thêm các trường cơ bản
+//         formData.append('email', data.email);
+//         formData.append('password', data.password);
+//         formData.append('name', data.name);
+//         formData.append('dob', data.dob);
+//         formData.append('gender', data.gender);
+
+//         // Thêm các trường không bắt buộc nếu có
+//         if (data.role) formData.append('role', data.role);
+//         if (data.avatar) formData.append('profile_pic', data.profile_pic);
+
+//         // Cấu hình header cho multipart/form-data
+//         const config = {
+//             headers: {
+//                 'Content-Type': 'multipart/form-data',
+//             },
+//         };
+
+//         const response = await axiosInstance.post(
+//             `/user_management/register/`,
+//             formData,
+//             config
+//         );
+
+//         if (response.status === 201) {
+//             return {
+//                 message: "success",
+//                 data: response.data
+//             };
+//         } else {
+//             return {
+//                 message: "error",
+//                 error: response.data?.detail || 'Unknown error'
+//             };
+//         }
+//     } catch (error) {
+//         console.error('Registration error:', error);
+
+//         // Xử lý các loại lỗi khác nhau
+//         if (error.response) {
+//             // Lỗi từ phía server
+//             const serverError = error.response.data;
+
+//             if (error.response.status === 400) {
+//                 if (serverError.email) {
+//                     return { message: "email_exists", error: serverError.email };
+//                 }
+//                 return {
+//                     message: "validation_error",
+//                     errors: serverError
+//                 };
+//             }
+
+//             return {
+//                 message: "server_error",
+//                 error: serverError.detail || 'Server error'
+//             };
+//         } else if (error.request) {
+//             // Lỗi không có phản hồi từ server
+//             return { message: "network_error", error: 'Không thể kết nối đến server' };
+//         } else {
+//             // Lỗi khác
+//             return { message: "unknown_error", error: error.message };
+//         }
+//     }
+// };
 export const handleRegister = async (data) => {
-  const { email, password, name, dob, gender, role } = data;
+    try {
+        // Tạo payload với tất cả các trường cần thiết
+        const payload = {
+            name: data.name,
+            email: data.email,
+            password: data.password,
+            dob: data.dob,
+            gender: data.gender,
+            role: data.role || 'user', // Mặc định là 'user' nếu không có
+            profile_pic: data.profile_pic || null // Thêm trường profile_pic
+        };
 
-  // Tạo payload chỉ với các trường có giá trị hợp lệ
-  const payload = {
-    email,
-    password,
-    name,
-    dob,
-    gender,
-  };
+        const response = await axios.post(
+            'http://127.0.0.1:8000/user_management/register/',
+            payload,
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
 
-  if (role) payload.role = role;
+        if (response.status === 201) {
+            return { message: "success", data: response.data };
+        }
 
-  try {
-    const response = await axios.post('http://127.0.0.1:8000/user_management/register/', payload);
+        return { message: "error", error: response.data?.error || 'Unknown error' };
 
-    if (response.status === 201) {
-      return { message: "success" };
-    } else if (response.data?.error === 'Email already registered') {
-      return { message: "email_exists" };
-    } else {
-      return { message: "error" };
+    } catch (error) {
+        console.error('Registration error:', error);
+
+        if (error.response) {
+            // Xử lý lỗi từ server
+            if (error.response.status === 400) {
+                return {
+                    message: "validation_error",
+                    errors: error.response.data
+                };
+            }
+            return {
+                message: "server_error",
+                error: error.response.data?.error || error.response.data?.detail || 'Server error'
+            };
+        } else if (error.request) {
+            return { message: "network_error", error: 'Không thể kết nối đến server' };
+        } else {
+            return { message: "unknown_error", error: error.message };
+        }
     }
-  } catch (error) {
-    console.error('Lỗi kết nối:', error);
-    console.error('Chi tiết phản hồi:', error.response?.data);
-    toast.error('Lỗi kết nối, vui lòng thử lại!');
-    return { message: "network_error" };
-  }
 };
-
-
 
 
 

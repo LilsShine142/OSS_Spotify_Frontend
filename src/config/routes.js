@@ -41,6 +41,7 @@ const routes = {
     album_tracks_list: (id) => `/album/${id}`,
     playlist_tracks_list: (id) => `/playlist/${id}`,
     liked_songs_collection: '/collection/likedsongs',
+    track_video: (id) => `/track/${id}/video`,
     home: '/home',
     login: '/login',
     register: 'register',

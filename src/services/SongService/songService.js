@@ -1,18 +1,15 @@
-import { axiosInstance } from "../../lib/axios/axios";
+import { axiosInstance } from "@/lib/axios/axios";
 
-export const getTracksListByPlaylistId = async (playlistId, token) => {
+
+export const getTrackVideoById = async (songId, token) => {
     try {
-        const response = await axiosInstance.get(`/spotify_app/playlists/${playlistId}/songs`, {
+        const response = await axiosInstance.get(`/spotify_app/songs/${songId}/`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
         });
         console.log("response", response);
-        if (response.data) {
-            return { success: true, Playlist: response.data };
-        } else {
-            return { success: false, message: response.data.error };
-        }
+        return response.data;
     } catch (error) {
         console.error("Lỗi khi lấy playlists:", error);
 

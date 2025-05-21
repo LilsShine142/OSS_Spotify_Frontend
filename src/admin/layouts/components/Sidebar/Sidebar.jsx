@@ -58,7 +58,6 @@ export default function AdminSidebar() {
           sub: [
             { label: "Tất cả album", path: "/admin/albums" },
             { label: "Tạo album", path: "/admin/create-album" },
-
           ],
         },
         {
